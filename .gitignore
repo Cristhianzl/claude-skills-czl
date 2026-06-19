@@ -1,0 +1,16 @@
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Private / internal — never publish
+CZL/
+*-private/
+*.private.md
+
+# Python caches (from the hooks)
+__pycache__/
+*.py[cod]
+
+# Archives / backups
+*.zip
+*.bak

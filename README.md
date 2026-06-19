@@ -114,4 +114,4 @@ Contributions welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). All content (c
 
 ## License
 
-[MIT](LICENSE) © Cristhian Lousa
+[MIT](LICENSE) © Cristhian Zanforlin

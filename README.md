@@ -77,24 +77,36 @@ Every config is a drop-in `.claude/` folder made of five parts:
 | `pre-push-smoke.sh` | before `git push` | Fast lint/test smoke on changed areas (project-configurable skeleton) |
 | `check-langflow-rules.py` | on Write/Edit | *(Langflow only)* `SecretStrInput` for API keys, no top-level SDK init in components, Alembic `Phase:` markers |
 
-## Install
+## Quick start
 
-Pick a config and put it at your project's root as `.claude/`.
+> **The whole setup is: copy one config folder into your project, rename it to `.claude`, and git-ignore it.** That's it — Claude Code reads `.claude/` automatically.
 
-**Copy** (a snapshot you can edit freely):
-
-```bash
-mkdir -p /path/to/your-project/.claude
-cp -R configs/agnostic/. /path/to/your-project/.claude/
-```
-
-**Symlink** (stays in sync as you pull updates to this repo):
+**1. Copy a config into your project as `.claude/`** (this both copies and renames):
 
 ```bash
-ln -sfn "$(pwd)/configs/agnostic" /path/to/your-project/.claude
+# from the root of YOUR project — pick agnostic (any language) or langflow
+cp -R /path/to/claude-skills-czl/configs/agnostic .claude
 ```
 
-Use `configs/langflow` instead when working inside Langflow.
+Use `configs/langflow` instead when working inside the Langflow codebase.
+
+**2. Git-ignore it** so your project repo doesn't track it:
+
+```bash
+echo ".claude/" >> .gitignore
+```
+
+**3. Done.** Open the project in Claude Code — the `CLAUDE.md` baseline, skills, commands, and hooks are active. (Want the whole team to share these rules instead of keeping them local? Skip step 2 and commit `.claude/`.)
+
+### Keep it in sync (optional)
+
+Prefer a **symlink** instead of a copy if you want updates to this repo to flow through automatically:
+
+```bash
+# from the root of YOUR project
+ln -sfn /path/to/claude-skills-czl/configs/agnostic .claude
+echo ".claude" >> .gitignore
+```
 
 ### Requirements
 

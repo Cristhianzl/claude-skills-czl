@@ -2,6 +2,9 @@
 .DS_Store
 Thumbs.db
 
+# Local dev convenience (this repo dogfoods its own config via a symlink)
+.claude
+
 # Private / internal — never publish
 CZL/
 *-private/

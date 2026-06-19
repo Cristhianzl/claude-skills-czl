@@ -55,6 +55,7 @@ Every config is a drop-in `.claude/` folder made of five parts:
 | `documenting-features` | Living, DDD-aligned feature docs (ADRs, C4, Gherkin) |
 | `ensuring-cross-platform` | Linux/macOS/Windows portability rules |
 | `playwright-cli` | Browser automation & E2E testing with Playwright |
+| `building-frontend-ui` | Framework-agnostic frontend UI — reuse & design tokens, components, accessibility, forms, state & data, responsive, performance, client security/PII (with per-framework references for React/Vue/Svelte/Web Components) |
 | `building-langflow-components` | *(Langflow only)* Create and evolve Langflow components safely |
 
 ### Commands

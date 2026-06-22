@@ -4,6 +4,28 @@ Single source of truth for AI coding agents in this Langflow repo. This is the *
 
 The project's `AGENTS.md` and the relevant `.agents/skills/` are canonical for area expertise — read them first; when they conflict with this file, the more specific one wins.
 
+## ⚠️ Backward compatibility & portability — applies to EVERY change
+
+This is the first thing to check on any Langflow change. It's **official Langflow policy** — see [`AGENTS.md`](https://github.com/langflow-ai/langflow/blob/main/AGENTS.md) and [docs.langflow.org/contributing-components](https://docs.langflow.org/contributing-components); full detail + citations in `rules/langflow.md`.
+
+**Never break existing components or saved flows.** A saved flow is a detached copy that references components, inputs, and outputs **by name** (the frontend matches on the `type` = class name or the `name` attribute). Rename or remove one and you silently break every flow — and every user — that has it. Therefore:
+
+- **Never rename** a Component class or its `name` attribute — *"breaks the component for all existing users."* If a new internal name is needed, mark the old one **`legacy=true`** and create a new component as a separate entity.
+- **Never rename/remove `inputs[].name` / `outputs[].name`** (disconnects edges); mark fields **`deprecated`** and keep them in place. **Never remove methods/attributes from base classes** (e.g. `LCModelComponent`).
+- **Additive-only** *(our convention)*: new inputs/outputs optional with safe defaults; never change a field's type or an existing default.
+- **Removal needs a documented migration plan.** Deprecated/legacy components stay usable in old flows, hidden for new ones.
+- **DB migrations must not lose data on upgrade** (upstream CI proves this end-to-end). *Our convention:* a `Phase: EXPAND | MIGRATE | CONTRACT` marker — expand first, contract later.
+- **Bundle changelog (`BUNDLE_API.md`)** is a project/fork convention, **not** upstream — verify before relying on it.
+- API/contract changes follow the same discipline — see `skills/api-design`.
+
+**It must run everywhere.** Langflow's CI runs a real matrix — Linux + macOS + **Windows** × Python 3.10/3.12 ([`cross-platform-test.yml`](https://github.com/langflow-ai/langflow/blob/main/.github/workflows/cross-platform-test.yml)). Every change has to work across those OSes and across Langflow's run modes — **server, API (`/v1/run`), Docker, and the stateless `lfx` package** (`lfx serve`; no DB) — plus the `langflow-base` split. Therefore:
+
+- The path / encoding / subprocess / time rules in `skills/ensuring-cross-platform` are mandatory — no POSIX-only assumptions, no hardcoded paths, `encoding="utf-8"`, no `shell=True`, UTC at boundaries.
+- Code reachable from `lfx` or the API must not depend on a server/UI context (no server-only globals, no frontend, no interactive state).
+- Reason about — and where feasible test — the change across OSes and the run modes it touches; CI runs the cross-platform matrix.
+
+> Gate before merging any Langflow change: **"Could this break a saved flow or an existing component? Does it still run on Windows/Linux/Docker, via the API, and from `lfx`?"** If unsure → stop and verify.
+
 ## Language
 
 All code, comments, commit messages, and documentation in English, regardless of conversation language.

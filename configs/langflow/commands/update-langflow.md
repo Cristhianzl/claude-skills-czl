@@ -10,6 +10,7 @@ Run these steps carefully and report at the end. Stop and ask if anything is amb
 
 1. **Pre-checks.**
    - If `.claude` is a **symlink** (`test -L .claude`), it already tracks the kit — tell the user to `git pull` in the kit repo instead, then stop.
+   - **Variant guard.** Read the installed variant: `installed=$(cat .claude/.variant 2>/dev/null)`. If it is non-empty and **not `langflow`** (e.g. `agnostic`), **STOP**: this project has the `$installed` config, and `/update-langflow` would switch variants — replacing the agnostic setup with the Langflow-specific one. Tell the user to run `/update-$installed` to stay on their variant, or to re-run only after **explicitly confirming** they want to switch to `langflow`.
    - Confirm with the user before overwriting `.claude/`.
 
 2. **Download the latest config** to a temp dir:

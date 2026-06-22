@@ -7,12 +7,23 @@ from pathlib import Path
 DOC_EXTS = {".md", ".mdx", ".rst", ".adoc"}
 DOC_NAME_HINTS = ("readme", "changelog", "contributing", "architecture")
 DOC_DIRS = {"docs", "documentation", "doc"}
-NOISE = {"package-lock.json", "yarn.lock", "pnpm-lock.yaml", "uv.lock", "poetry.lock", "Cargo.lock", "go.sum", "composer.lock", "Gemfile.lock"}
-GENERIC = {"src", "app", "lib", "pkg", "index", "main", "mod", "init", "__init__", "utils", "util", "types", "type", "test", "tests", "spec", "api", "core", "common", "base", "components", "component", "helpers", "models", "services"}
+SOURCE_EXTS = {
+    ".py", ".pyi", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".go", ".rs",
+    ".java", ".kt", ".cs", ".rb", ".swift", ".php", ".scala", ".c", ".cc",
+    ".cpp", ".h", ".hpp", ".m", ".mm", ".vue", ".svelte", ".sql",
+}
+GENERIC = {
+    "src", "app", "lib", "pkg", "index", "main", "mod", "init", "__init__",
+    "utils", "util", "types", "type", "test", "tests", "spec", "api", "core",
+    "common", "base", "components", "component", "helpers", "helper", "models",
+    "model", "services", "service", "handler", "handlers", "routes", "router",
+    "controller", "controllers", "schema", "schemas", "config", "client",
+    "server", "module", "shared", "constants", "demo", "example", "draft",
+}
 DOC_PATHSPECS = ("*.md", "*.mdx", "*.rst", "*.adoc", "*README*", "*CHANGELOG*")
 MAX_READ = 256 * 1024
 MAX_DOCS = 4000
-MAX_LIST = 25
+MAX_LIST = 20
 
 
 def is_doc(rel: str) -> bool:
@@ -22,6 +33,10 @@ def is_doc(rel: str) -> bool:
     if p.suffix.lower() in DOC_EXTS:
         return True
     return any(h in p.name.lower() for h in DOC_NAME_HINTS)
+
+
+def is_source(rel: str) -> bool:
+    return Path(rel).suffix.lower() in SOURCE_EXTS
 
 
 def git(cwd: str, *args: str) -> subprocess.CompletedProcess:
@@ -44,17 +59,18 @@ def all_doc_files(cwd: str) -> list[str]:
     return [p for p in res.stdout.split("\0") if p][:MAX_DOCS]
 
 
-def tokens_for(code: list[str]) -> tuple[set[str], set[str]]:
-    names, codedirs = set(), set()
-    for rel in code:
+def topic_from(source: list[str]) -> tuple[set[str], set[str]]:
+    paths, names, dirs = set(), set(), set()
+    for rel in source:
         p = Path(rel)
-        codedirs.add(p.parent.as_posix())
-        names.add(rel.lower())
-        for tok in (p.name, p.stem, p.parent.name):
-            t = tok.lower()
-            if len(t) >= 4 and t not in GENERIC:
-                names.add(t)
-    return names, codedirs
+        paths.add(rel.lower())
+        parent = p.parent.as_posix()
+        if parent not in ("", "."):
+            dirs.add(parent)
+        t = p.stem.lower()
+        if len(t) >= 5 and t not in GENERIC:
+            names.add(t)
+    return paths | names, dirs
 
 
 def main() -> None:
@@ -70,39 +86,39 @@ def main() -> None:
         sys.exit(0)
 
     changed = changed_paths(cwd)
-    if not changed:
-        sys.exit(0)
-    code = [p for p in changed if not is_doc(p) and Path(p).name not in NOISE]
+    source = [p for p in changed if is_source(p)]
     docs_touched = {p for p in changed if is_doc(p)}
-    if not code:
+    if not source:
         sys.exit(0)
 
     repo = Path(cwd)
-    names, codedirs = tokens_for(code)
+    tokens, source_dirs = topic_from(source)
     related = []
     for rel in all_doc_files(cwd):
         if rel in docs_touched:
             continue
-        if Path(rel).parent.as_posix() in codedirs:
+        if Path(rel).parent.as_posix() in source_dirs:
             related.append(rel)
             continue
         try:
             text = (repo / rel).read_text(encoding="utf-8", errors="ignore")[:MAX_READ].lower()
         except Exception:
             continue
-        if any(tok in text for tok in names):
+        if any(tok in text for tok in tokens):
             related.append(rel)
 
     if not related:
         sys.exit(0)
 
-    lines = ["Doc-sync check: code changed but related documentation was not updated.", "", "Changed (non-doc) files:"]
-    lines += [f"  - {p}" for p in code[:MAX_LIST]]
-    lines += ["", "Docs across the repo that reference (or sit beside) what you changed — review and update any now inaccurate:"]
+    lines = ["Doc-sync check: you changed source code — review the docs related to it.", "", "Source files changed:"]
+    lines += [f"  - {p}" for p in source[:MAX_LIST]]
+    if len(source) > MAX_LIST:
+        lines.append(f"  ... and {len(source) - MAX_LIST} more")
+    lines += ["", "Docs that reference (or sit beside) what you changed — update any now inaccurate:"]
     lines += [f"  - {p}" for p in related[:MAX_LIST]]
     if len(related) > MAX_LIST:
-        lines.append(f"  ... and {len(related) - MAX_LIST} more")
-    lines += ["", "Update the docs that drifted (for feature docs, follow the documenting-features skill). If none need changing, say so explicitly, then stop."]
+        lines.append(f"  ... and {len(related) - MAX_LIST} more (match looks broad — focus on the ones tied to this change)")
+    lines += ["", "Update the docs that drifted (for feature docs, follow the documenting-features skill). If none apply to this change, say so explicitly, then stop."]
     print("\n".join(lines), file=sys.stderr)
     sys.exit(2)
 

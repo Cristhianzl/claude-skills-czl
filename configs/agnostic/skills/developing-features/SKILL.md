@@ -108,6 +108,12 @@ Security is a lens, not a section. See `references/security.md` for the full set
 
 Full guidance: `references/observability.md`.
 
+## Data layer & scale (summary)
+
+If the code touches a database, be born-scaled — these are cheap and high-ROI: use a **pooled connection with explicit limits**; **index** every foreign key and every column used in `WHERE` / `JOIN` / `ORDER BY`, added in the same migration; **no N+1** (eager/batch load) and **no query inside a loop**; **paginate every list**; keep transactions short with a query timeout. Distributed scaling (replicas, sharding, caches) only when a measured limit demands it.
+
+Full guidance: `references/data-layer.md`.
+
 ## Platform agnosticism (summary)
 
 Required: see `ensuring-cross-platform` skill. Implementation-phase quick table:
@@ -134,6 +140,7 @@ Before delivering:
 - [ ] No WHAT-comments (commenting what the code does); only WHY-comments where the reason is genuinely non-obvious.
 - [ ] Existing tests still pass; new behavior has new tests.
 - [ ] Platform-agnostic checklist (see `ensuring-cross-platform`) passes.
+- [ ] If it touches a DB: pooled connection with limits, indexes on FK/filter columns, no N+1, lists paginated (see `references/data-layer.md`).
 
 If any item fails → fix before delivering.
 
@@ -150,6 +157,7 @@ If any item fails → fix before delivering.
 - `references/file-structure.md` — hard limits, responsibility categories, layer rules, naming.
 - `references/pragmatic-principles.md` — DRY/KISS/YAGNI/Demeter with anti-patterns.
 - `references/observability.md` — logging guidance.
+- `references/data-layer.md` — connection pooling, indexes, query hygiene, transactions (born-scaled defaults).
 - `ensuring-cross-platform` skill — full platform-agnostic rules.
 - `writing-tests` skill — coverage and test quality.
 - `learnings/` — project-specific conventions accumulated over time.

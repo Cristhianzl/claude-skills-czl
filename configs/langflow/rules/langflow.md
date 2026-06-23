@@ -40,6 +40,15 @@ globs: "**/*.py"
 - **Be consistent:** if one enum column genuinely needs a rebuild, its siblings (e.g. `job.status`) do too — rebuilding one VARCHAR-enum column while leaving another untouched is a smell that the rebuild was unnecessary.
 - A new enum **value** is also a code-level state: audit every `.in_([...])`, `match`/`switch`, and dispatch over that enum (see `skills/reviewing-code` → `references/correctness-checks.md`). The migration and the guards land in the same PR.
 
+## Data layer & scale
+
+**[ours]** Born-scaled defaults (pooling, indexes, no-N+1, pagination) live in `skills/developing-features/references/data-layer.md`. In this repo specifically:
+
+- **SQLAlchemy 2.0 style:** `select(...)` (never the legacy `Query` API), and **eager-load relationships** (`selectinload` / `joinedload`) to avoid N+1.
+- **Index** new foreign keys and any column you filter/sort on — in the model **and** its migration together (see Database migrations above).
+- **Workers / background jobs use a dedicated DB session**, never the request's session.
+- Connection pooling is configured at the engine/settings level — set explicit limits via the project's DB settings/env, sized against the database's `max_connections`. (Pooling applies to the server/API paths; LFX runs without a DB.)
+
 ## Portability — it must run everywhere
 
 **[official]** Langflow's CI runs a real matrix — **Linux + macOS (Intel/ARM) + Windows × Python 3.10/3.12** ([`.github/workflows/cross-platform-test.yml`](https://github.com/langflow-ai/langflow/blob/main/.github/workflows/cross-platform-test.yml)); supported Python 3.10–3.14. A change must also work across Langflow's run modes: **server** (`langflow run`), **API** (`POST /v1/run/{flow}`), **Docker** image, and the **`lfx`** package (`lfx serve`). LFX is **stateless** — no DB, a `NoopSession` ([`src/lfx/README.md`](https://github.com/langflow-ai/langflow/blob/main/src/lfx/README.md)).

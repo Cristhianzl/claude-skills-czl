@@ -75,6 +75,13 @@ IMPORTANT (Must fix)
 [ ] Types in dedicated types file
 [ ] Constants in dedicated constants file
 
+IMPORTANT — Data layer & scale (when it touches a DB; see developing-features/references/data-layer.md)
+[ ] Connection pooling with explicit limits (not a connection per request)
+[ ] Index on every foreign key and on columns used in WHERE / JOIN / ORDER BY, added in the same migration
+[ ] No N+1 queries (eager/batch load), and no query inside a loop
+[ ] Every list endpoint is paginated
+[ ] Transactions kept short; a query/statement timeout is set
+
 RECOMMENDED (Should fix)
 [ ] Appropriate logging at key points
 [ ] No unnecessary comments

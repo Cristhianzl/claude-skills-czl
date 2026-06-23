@@ -27,6 +27,26 @@ Cheap "born-scaled" defaults for any service that talks to a database. Apply the
 - **Select only the columns you need** on hot paths; avoid shipping unused blobs.
 - For hot counts/rankings at scale, prefer a **maintained counter/aggregate** over `COUNT(*)` per request.
 
+## Writes & write scaling
+
+**Cheap defaults (day one)** — the write-side twins of the read rules; they cost nothing:
+
+- **Batch / bulk insert** — one statement/transaction for many rows, not N round-trips (one connection, one commit).
+- **No write inside a loop** — accumulate and flush once.
+- **Make retryable writes idempotent** (a natural/unique key or an idempotency key) so a retry can't double-insert.
+- **Async only for genuine fire-and-forget** (emails, webhooks, derived/analytics events) — never for data the caller must read back immediately.
+
+**When writes become the bottleneck — measure first, then pick.** A single relational DB handles ~**10–20k writes/s**; past that *sustained*, reach for one of these. The decisive question is **constant load vs spike** — it picks the strategy:
+
+| Strategy | Use when | Tradeoff |
+|---|---|---|
+| **Queue** (Kafka / SQS / RabbitMQ) | **Spikes** (launch, viral, rush hour) — absorb the burst, workers drain at DB pace | Data isn't in the DB instantly (fine for a feed, not a balance). **Not for constant load** — the queue just grows until it falls over. |
+| **Batching** (buffer, e.g. in Redis, flush periodically) | Many small inserts (counters, metrics, logs) | A small delay before it lands; works with complex/JSON rows. |
+| **Sharding** | **Constant** volume above one DB's ceiling | Lose cross-shard joins; pick the **partition key from your queries**. Use a DB built for it (Cassandra / ScyllaDB / DynamoDB / ClickHouse), not vanilla Postgres. A bad key → **hot shard**. |
+| **Hierarchical aggregation** (edge → regional → central) | Truly global, **purely numeric/aggregable** data (dashboard counters) | Aggregables only — no JSON/strings. Overkill for most. |
+
+**The mistakes that signal over- (or under-) engineering:** sharding before the volume demands it (a relational DB is stronger than it looks — "not worth the complexity yet" is a valid, senior answer); a partition key chosen without knowing the queries (hot shards); using a **queue for constant write load** (it only smooths spikes). Measure your writes/s and constant-vs-spike first, add the cheapest thing that fits, and say the tradeoff out loud.
+
 ## Transactions & timeouts
 
 - Keep transactions **short**; never hold one open across an external/network call.

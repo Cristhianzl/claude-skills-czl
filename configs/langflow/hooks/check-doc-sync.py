@@ -107,18 +107,28 @@ def main() -> None:
         if any(tok in text for tok in tokens):
             related.append(rel)
 
-    if not related:
-        sys.exit(0)
-
-    lines = ["Doc-sync check: you changed source code — review the docs related to it.", "", "Source files changed:"]
+    header = (
+        "Doc-sync check: you changed source code — review the docs related to it."
+        if related
+        else "Wrap-up check: you changed source code this turn."
+    )
+    lines = [header, "", "Source files changed:"]
     lines += [f"  - {p}" for p in source[:MAX_LIST]]
     if len(source) > MAX_LIST:
         lines.append(f"  ... and {len(source) - MAX_LIST} more")
-    lines += ["", "Docs that reference (or sit beside) what you changed — update any now inaccurate:"]
-    lines += [f"  - {p}" for p in related[:MAX_LIST]]
-    if len(related) > MAX_LIST:
-        lines.append(f"  ... and {len(related) - MAX_LIST} more (match looks broad — focus on the ones tied to this change)")
-    lines += ["", "Update the docs that drifted (for feature docs, follow the documenting-features skill). If none apply to this change, say so explicitly, then stop."]
+    if related:
+        lines += ["", "Docs that reference (or sit beside) what you changed — update any now inaccurate:"]
+        lines += [f"  - {p}" for p in related[:MAX_LIST]]
+        if len(related) > MAX_LIST:
+            lines.append(f"  ... and {len(related) - MAX_LIST} more (match looks broad — focus on the ones tied to this change)")
+        lines += ["", "Update the docs that drifted (for feature docs, follow the documenting-features skill). If none apply to this change, say so explicitly."]
+    lines += [
+        "",
+        "Then suggest a commit message scoped to the changes YOU made this turn — the list above is the",
+        "whole working-tree delta, so exclude files you did not touch (pre-existing or unrelated edits).",
+        "Conventional Commits format (`type: imperative subject`, subject <= 50 chars, English; add a body",
+        "only if it explains why). A suggestion only; the human runs git — never run git add/commit/push.",
+    ]
     print("\n".join(lines), file=sys.stderr)
     sys.exit(2)
 

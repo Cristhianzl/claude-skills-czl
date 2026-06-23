@@ -73,7 +73,7 @@ Every config is a drop-in `.claude/` folder made of five parts:
 | `check-comments.py` | on Write/Edit | No WHAT-comments; comment-density cap; doc-comments (`///`, `//!`) exempt |
 | `check-file-size.py` | on Write/Edit | ≤ 500 LOC per file (≤ 700 with justification) |
 | `check-banned-patterns.py` | on Write/Edit | `shell=True`, `eval`/`exec` on input, hardcoded paths, tokens in `localStorage`, bare `except:`, … |
-| `check-doc-sync.py` | on Stop (turn end) | Searches the repo for docs related to your code changes and asks the agent to update them — so you don't have to ask manually |
+| `check-doc-sync.py` | on Stop (turn end) | When you changed source: flags repo docs that may have drifted (so you don't have to ask), then suggests a Conventional-Commits message for the change — human commits, agent never runs git |
 | `pre-push-smoke.sh` | before `git push` | Fast lint/test smoke on changed areas (project-configurable skeleton) |
 | `check-langflow-rules.py` | on Write/Edit | *(Langflow only)* `SecretStrInput` for API keys, no top-level SDK init in components, Alembic `Phase:` markers |
 

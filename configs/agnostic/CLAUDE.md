@@ -39,6 +39,7 @@ This repo drives git through `/commit`, `/push`, `/pr` — the agent stages/comm
 3. Follow the matching `rules/<area>.md`.
 4. Write/update tests alongside the code; run lint + tests locally.
 5. State assumptions when the request is ambiguous; surface tradeoffs instead of burying them.
+6. Write prose answer-first — lead with the conclusion/recommendation, then grouped reasons, then detail (Minto Pyramid / SCQA). Applies to docs, PRDs, PR descriptions, reviews, and updates. (detail: `skills/documenting-features/references/communication.md`)
 
 ## Map of this configuration
 

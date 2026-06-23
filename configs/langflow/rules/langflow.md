@@ -35,9 +35,9 @@ globs: "**/*.py"
 
 **[ours]** **No dead DDL — and no enum gap.** Adding a value to a SQLAlchemy `Enum` is asymmetric by backend; getting it wrong ships a no-op or a needless table rebuild:
 
-- **SQLite stores enums as `VARCHAR` with no CHECK constraint** when the column was created with a plain `sa.Enum(...)` (`create_constraint` defaults to `False` in SQLAlchemy 2.x). The SQLite upgrade branch for a new enum value is then a **`pass`** — a `batch_alter_table(..., recreate="always")` there is dead DDL that rebuilds the table for nothing. Verify against the *original* `op.create_table` before assuming a constraint exists.
+- **SQLite stores a plain `sa.Enum` as `VARCHAR(len-of-longest-value)`** with no CHECK constraint (`create_constraint` defaults to `False` in SQLAlchemy 2.x). There's no CHECK to widen — **but** the model/migration consistency check (autogenerate) compares the reflected VARCHAR **length** to the model's Enum. So a new value **longer** than the current longest **does** need a SQLite rebuild (`batch_alter_table(..., recreate="always").alter_column(type_=new_enum)`) to grow the column, or CI ships a phantom `VARCHAR(n) -> Enum` diff and `test_no_phantom_migrations[sqlite]` fails. A value **no longer** than the existing max needs no rebuild. (Hard-won: a `pass` here looked like "dead DDL" but broke consistency.)
 - **PostgreSQL** needs `ALTER TYPE ... ADD VALUE IF NOT EXISTS` inside an `autocommit_block()`.
-- **Be consistent:** if one enum column genuinely needs a rebuild, its siblings (e.g. `job.status`) do too — rebuilding one VARCHAR-enum column while leaving another untouched is a smell that the rebuild was unnecessary.
+- **It's per-column, not all-or-nothing:** the rebuild decision is per enum column and depends on whether *that* column's new value is the new longest — e.g. adding `resume` (6) to a signal enum whose max was `stop` (4) needs a rebuild, while adding `suspended` (9) to a status enum that already has `in_progress` (11) does not. Rebuilding one and not the other is correct, not a smell.
 - A new enum **value** is also a code-level state: audit every `.in_([...])`, `match`/`switch`, and dispatch over that enum (see `skills/reviewing-code` → `references/correctness-checks.md`). The migration and the guards land in the same PR.
 
 ## Data layer & scale

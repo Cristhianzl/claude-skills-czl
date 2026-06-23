@@ -171,6 +171,7 @@ Detailed rules — labeling schemes, length, length, link format, copy-paste saf
 
 ## See also
 
+- `../documenting-features/references/communication.md` — answer-first structure (Minto Pyramid); lead the review with the verdict, then findings by severity.
 - `references/output-format.md` — GitHub-comment formatting rules, label schemes, structure skeleton, copy-paste safety check.
 - `references/security-checks.md` — PII zero-tolerance, AI security, third-party integration, AI-untrusted-code lens, AI runtime resilience.
 - `references/structural-checks.md` — file structure hard limits, SOLID verification, pragmatic principles, layer separation, error handling.

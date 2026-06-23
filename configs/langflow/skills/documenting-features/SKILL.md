@@ -123,6 +123,7 @@ The final feature doc, ready to save at `docs/features/<feature-name>.md`. Print
 
 ## See also
 
+- `references/communication.md` — answer-first structure (Minto Pyramid / SCQA) for every doc and summary; lead with the conclusion.
 - `references/template.md` — the complete 10-section template with placeholders, ready to fill in.
 - `references/c4-diagrams.md` — Mermaid syntax for Context, Container, and Component diagrams with concrete examples.
 - `references/gherkin.md` — how to write Gherkin scenarios that translate to tests; common smells; coverage rules.

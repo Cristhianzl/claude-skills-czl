@@ -74,6 +74,7 @@ Before closing, ask: *did I encounter a section template, required metric, appro
 - [references/prd-structure.md](references/prd-structure.md) — the canonical PRD section skeleton with one line of guidance each, plus the artifact ladder.
 - [references/metrics-and-acceptance.md](references/metrics-and-acceptance.md) — success metrics, acceptance vs. success criteria, and prioritization frameworks (RICE, MoSCoW, Kano, Impact/Effort).
 - [references/pr-faq.md](references/pr-faq.md) — the Amazon Working Backwards PR-FAQ template and when to use it.
+- `../documenting-features/references/communication.md` — answer-first structure (Minto Pyramid / SCQA); lead the PRD with the recommendation, not the build-up.
 - `documenting-features` skill — the living-doc companion: once the feature ships, the PRD's problem/scope/criteria feed the feature doc.
 - `developing-features` skill — turns the PRD's acceptance criteria into implementation and tests.
 - `learnings/` — project-specific PRD conventions accumulated over time.

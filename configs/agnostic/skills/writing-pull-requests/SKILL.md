@@ -85,6 +85,7 @@ DESCRIPTION:
 
 ## See also
 
+- `../documenting-features/references/communication.md` — answer-first structure (Minto Pyramid); first line = what it does and why it's safe to merge.
 - `references/examples.md` — wrong-vs-right titles and descriptions, distilled from common LLM mistakes.
 - `references/templates.md` — full template variants (feature, fix, refactor, revert, breaking change).
 - `learnings/` — project-specific conventions accumulated over time. **Read before generating.** **Append a new file when you discover a non-obvious convention** (see `learnings/README.md` for the append protocol).

@@ -64,7 +64,7 @@ Every config is a drop-in `.claude/` folder made of five parts:
 
 ### Commands
 
-`/init` · `/next` · `/check` · `/test` · `/review` · `/done` · `/commit` · `/push` · `/pr` · `/roadmap` · `/task` · `/sync` · `/security` · `/help`
+`/init` · `/next` · `/check` · `/test` · `/review` · `/done` · `/commit` · `/push` · `/pr` · `/roadmap` · `/task` · `/sync` · `/security` · `/help` · `/update-agnostic` · `/update-langflow`
 
 ### Hooks (what gets enforced)
 
@@ -107,6 +107,17 @@ Prefer a **symlink** instead of a copy if you want updates to this repo to flow 
 ln -sfn /path/to/claude-skills-czl/configs/agnostic .claude
 echo ".claude" >> .gitignore
 ```
+
+### Updating a copied install
+
+If you **copied** the config (not symlinked), pull the latest from inside the project with a slash command:
+
+- **`/update-agnostic`** — refresh `.claude/` from `configs/agnostic`.
+- **`/update-langflow`** — refresh `.claude/` from `configs/langflow`.
+
+They download the latest version, **back up** the current `.claude/`, and **preserve your local additions** (each skill's `learnings/`, `settings.local.json`, and any project-only rules/skills). A **variant guard** stops you from cross-updating — e.g. running `/update-agnostic` on a project that has the `langflow` config installed — unless you explicitly confirm the switch.
+
+If you **symlinked** instead, you don't need these — just `git pull` in this repo.
 
 ### Requirements
 

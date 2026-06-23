@@ -13,7 +13,6 @@ Thanks for helping improve these configurations! Contributions of new skills, ru
 
 - `configs/agnostic` — the generic baseline. Changes here should help *every* project.
 - `configs/langflow` — the Langflow-specialized config. Langflow-only changes go here.
-- `legacy/` — frozen history; don't build on it.
 
 When you change a skill in one config, check whether the same skill exists in the other and keep them in sync (the generic skill bodies are shared; only `description` and `learnings/` differ).
 

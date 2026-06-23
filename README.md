@@ -28,7 +28,6 @@ claude-skills-czl/
 │   │   ├── rules/               # optional per-stack rules (auto-applied by globs)
 │   │   └── skills/              # the detailed "how" playbooks
 │   └── langflow/            # same shape, specialized for Langflow
-├── legacy/                 # earlier iterations, kept for reference
 └── README.md
 ```
 
@@ -131,10 +130,6 @@ If you **symlinked** instead, you don't need these — just `git pull` in this r
 - **Add per-stack rules:** copy `rules/TEMPLATE.md` to `rules/<stack>.md`, set its `globs`, keep it short, and point to the skills for depth.
 - **Teach the agent project specifics:** drop a dated note in any skill's `learnings/` folder. A learning overrides the skill's defaults — the agent reads it first.
 - **Tune the hooks:** they're small, dependency-free scripts; the thresholds live at the top of each file.
-
-## `legacy/`
-
-Earlier iterations of these configs, kept for reference and history. Not maintained — start from `configs/`.
 
 ## Contributing
 

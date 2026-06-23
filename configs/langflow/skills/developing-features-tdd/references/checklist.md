@@ -49,6 +49,7 @@ PHASE 8 — VALIDATE
 [ ] Cyclomatic complexity check passes (configured tool, not eyeballed)
 [ ] No `any`/`object`/`dynamic` introduced
 [ ] No suppressed lint rules without documented `Why:`
+[ ] If it touches a DB: pooled connection with limits, indexes on FK/filter columns, no N+1, lists paginated (see developing-features/references/data-layer.md)
 
 COMPREHENSION GATE (mandatory before "done")
 [ ] I can defend every significant block of the diff without re-reading it

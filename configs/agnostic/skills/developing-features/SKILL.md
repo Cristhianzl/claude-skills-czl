@@ -1,6 +1,6 @@
 ---
 name: developing-features
-description: Write production code with security-first thinking, SOLID design, pragmatic principles, observability, and strict file-structure limits. Use when implementing a new feature, designing a system, refactoring code, or whenever the task is "build production code" rather than fix a bug or write tests. Pairs with ensuring-cross-platform for portability and writing-tests for coverage.
+description: Write production code with security-first thinking, SOLID design, pragmatic principles, observability, and strict file-structure limits. Use when implementing a new feature, designing a system, refactoring code, or whenever the task is "build production code" rather than fix a bug or write tests. This is the default for feature and production-code work — use it unless the user explicitly asks for TDD (tests-first / red-green-refactor), which is developing-features-tdd. Pairs with ensuring-cross-platform for portability and writing-tests for coverage.
 license: MIT
 ---
 

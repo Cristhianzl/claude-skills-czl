@@ -20,6 +20,16 @@ Apply the full nine-phase cycle for **production features** the user explicitly 
 
 Lighten the formality for one-off scripts, throwaway exploration, prototypes the user has labeled as such, or features under 30 lines of production code. Still write at least one happy-path test and one adversarial test — but skip the explicit Phase 2 design document.
 
+## Best practices — inherited from `developing-features` (this skill changes only the *how*)
+
+Every engineering standard in `developing-features` applies here **in full and unchanged**. TDD changes *how* you implement (test-first: RED → GREEN → REFACTOR), not *what* "good" means — it never relaxes or replaces these:
+
+- The **pre-implementation security check**, the **trade-off priority** (correctness → simplicity → testability → performance → reuse), and the **core code-quality rules**: SOLID, DRY/KISS/YAGNI/Law of Demeter, file-structure hard limits, intention-revealing naming, immutability, no global state, strong typing, guard clauses, complexity ≤ 10 / nesting ≤ 4, and no-WHAT-comments.
+- **Error handling**, **security**, **observability**, **data layer & scale** (pooling, indexes, no-N+1, pagination), and **platform-agnostic** rules.
+- Their full detail lives in `developing-features/references/{security,solid,pragmatic-principles,file-structure,observability,data-layer}.md` — read them as needed.
+
+The phases below weave these into the RED/GREEN/REFACTOR/VALIDATE loop; they are the **same bar**, reached test-first.
+
 ## The cycle (strict order)
 
 ```
@@ -61,7 +71,7 @@ SO THAT:  <business value>
 
 If any criterion cannot be decomposed → **ask for clarification**. Don't guess scope.
 
-**Pre-implementation security check** — the same five questions from the `developing-features` skill apply. If the feature touches AI/LLM, webhooks, auth, or data persistence, the answers **must become adversarial tests** in Phase 3 before the corresponding production code exists.
+**Pre-implementation security check** — the same questions from the `developing-features` skill apply (all of them). If the feature touches AI/LLM, webhooks, auth, or data persistence, the answers **must become adversarial tests** in Phase 3 before the corresponding production code exists.
 
 ## Phase 2 — DESIGN
 
@@ -213,6 +223,7 @@ Run the FULL test suite. All tests must pass. New + pre-existing.
 - [ ] **Cyclomatic complexity ≤ 10** in new functions; **nesting ≤ 4**.
 - [ ] **Coverage ≥ 75% (target 80%)** — branch coverage, shown to the user.
 - [ ] Platform-agnostic checks pass (see `ensuring-cross-platform` skill).
+- [ ] **If it touches a DB:** pooled connection with limits, indexes on FK / filter columns, no N+1, lists paginated (see `developing-features/references/data-layer.md`).
 - [ ] **AI runtime resilience tests pass** if the feature calls an LLM (timeout → fallback, malformed output → graceful error, circuit-open → bypass, kill switch → deterministic disable).
 - [ ] **Comprehension gate** — you can defend every significant block of the diff without re-reading it.
 - [ ] **Architectural intent is captured** for every non-obvious decision (test name, `Why:` comment, PR `## Design Decisions`, or ADR).
@@ -260,7 +271,7 @@ Before closing the task, ask: *did I encounter a TDD-relevant constraint, framew
 - `references/test-quality.md` — naming convention, AAA structure, what to test / what NOT to test, anti-patterns.
 - `references/ai-runtime.md` — AI runtime profile, mandatory failure-mode tests for LLM features.
 - `references/checklist.md` — the full feature checklist + PR description template + commit format.
-- `developing-features` skill — non-TDD production code rules (SOLID, security, file structure, observability) referenced throughout this skill.
+- `developing-features` skill — non-TDD production code rules (SOLID, security, file structure, observability, data layer) referenced throughout this skill; incl. `references/data-layer.md` (connection pooling, indexes, no-N+1, pagination).
 - `ensuring-cross-platform` skill — portability rules that apply at RED, GREEN, REFACTOR, and VALIDATE.
 - `writing-tests` skill — broader testing strategy (pyramid, integration, E2E, coverage).
 - `learnings/` — project-specific TDD conventions accumulated over time.

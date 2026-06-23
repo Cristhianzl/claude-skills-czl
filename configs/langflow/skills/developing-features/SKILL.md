@@ -1,6 +1,6 @@
 ---
 name: developing-features
-description: Write production code in Langflow with security-first thinking, SOLID design, pragmatic principles, observability, and strict file-structure limits — tuned for Langflow conventions (uv workspaces, SQLModel, lfx vs langflow-base split, pre-commit invoked via uv run). Use when implementing a new feature, designing a service, refactoring backend code, adding an API route, or whenever the task is "build production code" rather than fix a bug or write tests. For new Components specifically, use building-langflow-components. Pairs with ensuring-cross-platform for portability and writing-tests for coverage.
+description: Write production code in Langflow with security-first thinking, SOLID design, pragmatic principles, observability, and strict file-structure limits — tuned for Langflow conventions (uv workspaces, SQLModel, lfx vs langflow-base split, pre-commit invoked via uv run). Use when implementing a new feature, designing a service, refactoring backend code, adding an API route, or whenever the task is "build production code" rather than fix a bug or write tests. This is the default for feature and production-code work — use it unless the user explicitly asks for TDD (tests-first / red-green-refactor), which is developing-features-tdd. For new Components specifically, use building-langflow-components. Pairs with ensuring-cross-platform for portability and writing-tests for coverage.
 license: MIT
 ---
 

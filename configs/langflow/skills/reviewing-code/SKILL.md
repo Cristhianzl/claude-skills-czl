@@ -49,16 +49,19 @@ Apply the same restrictions as the `writing-pull-requests` skill, plus review-sp
 5. **Apply the platform-agnostic checks.** Paths, encoding, shell, temp/config dirs, line endings, time, CI matrix. Full grep recipes in `references/grep-recipes.md`. See `ensuring-cross-platform` for the rationale.
    → verify: no Windows-only bug ships through this PR.
 
-6. **Apply the testing checks.** Coverage gate (≥75%, target 80%) shown by the author. Tests challenge the code, not confirm it. Both happy path AND adversarial. Anti-patterns absent (Mirror, Liar, Giant, Mockery, Inspector, Chain Gang, Flaky, Snowball). See `writing-tests` for the full list.
+6. **Apply the correctness checks** (see `references/correctness-checks.md`). The third class of bug: code that is right on the happy path and silently wrong on an edge/error path. New enum member → audit every enumeration site. Control-flow/signal exceptions (pause/cancel/retry) propagate **unwrapped** through every layer. Degrade-don't-crash contracts never hard-raise.
+   → verify: every new state and every failure branch has a test that would fail if its line were deleted.
+
+7. **Apply the testing checks.** Coverage gate (≥75%, target 80%) shown by the author. Tests challenge the code, not confirm it. Both happy path AND adversarial. Anti-patterns absent (Mirror, Liar, Giant, Mockery, Inspector, Chain Gang, Flaky, Snowball). See `writing-tests` for the full list.
    → verify: if you removed a line of business logic, at least one test would fail.
 
-7. **Compile the findings** by severity (B = Blocker, I = Important, R = Recommended, N = Nice-to-have). Output format in `references/output-format.md`.
+8. **Compile the findings** by severity (B = Blocker, I = Important, R = Recommended, N = Nice-to-have). Output format in `references/output-format.md`.
    → verify: every finding has a label, a file:line reference, a problem statement, an impact statement, and a suggested fix.
 
-8. **Render the review** in the structure below (one `## Code Review Summary` section, severity sections in order, then the Action Checklist).
+9. **Render the review** in the structure below (one `## Code Review Summary` section, severity sections in order, then the Action Checklist).
    → verify: the rendered output passes the copy-paste safety check (no `#N`, no `@mentions`, no absolute paths, length under cap).
 
-9. **Capture a learning (final step).** Ask: *did I encounter a review pattern, codebase quirk, recurring violation, or severity adjustment not in this SKILL.md or `references/`?* If yes, append a `learnings/YYYY-MM-DD-slug.md`. If no, skip.
+10. **Capture a learning (final step).** Ask: *did I encounter a review pattern, codebase quirk, recurring violation, or severity adjustment not in this SKILL.md or `references/`?* If yes, append a `learnings/YYYY-MM-DD-slug.md`. If no, skip.
 
 ## Severity scoring
 
@@ -171,6 +174,7 @@ Detailed rules — labeling schemes, length, length, link format, copy-paste saf
 - `references/output-format.md` — GitHub-comment formatting rules, label schemes, structure skeleton, copy-paste safety check.
 - `references/security-checks.md` — PII zero-tolerance, AI security, third-party integration, AI-untrusted-code lens, AI runtime resilience.
 - `references/structural-checks.md` — file structure hard limits, SOLID verification, pragmatic principles, layer separation, error handling.
+- `references/correctness-checks.md` — enum/state-machine completeness, control-flow exceptions propagate unwrapped, degrade-don't-crash contracts + the failure-path test spec.
 - `references/grep-recipes.md` — copy-paste grep commands for catching common violations across languages.
 - `references/checklist.md` — pre-submission checklist + perfect-score criteria + framework-specific guidelines.
 - `developing-features` skill — the code quality rules being reviewed; if you find yourself rebuilding the rationale, link to that skill in the finding.

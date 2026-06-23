@@ -197,6 +197,14 @@ find . -name "utils.ts" -o -name "helpers.ts" -o -name "misc.ts" -o -name "commo
 
 ---
 
+## Correctness: state machines & control-flow exceptions
+
+Recipes for the third bug class (right on the happy path, silently wrong on an edge) live in
+`correctness-checks.md`: auditing every enumeration site when an enum gains a member, and finding
+broad `except`/`catch` blocks that swallow or rewrap control-flow signals (pause/cancel/retry).
+
+---
+
 ## When to ignore grep results
 
 - Test files often legitimately use patterns banned in production (e.g., `open()` without encoding for fixtures). Filter `test_` / `spec` / `__tests__` when checking production-only rules.

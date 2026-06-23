@@ -33,6 +33,13 @@ globs: "**/*.py"
 
 **[ours]** New migrations declare a `Phase: EXPAND | MIGRATE | CONTRACT` marker (enforced by our hook): expand first, contract only once nothing uses the old shape, so rollbacks stay safe. This is our convention layered on top of the upstream data-preservation guarantee — Langflow itself doesn't require the marker.
 
+**[ours]** **No dead DDL — and no enum gap.** Adding a value to a SQLAlchemy `Enum` is asymmetric by backend; getting it wrong ships a no-op or a needless table rebuild:
+
+- **SQLite stores enums as `VARCHAR` with no CHECK constraint** when the column was created with a plain `sa.Enum(...)` (`create_constraint` defaults to `False` in SQLAlchemy 2.x). The SQLite upgrade branch for a new enum value is then a **`pass`** — a `batch_alter_table(..., recreate="always")` there is dead DDL that rebuilds the table for nothing. Verify against the *original* `op.create_table` before assuming a constraint exists.
+- **PostgreSQL** needs `ALTER TYPE ... ADD VALUE IF NOT EXISTS` inside an `autocommit_block()`.
+- **Be consistent:** if one enum column genuinely needs a rebuild, its siblings (e.g. `job.status`) do too — rebuilding one VARCHAR-enum column while leaving another untouched is a smell that the rebuild was unnecessary.
+- A new enum **value** is also a code-level state: audit every `.in_([...])`, `match`/`switch`, and dispatch over that enum (see `skills/reviewing-code` → `references/correctness-checks.md`). The migration and the guards land in the same PR.
+
 ## Portability — it must run everywhere
 
 **[official]** Langflow's CI runs a real matrix — **Linux + macOS (Intel/ARM) + Windows × Python 3.10/3.12** ([`.github/workflows/cross-platform-test.yml`](https://github.com/langflow-ai/langflow/blob/main/.github/workflows/cross-platform-test.yml)); supported Python 3.10–3.14. A change must also work across Langflow's run modes: **server** (`langflow run`), **API** (`POST /v1/run/{flow}`), **Docker** image, and the **`lfx`** package (`lfx serve`). LFX is **stateless** — no DB, a `NoopSession` ([`src/lfx/README.md`](https://github.com/langflow-ai/langflow/blob/main/src/lfx/README.md)).

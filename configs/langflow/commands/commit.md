@@ -20,6 +20,7 @@ Flow:
 
 ## Rules
 
+- **Never add a `Co-Authored-By` (or any AI-attribution) trailer** to the message
 - Never commit `.env` or credentials
 - No `--no-verify` unless the user asks
 - No `--amend` unless the user asks (create a new commit)

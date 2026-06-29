@@ -53,6 +53,22 @@ Cheap "born-scaled" defaults for any service that talks to a database. Apply the
 - Set a **statement/query timeout** so one pathological query can't pin a connection forever.
 - Rely on DB constraints for correctness (uniqueness, FKs, checks), not only app code; pick the isolation level the invariant actually needs.
 
+### Isolation & concurrency anomalies
+
+Most subtle data bugs are concurrency races, not logic errors. Pick the isolation level by the **anomaly you must prevent**:
+
+- **Read Committed** (typical default) — no dirty reads, but allows non-repeatable reads and **lost updates**.
+- **Snapshot / Repeatable Read** — a consistent snapshot; still allows **write skew** and **phantoms**.
+- **Serializable** — prevents all of them; use it (or a lock / atomic op) when correctness depends on data you just read.
+
+Recognize and guard the common races:
+
+- **Lost update** — two read-modify-write on the same row; one clobbers the other. Fix with an atomic update (`SET x = x + 1`), `SELECT … FOR UPDATE`, or compare-and-set (a version column).
+- **Write skew** — two transactions each read a set, both pass a check, both write, and together they break an invariant (e.g. "at least one approver on call"). Snapshot isolation does **not** catch this — use Serializable or lock the rows the decision depends on.
+- **Phantom** — a row appearing/disappearing changes a query a concurrent transaction relied on.
+
+Rule of thumb: **if a write's correctness depends on what you just read, make that read-decide-write atomic** (serializable, a row lock, or a DB constraint) — don't assume the default isolation protects it.
+
 ## What WOULD be over-engineering
 
 Born-scaled ≠ premature distributed systems. Read replicas, sharding, a distributed cache, or CQRS come **only when a measured limit demands it**. Pooling, indexes, no-N+1, and pagination are the cheap baseline that buys you the runway to not need those yet.

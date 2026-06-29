@@ -141,3 +141,7 @@ Without this, an incident investigator stitches logs by hand from timestamp and 
 Logs answer "what happened to this specific request". Metrics answer "what's happening across all requests".
 
 For any operation worth logging, also emit a counter (`payment.charge.attempted`, `payment.charge.succeeded`, `payment.charge.failed`) and, if non-trivial, a histogram (`payment.charge.duration_ms`). Don't try to compute SLOs from logs.
+
+**Measure latency by percentiles (p95 / p99), never the average.** The average hides the slow tail that users actually feel — one slow request in a hundred is invisible to the mean but is exactly what you get paged for. Set SLOs and alerts on a percentile, not the mean.
+
+Percentiles come from production traffic — at **development time** you can't measure them, so catch latency before it ships instead: (1) read the code for the known killers (N+1, unindexed `WHERE`/`JOIN`, a query in a loop, unbounded lists, sync I/O on the hot path — see `data-layer.md`); (2) run `EXPLAIN ANALYZE` against a **realistic data volume** (problems hide at 1k rows, surface at 1M); (3) for a hot path, run a quick local load test (`k6` / `wrk` / `ab` / `hey`) to see the distribution; (4) profile if it's CPU-bound. Emit the `duration` histogram now so production hands you the real p95/p99 later.

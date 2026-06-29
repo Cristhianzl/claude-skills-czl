@@ -43,6 +43,8 @@ Both sides cooperate so additive changes stay additive:
 - **Clients must not assume field order** or that the set of fields is closed.
 - **Servers must not require** fields/params they didn't require before.
 
+> The same forward/backward-compatibility discipline applies to **anything you persist or publish**, not just HTTP responses — stored rows/JSON, event and message payloads, queue jobs, cache entries. Old and new code versions run at the same time, so writers must keep old readers working and readers must tolerate fields they don't recognize. Some serialization formats (e.g. Avro, Protocol Buffers) build these evolution rules in for you; with plain JSON you apply the same discipline by hand. The discipline is what matters — the formats are just examples, not a requirement.
+
 Document this expectation in your API docs; it's what makes additive evolution possible.
 
 ## Deprecation policy

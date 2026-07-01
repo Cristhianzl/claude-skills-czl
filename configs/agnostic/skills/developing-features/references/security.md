@@ -2,6 +2,8 @@
 
 Security is a lens applied to every decision. Apply this when implementing **anything** that touches user input, external systems, persistence, authentication, or AI/LLM features.
 
+> For a dedicated audit pass (frontend + backend, OWASP Top 10 2025, with a safe-remediation protocol), use the `security-review` skill.
+
 ---
 
 ## Pre-implementation security check
@@ -35,7 +37,7 @@ A task is **not complete** until these are answered. If you discover mid-impleme
 - Sanitize and validate **all** user and external inputs.
 - Never trust data from outside the system boundary.
 - Avoid exposing internal details in error messages to end users.
-- Keep secrets out of code; use environment variables or secret managers.
+- Keep secrets out of code; use environment variables or secret managers. **Never in a client-shipped file or a public-prefixed env var** (`NEXT_PUBLIC_`, `VITE_`, `PUBLIC_` ship to the browser bundle) — third-party keys are used only in server code.
 - Use HTTPS/TLS for **all** external communication. Never transmit sensitive data over plain HTTP.
 - Apply rate limiting on all public-facing endpoints to prevent abuse and brute-force attacks.
 - Use parameterized queries or ORMs for **all** database access. String concatenation in queries is forbidden.
@@ -159,6 +161,8 @@ Before writing a single line of integration code, answer these from the official
 - Version APIs explicitly (`/v1/`, `/v2/`) and deprecate old versions with controlled sunset timelines.
 - Implement idempotency keys for state-changing operations to prevent duplicate execution.
 - Never expose stack traces or internal identifiers in API error responses to external clients.
+- **Guard against mass assignment** — use a field allow-list; never let the client set fields like `role` / `is_admin`. Return only the fields needed (never `password_hash` or internal columns).
+- **Set security response headers** — CSP (start report-only), HSTS, `X-Content-Type-Options: nosniff`, `X-Frame-Options` / CSP `frame-ancestors`, `Referrer-Policy`, `Permissions-Policy` — and **CSRF protection** for cookie-session state-changing requests.
 
 ---
 

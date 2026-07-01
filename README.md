@@ -60,6 +60,7 @@ Every config is a drop-in `.claude/` folder made of five parts:
 | `writing-prd` | Product requirements — PRDs, one-pagers, PR-FAQs; problem-first, testable metrics, explicit non-goals |
 | `api-design` | Contract-first, resource-oriented, backward-compatible, secure-by-default HTTP/REST APIs (with REST/GraphQL/gRPC guidance) |
 | `threat-modeling` | Security design analysis — data-flow diagrams & trust boundaries, STRIDE, abuse cases, threats → controls → tests |
+| `security-review` | Focused security audit of app code (frontend + backend) — OWASP Top 10 2025 + API Top 10 + privacy (LGPD/GDPR), with a safe, anti-regression remediation protocol |
 | `running-agent-loops` | Drive multi-step / unattended agent loops safely — sequential pipelines, PR loops, RFC→DAG, the shared-notes context bridge, the de-sloppify pass |
 | `debugging-agent-runs` | Recover a stuck/looping agent run — restate the goal, verify world state, shrink scope, run one discriminating check, then retry |
 | `evaluating-ai-output` | Eval non-deterministic LLM/AI output — define expected behavior first, measure pass@k / pass^k, grade with code / model / human graders |

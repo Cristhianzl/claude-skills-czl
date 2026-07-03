@@ -71,6 +71,8 @@ The `/commit`, `/push`, `/pr` commands stay available for the human to drive. (d
 
 This repo is a Langflow monorepo (uv workspaces; `lfx` / `langflow-base` split; SQLModel; Components are the building blocks of every flow). The Langflow-specific rules — hook-enforced (`SecretStrInput`, no top-level SDK init, Alembic `Phase:` markers) and review-enforced (never rename a Component class, `BUNDLE_API.md` updated with bundle changes, `uv run` everywhere, real integrations over mocks) — live in **`rules/langflow.md`**. For creating/evolving Components, follow **`skills/building-langflow-components`**.
 
+**i18n is mandatory for frontend work.** The frontend is internationalized (`src/frontend/src/locales/` — de, en, es, fr, ja, pt, zh-Hans). Every user-facing string goes through the translation system — never hardcoded — and **every new key must be added to all locale files** in the same PR. Reviews flag hardcoded UI strings and keys missing from any locale.
+
 ## Map of this configuration
 
 - **`rules/`** — per-stack rules applied by `globs`: `langflow.md` (this repo's Python/component/migration rules) + `TEMPLATE.md` for adding more.

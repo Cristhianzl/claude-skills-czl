@@ -40,3 +40,8 @@ The short, non-negotiable subset. The skill carries the full reasoning, checklis
 
 - Keep data fetching out of leaf components.
 - Derive state instead of duplicating it; reflect navigable state (filters, tabs, pagination) in the URL.
+
+## i18n (when the project has one)
+
+- If the repo has a `locales/` dir or i18n config, **never hardcode a user-facing string** — use the translation function.
+- Every new translation key is added to **every** locale file; a key missing in one language is a bug.

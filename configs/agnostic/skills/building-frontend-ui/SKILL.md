@@ -18,9 +18,10 @@ Most bad frontend work is *net-new code that should have been reuse*. Before wri
 
 1. **Find the design system.** Grep for the token/theme source — CSS custom properties (`--color-*`, `--space-*`), a `tailwind.config`, a theme file, design-token JSON. Use those tokens; **never hardcode raw hex, px spacing, or font sizes** in a component.
 2. **Find existing components and utilities.** Grep/glob for a component that already does this (button, modal, field, table, empty-state) and **reuse or extend it** instead of creating a parallel one. Match the established prop and naming patterns.
-3. **Read the surrounding files** to copy the project's conventions (file layout, styling approach, state approach, test location).
+3. **Find the i18n system, if any.** Grep for a `locales/` dir, i18n config, or translation calls (`t(...)`, `$t`, `useTranslation`, `FormattedMessage`). If the project has one, **every user-facing string goes through it** — a hardcoded string in a translated app is a bug, and **every new key must be added to all locale files** (a key present in one language and missing in another ships broken UI).
+4. **Read the surrounding files** to copy the project's conventions (file layout, styling approach, state approach, test location).
 
-→ verify: you can name the token source, the existing components you're reusing, and the pattern you're following — or you've confirmed none exists.
+→ verify: you can name the token source, the existing components you're reusing, the pattern you're following — and whether the project has i18n — or you've confirmed none exists.
 
 ## Priority order
 
@@ -87,6 +88,7 @@ Semantic HTML before ARIA. `<button>` for actions, `<a>` for navigation — neve
 - [ ] No tokens/secrets in web storage; no unsanitized HTML; no PII leaked to client/logs.
 - [ ] Typed props/state; small single-responsibility components; stable keys.
 - [ ] Responsive at the project's breakpoints; animations honor reduced-motion.
+- [ ] If the project has i18n: no hardcoded user-facing strings; every new key present in **all** locale files.
 - [ ] Tests for behavior and accessibility; existing tests still pass.
 
 ## See also

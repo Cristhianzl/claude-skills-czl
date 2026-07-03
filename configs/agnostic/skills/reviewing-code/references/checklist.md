@@ -75,6 +75,11 @@ IMPORTANT (Must fix)
 [ ] Types in dedicated types file
 [ ] Constants in dedicated constants file
 
+IMPORTANT — i18n (when the repo has a locales/ dir or i18n config)
+[ ] No hardcoded user-facing strings in the diff — new UI text goes through the translation function
+[ ] Every new translation key exists in ALL locale files (missing in one language = broken UI for that language)
+[ ] Removed/renamed keys cleaned up in all locales (no orphans)
+
 IMPORTANT — Data layer & scale (when it touches a DB; see developing-features/references/data-layer.md)
 [ ] Connection pooling with explicit limits (not a connection per request)
 [ ] Index on every foreign key and on columns used in WHERE / JOIN / ORDER BY, added in the same migration

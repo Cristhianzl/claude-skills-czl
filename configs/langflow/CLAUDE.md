@@ -71,7 +71,11 @@ The `/commit`, `/push`, `/pr` commands stay available for the human to drive. (d
 
 This repo is a Langflow monorepo (uv workspaces; `lfx` / `langflow-base` split; SQLModel; Components are the building blocks of every flow). The Langflow-specific rules — hook-enforced (`SecretStrInput`, no top-level SDK init, Alembic `Phase:` markers) and review-enforced (never rename a Component class, `BUNDLE_API.md` updated with bundle changes, `uv run` everywhere, real integrations over mocks) — live in **`rules/langflow.md`**. For creating/evolving Components, follow **`skills/building-langflow-components`**.
 
-**i18n is mandatory for frontend work.** The frontend is internationalized (`src/frontend/src/locales/` — de, en, es, fr, ja, pt, zh-Hans). Every user-facing string goes through the translation system — never hardcoded — and **every new key must be added to all locale files** in the same PR. Reviews flag hardcoded UI strings and keys missing from any locale.
+**i18n is mandatory for frontend work.** The frontend is internationalized (`src/frontend/src/locales/` — de, en, es, fr, ja, pt, zh-Hans). Every user-facing string goes through the translation system — never hardcoded — and **every new key must be added to all locale files** in the same PR. Reviews flag hardcoded UI strings and keys missing from any locale. Mechanics: `skills/building-frontend-ui/references/langflow-i18n.md`.
+
+**Accessibility is mandatory for frontend work.** The standard is **WCAG 2.2** — the official W3C docs are the source of truth ([WCAG 2.2 quickref](https://www.w3.org/WAI/WCAG22/quickref/), [ARIA APG patterns](https://www.w3.org/WAI/ARIA/apg/patterns/)). This repo's bar: run **all** the a11y scan engines the frontend ships (Jest axe + the Playwright live-DOM scan, `page.runA11yScan`) — **all must report zero**, across every meaningful state, not just the default render. Generic floor: `skills/building-frontend-ui/references/accessibility.md`; Langflow machinery and gotchas (AG Grid, Radix, baselines, commands): `skills/building-frontend-ui/references/langflow-a11y.md`.
+
+If the repo ships its own agent docs (`.agents/skills/`, `AGENTS.md`), read them too when they match the task — but this config is self-sufficient and does not depend on them existing.
 
 ## Map of this configuration
 

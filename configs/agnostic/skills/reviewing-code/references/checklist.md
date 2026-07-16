@@ -75,6 +75,12 @@ IMPORTANT (Must fix)
 [ ] Types in dedicated types file
 [ ] Constants in dedicated constants file
 
+IMPORTANT — Accessibility (when the diff touches UI; see building-frontend-ui/references/accessibility.md)
+[ ] Keyboard operable both directions (Tab AND Shift+Tab — no trap); visible focus; focus lands somewhere useful after open/close
+[ ] Semantic elements; labels on controls; alt on images; aria-label on icon-only buttons; visible label matches accessible name
+[ ] No color-only meaning; composite widgets (grid/tree/menu) are one tab stop with roving tabindex
+[ ] If the project has a11y scanners, they ran green on the changed states (not just default render) — all engines, not just one
+
 IMPORTANT — i18n (when the repo has a locales/ dir or i18n config)
 [ ] No hardcoded user-facing strings in the diff — new UI text goes through the translation function
 [ ] Every new translation key exists in ALL locale files (missing in one language = broken UI for that language)

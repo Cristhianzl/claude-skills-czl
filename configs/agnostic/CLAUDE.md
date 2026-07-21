@@ -30,7 +30,7 @@ All new code has a test — function: success + error; endpoint: success + auth 
 
 Conventional format `type: short description` (subject ≤ 50 chars, imperative, no trailing period, English). Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `ui`. Before committing: lint + tests green, no `.env`/credentials in the diff.
 
-This repo drives git through `/commit`, `/push`, `/pr` — the agent stages/commits only **after explicit user confirmation**, never `--no-verify`/`--amend` unless asked, and never `--force` (never on `main`). Never add `Co-Authored-By`. (detail: `skills/writing-pull-requests`)
+This repo drives git through `/commit`, `/push`, `/pr` — the agent stages/commits only **after explicit user confirmation**, never `--no-verify`/`--amend` unless asked, and never `--force` (never on `main`). **Never add AI attribution anywhere**: no `Co-Authored-By` trailer, no "🤖 Generated with Claude Code" footer, no session links in commits or PRs. (detail: `skills/writing-pull-requests`)
 
 ## Workflow
 

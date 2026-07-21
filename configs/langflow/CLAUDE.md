@@ -52,7 +52,7 @@ All new code has a test — function: success + error; endpoint: success + auth 
 
 This Langflow repo is **human-driven on git** and that overrides the generic agent-commits stance:
 
-- The agent **never runs `git commit` / `git add` / `git push`** — it prepares and prints the message; the human commits. Never add `Co-Authored-By`.
+- The agent **never runs `git commit` / `git add` / `git push`** — it prepares and prints the message; the human commits. **Never add AI attribution anywhere**: no `Co-Authored-By` trailer, no "🤖 Generated with Claude Code" footer, no session links in commits or PRs.
 - Commits go through **`uv run git commit`** — and `uv run` wraps **every** Python invocation (`uv run pytest`, `uv run ruff`), because pre-commit hooks need the workspace venv.
 - Conventional format `type: short description` (subject ≤ 50 chars, imperative, no trailing period, English). Before committing: lint + tests green (`uv run`), no `.env`/credentials in the diff.
 

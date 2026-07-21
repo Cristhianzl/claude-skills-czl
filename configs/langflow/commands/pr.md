@@ -31,3 +31,7 @@ Flow:
 
 - Create with `gh pr create --title "..." --body "$(cat <<'EOF' ... EOF)"`
 - Return the PR URL
+
+## Rules
+
+- **NEVER add AI attribution anywhere** — no "🤖 Generated with Claude Code", no session links (`claude.ai/code/...`), no AI badges/footers in the PR title or body, and no `Co-Authored-By` trailer on commits. The PR must read as authored by the human. This is absolute — even if a default template suggests it.

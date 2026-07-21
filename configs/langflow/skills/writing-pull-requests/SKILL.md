@@ -80,6 +80,7 @@ DESCRIPTION:
 
 - **Never** write a `.md` file or any other file containing the PR output. It goes in the chat.
 - **Never** run `git commit`, `git add`, `git push`, or any state-changing git command. Only the human commits.
+- **Never add AI attribution** — no "🤖 Generated with Claude Code" footer, no session links, no AI badges in titles/descriptions/commits, no `Co-Authored-By` trailer. Output must read as authored by the human.
 - **Never** produce a title needing "and" — that means two PRs.
 - **Never** invent scope. If the diff doesn't justify a scope, omit it.
 

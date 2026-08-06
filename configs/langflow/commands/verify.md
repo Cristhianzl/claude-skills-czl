@@ -12,5 +12,6 @@ Use the project's actual commands (e.g. `uv run …` where the repo requires it)
 4. **Tests** — full suite green; branch coverage meets the gate.
 5. **Secrets / debug scan** — no secrets or credentials, no debug `print()` / `console.log`, no `.env` in the diff.
 6. **Diff self-review** — re-read the whole diff: every change is intended, no leftover scaffolding or stray `TODO`, docs updated if behavior changed (the `Stop` doc-sync check helps here).
+7. **Runtime validation (when a server / user-provided cURL applies)** — prove it against the live system per `skills/validating-in-reality`: run the acceptance request, check DB state, E2E the UI flow. Static gates green + runtime proof = done.
 
 Report a one-line **PASS/FAIL per step** and an overall verdict. On any FAIL, name the step and the fix — don't claim done. Never run git.

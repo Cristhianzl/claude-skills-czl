@@ -40,6 +40,7 @@ This repo drives git through `/commit`, `/push`, `/pr` — the agent stages/comm
 4. Write/update tests alongside the code; run lint + tests locally.
 5. State assumptions when the request is ambiguous; surface tradeoffs instead of burying them.
 6. Write prose answer-first — lead with the conclusion/recommendation, then grouped reasons, then detail (Minto Pyramid / SCQA). Applies to docs, PRDs, PR descriptions, reviews, and updates. (detail: `skills/documenting-features/references/communication.md`)
+7. When the user provides a cURL, endpoint, or repro, it **is the acceptance test** — validate against the running system (request before/after, DB state, E2E when there's UI) before claiming done. Real evidence, no assumptions. (detail: `skills/validating-in-reality`)
 
 ## Map of this configuration
 

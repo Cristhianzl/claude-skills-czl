@@ -66,6 +66,7 @@ The `/commit`, `/push`, `/pr` commands stay available for the human to drive. (d
 4. Write/update tests alongside the code; run lint + tests locally via `uv run`.
 5. State assumptions when ambiguous; surface tradeoffs instead of burying them.
 6. Write prose answer-first — lead with the conclusion/recommendation, then grouped reasons, then detail (Minto Pyramid / SCQA). Applies to docs, PRDs, PR descriptions, reviews, and updates. (detail: `skills/documenting-features/references/communication.md`)
+7. When the user provides a cURL, endpoint, or repro, it **is the acceptance test** — validate against the running system (request before/after, DB state, E2E when there's UI) before claiming done. Real evidence, no assumptions. (detail: `skills/validating-in-reality`)
 
 ## Langflow
 

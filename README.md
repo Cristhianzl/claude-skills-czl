@@ -64,6 +64,7 @@ Every config is a drop-in `.claude/` folder made of five parts:
 | `running-agent-loops` | Drive multi-step / unattended agent loops safely — sequential pipelines, PR loops, RFC→DAG, the shared-notes context bridge, the de-sloppify pass |
 | `debugging-agent-runs` | Recover a stuck/looping agent run — restate the goal, verify world state, shrink scope, run one discriminating check, then retry |
 | `evaluating-ai-output` | Eval non-deterministic LLM/AI output — define expected behavior first, measure pass@k / pass^k, grade with code / model / human graders |
+| `validating-in-reality` | Prove a bugfix/feature against the real running system — the user's cURL is the acceptance test (request before/after, DB state, E2E), real evidence over assumptions |
 
 ### Commands
 
@@ -77,6 +78,7 @@ Every config is a drop-in `.claude/` folder made of five parts:
 | `check-file-size.py` | on Write/Edit | ≤ 500 LOC per file (≤ 700 with justification) |
 | `check-banned-patterns.py` | on Write/Edit | `shell=True`, `eval`/`exec` on input, hardcoded paths, tokens in `localStorage`, bare `except:`, … |
 | `check-doc-sync.py` | on Stop (turn end) | When you changed source: flags repo docs that may have drifted (so you don't have to ask), then suggests a Conventional-Commits message for the change — human commits, agent never runs git |
+| `check-real-validation.py` | on user prompt | When your request contains a cURL or local endpoint, auto-instructs the agent to treat it as the acceptance test — validate against the running system (request + DB + E2E), no assumptions |
 | `pre-push-smoke.sh` | before `git push` | Fast lint/test smoke on changed areas (project-configurable skeleton) |
 | `check-langflow-rules.py` | on Write/Edit | *(Langflow only)* `SecretStrInput` for API keys, no top-level SDK init in components, Alembic `Phase:` markers |
 

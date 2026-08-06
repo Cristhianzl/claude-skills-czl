@@ -224,6 +224,7 @@ Pay particular attention to **bug clusters**: if the same kind of bug keeps recu
 
 ## See also
 
+- `skills/validating-in-reality` — when the user provides a cURL/repro, also prove the fix against the running system (request before/after, DB state, E2E).
 - `references/cycle.md` — phase-by-phase detail and examples (test naming, AAA structure, exact-error-path rule).
 - `references/investigation.md` — `git bisect` automation, 5 Whys, debugging journal, bug clustering.
 - `references/checklist.md` — full bug-fix checklist + commit format + PR description rules + edge cases (multiple bugs, untested code, integration-only, regressions).

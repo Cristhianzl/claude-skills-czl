@@ -142,7 +142,7 @@ If you **symlinked** instead, you don't need these — just `git pull` in this r
 
 ## Contributing
 
-Contributions welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). All content (code, comments, docs, skills) is in **English**. By participating you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
+Contributions welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). All content (code, comments, docs, skills) is in **English**. By participating you agree to the [Code of Conduct](CODE_OF_CONDUCT.md). Notable changes per release are in [CHANGELOG.md](CHANGELOG.md).
 
 ## Security
 

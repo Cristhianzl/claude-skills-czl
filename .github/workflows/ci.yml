@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hooks:
+    name: Hooks compile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Byte-compile Python hooks
+        run: find configs -name '*.py' -print0 | xargs -0 -r python3 -m py_compile
+
+      - name: Parse shell hooks
+        run: find configs -name '*.sh' -print0 | xargs -0 -r -n1 bash -n
+
+      - name: Shellcheck
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+          find configs -name '*.sh' -print0 | xargs -0 -r shellcheck --severity=error
+
+  configs:
+    name: Config structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Validate configs
+        run: python3 .github/scripts/validate_configs.py
+
+  metadata:
+    name: Repo metadata
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Required community files
+        run: |
+          for f in LICENSE README.md CONTRIBUTING.md CODE_OF_CONDUCT.md SECURITY.md; do
+            test -f "$f" || { echo "missing $f"; exit 1; }
+          done
+
+      - name: Issue templates and workflows parse
+        run: |
+          pip install --quiet pyyaml
+          python3 - <<'PY'
+          import glob
+          import yaml
+          for path in sorted(glob.glob('.github/ISSUE_TEMPLATE/*.yml') + glob.glob('.github/workflows/*.yml')):
+              with open(path, encoding='utf-8') as handle:
+                  yaml.safe_load(handle)
+              print(f'ok {path}')
+          PY

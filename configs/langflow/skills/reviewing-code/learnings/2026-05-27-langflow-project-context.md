@@ -1,5 +1,5 @@
 ---
-trigger: Any PR review task in /Users/criszl/Documents/langflow.
+trigger: Any PR review task in the Langflow repo.
 ---
 
 # Langflow project context

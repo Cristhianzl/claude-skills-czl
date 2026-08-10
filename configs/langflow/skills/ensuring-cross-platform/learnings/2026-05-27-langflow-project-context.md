@@ -1,5 +1,5 @@
 ---
-trigger: Any cross-platform decision in /Users/criszl/Documents/langflow — Windows, macOS, Linux, Docker, ARM, desktop.
+trigger: Any cross-platform decision in the Langflow repo — Windows, macOS, Linux, Docker, ARM, desktop.
 ---
 
 # Langflow project context

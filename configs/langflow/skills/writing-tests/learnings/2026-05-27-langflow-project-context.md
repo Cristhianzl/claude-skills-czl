@@ -1,5 +1,5 @@
 ---
-trigger: Any task that writes or modifies tests in /Users/criszl/Documents/langflow.
+trigger: Any task that writes or modifies tests in the Langflow repo.
 ---
 
 # Langflow project context

@@ -1,5 +1,5 @@
 ---
-trigger: Any PR or commit task in /Users/criszl/Documents/langflow.
+trigger: Any PR or commit task in the Langflow repo.
 ---
 
 # Langflow project context

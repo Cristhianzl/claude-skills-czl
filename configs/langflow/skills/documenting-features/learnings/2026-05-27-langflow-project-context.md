@@ -1,5 +1,5 @@
 ---
-trigger: Any documentation task in /Users/criszl/Documents/langflow.
+trigger: Any documentation task in the Langflow repo.
 ---
 
 # Langflow project context
@@ -29,7 +29,7 @@ trigger: Any documentation task in /Users/criszl/Documents/langflow.
 ## Running the docs site
 
 ```bash
-cd /Users/criszl/Documents/langflow/docs
+cd docs               # from the repo root
 yarn install
 yarn start          # Dev server on :3000 (prompts for :3001 if 3000 is busy)
 ```

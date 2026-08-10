@@ -12,7 +12,7 @@ A Langflow Component is a Python class that becomes a draggable node in the visu
 
 List `learnings/` and read every file relevant to the current component (provider, bundle, AI runtime, etc.). Project-specific naming conventions, banned dependencies, icon rules, or provider-specific patterns live there and override the defaults in this SKILL.md. If a learning conflicts with this file, **the learning wins** — mention it to the user.
 
-Also read `/Users/criszl/Documents/langflow/AGENTS.md` (or the project's current version) — it's canonical and may have evolved.
+Also read `AGENTS.md` at the Langflow repo root — it's canonical and may have evolved.
 
 ## Tradeoff — when to apply, when to lighten up
 
@@ -207,5 +207,5 @@ When you save a `.py` file under `src/backend/base/langflow/components/...`, the
 - `references/ai-component-patterns.md` — timeouts, retries, error mapping, streaming, token accounting, redaction.
 - `references/bundles.md` — when a component belongs in a bundle, how the bundle directory is laid out, `BUNDLE_API.md` requirements.
 - `learnings/` — provider-specific quirks, SDK traps, and Langflow conventions accumulated over time.
-- **Langflow's own skills** at `/Users/criszl/Documents/langflow/.agents/skills/` — especially `component-refactoring` for evolving an existing component (different from creating one), `backend-code-review` for reviewing the PR, and `frontend-testing` for component UI tests.
+- **Langflow's own skills** at `.agents/skills/` in the repo root — especially `component-refactoring` for evolving an existing component (different from creating one), `backend-code-review` for reviewing the PR, and `frontend-testing` for component UI tests.
 - `building-langflow-components` is **complementary** to `developing-features-tdd` — the TDD cycle applies, the file-structure rules apply, but the **shape** of the artifact (a `Component` subclass) is governed here.

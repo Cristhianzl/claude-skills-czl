@@ -1,5 +1,5 @@
 ---
-trigger: Any bug-fix task in the Langflow repo at /Users/criszl/Documents/langflow. Read this first.
+trigger: Any bug-fix task in the Langflow repo. Read this first.
 ---
 
 # Langflow project context

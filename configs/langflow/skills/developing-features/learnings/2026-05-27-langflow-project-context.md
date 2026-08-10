@@ -1,10 +1,10 @@
 ---
-trigger: Any task in the Langflow repo at /Users/criszl/Documents/langflow. Read this first.
+trigger: Any task in the Langflow repo. Read this first.
 ---
 
 # Langflow project context
 
-**Context:** This skill is now invoked inside Langflow, a visual workflow builder for AI agents — Python/FastAPI backend + React 19/TypeScript frontend + `lfx` lightweight executor CLI. The repo is a `uv` workspace monorepo at `/Users/criszl/Documents/langflow`.
+**Context:** This skill is now invoked inside Langflow, a visual workflow builder for AI agents — Python/FastAPI backend + React 19/TypeScript frontend + `lfx` lightweight executor CLI. The repo is a `uv` workspace monorepo.
 
 **Lesson:** Treat `AGENTS.md` (at the repo root) as the canonical guide for development conventions; it supersedes the generic defaults in this skill's SKILL.md. The minimal `CLAUDE.md` just delegates to it. Several specialty Langflow skills already exist under `.agents/skills/` — read them before writing new generic code:
 

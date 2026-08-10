@@ -1,10 +1,10 @@
 ---
-trigger: Any TDD task in the Langflow repo at /Users/criszl/Documents/langflow. Read this first.
+trigger: Any TDD task in the Langflow repo. Read this first.
 ---
 
 # Langflow project context
 
-**Context:** This skill is now invoked inside Langflow — Python/FastAPI backend + React 19/TypeScript frontend + `lfx` executor. `uv` workspace monorepo at `/Users/criszl/Documents/langflow`.
+**Context:** This skill is now invoked inside Langflow — Python/FastAPI backend + React 19/TypeScript frontend + `lfx` executor. `uv` workspace monorepo.
 
 **Lesson:** Treat `AGENTS.md` at the repo root as canonical. Langflow already ships specialty skills under `.agents/skills/`:
 

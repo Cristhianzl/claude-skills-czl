@@ -116,7 +116,7 @@ When cross-referencing a finding elsewhere in the document, use the same label (
 |-----------------------------------------------------|---------------------------------------------------------------------|
 | `path/to/file.ts:42` (repo-relative, plain)         | Default. GitHub renders as plain text; humans copy-navigate.        |
 | `[file.ts:42](path/to/file.ts#L42)`                  | Only when posting to a known repo URL where line anchors resolve.   |
-| `/Users/criszl/...` (absolute local path)            | Forbidden — leaks local environment.                                |
+| `/Users/<you>/...` (absolute local path)             | Forbidden — leaks local environment.                                |
 | `#42` referring to a line number                     | Forbidden — GitHub will think it's PR #42.                          |
 
 ---

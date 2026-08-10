@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/Cristhianzl/claude-skills-czl/security/advisories/new
+    about: Report privately — do not open a public issue. See SECURITY.md.
+  - name: Claude Code itself (the CLI, hooks API, settings schema)
+    url: https://github.com/anthropics/claude-code/issues
+    about: Bugs in Claude Code belong upstream, not here.

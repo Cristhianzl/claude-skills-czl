@@ -1,5 +1,8 @@
 # claude-skills-czl
 
+[![CI](https://github.com/Cristhianzl/claude-skills-czl/actions/workflows/ci.yml/badge.svg)](https://github.com/Cristhianzl/claude-skills-czl/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 > Battle-tested [Claude Code](https://docs.claude.com/en/docs/claude-code) configurations — opinionated `CLAUDE.md` baselines, **skills**, **slash commands**, and **enforcement hooks** you drop into any project so the AI follows your engineering standards by default.
 
 Stop re-explaining your standards every session. Drop a config into your project's `.claude/` folder and the agent already knows your rules for code style, security, testing, commits, and docs — and the hooks **enforce** the non-negotiable ones mechanically.
@@ -139,7 +142,11 @@ If you **symlinked** instead, you don't need these — just `git pull` in this r
 
 ## Contributing
 
-Contributions welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). All content (code, comments, docs, skills) is in **English**.
+Contributions welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). All content (code, comments, docs, skills) is in **English**. By participating you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Security
+
+These configs are scripts and instructions that run on your machine — read `settings.json` and `hooks/` before installing. To report a vulnerability, see [SECURITY.md](SECURITY.md); **don't** open a public issue.
 
 ## License
 

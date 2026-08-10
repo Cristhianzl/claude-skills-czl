@@ -1,0 +1,67 @@
+name: Hook false positive / false negative
+description: A hook blocked something it shouldn't have, or let something through it should have caught.
+labels: ["hook", "bug"]
+body:
+  - type: dropdown
+    id: hook
+    attributes:
+      label: Which hook
+      options:
+        - check-comments.py
+        - check-file-size.py
+        - check-banned-patterns.py
+        - check-doc-sync.py
+        - check-real-validation.py
+        - check-langflow-rules.py (langflow only)
+        - pre-push-smoke.sh
+    validations:
+      required: true
+
+  - type: dropdown
+    id: direction
+    attributes:
+      label: What went wrong
+      options:
+        - False positive — it blocked valid code
+        - False negative — it missed a real violation
+    validations:
+      required: true
+
+  - type: dropdown
+    id: config
+    attributes:
+      label: Config
+      options: ["agnostic", "langflow"]
+    validations:
+      required: true
+
+  - type: textarea
+    id: snippet
+    attributes:
+      label: The code that triggered it
+      description: The smallest snippet that reproduces it, plus the file extension/language.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: message
+    attributes:
+      label: What the hook printed
+      description: Paste the hook's output verbatim.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+
+  - type: input
+    id: python
+    attributes:
+      label: python3 version
+      placeholder: "python3 --version"

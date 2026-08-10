@@ -1,0 +1,59 @@
+name: Propose a skill, command, rule, or hook
+description: Suggest something new — or a change to how an existing one behaves.
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What are you proposing
+      options:
+        - A new skill
+        - A new slash command
+        - A new per-stack rule (rules/<stack>.md)
+        - A new enforcement hook
+        - A behavior change to an existing one
+    validations:
+      required: true
+
+  - type: dropdown
+    id: config
+    attributes:
+      label: Where it belongs
+      options:
+        - configs/agnostic — helps every project, any language
+        - configs/langflow — Langflow-specific
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What does the agent get wrong today, and how often? Concrete beats hypothetical.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What it should do
+      description: For a skill, sketch the sections. For a hook, say exactly what it blocks and what it must not flag.
+    validations:
+      required: true
+
+  - type: textarea
+    id: overlap
+    attributes:
+      label: Overlap with what exists
+      description: Which existing skill, command, or rule is closest, and why extending it isn't enough. (The README lists them all.)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: agnostic-check
+    attributes:
+      label: If this targets configs/agnostic
+      options:
+        - label: It assumes no particular language, framework, or toolchain.
+        - label: It won't fight a language's own idioms.

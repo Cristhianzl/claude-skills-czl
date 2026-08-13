@@ -60,7 +60,7 @@ The `/commit`, `/push`, `/pr` commands stay available for the human to drive. (d
 
 ## Workflow
 
-1. Read the file before editing; check for existing similar code first (Grep).
+1. Read the file before editing; check for existing similar code first (Grep). Prefer existing code / stdlib / platform features / already-installed deps over new code (the reuse ladder — detail: `skills/developing-features`).
 2. Read the relevant skill (`SKILL.md` + `learnings/`), plus `AGENTS.md` and the matching `.agents/skills/`, before generating.
 3. Follow the matching `rules/<area>.md` (`rules/langflow.md` auto-applies to Python).
 4. Write/update tests alongside the code; run lint + tests locally via `uv run`.

@@ -34,7 +34,7 @@ This repo drives git through `/commit`, `/push`, `/pr` — the agent stages/comm
 
 ## Workflow
 
-1. Read the file before editing; check for existing similar code first (Grep).
+1. Read the file before editing; check for existing similar code first (Grep). Prefer existing code / stdlib / platform features / already-installed deps over new code (the reuse ladder — detail: `skills/developing-features`).
 2. Read the relevant skill (`SKILL.md` + `learnings/`) and any project conventions (`AGENTS.md`, `CONTRIBUTING.md`, `README.md`) before generating.
 3. Follow the matching `rules/<area>.md`.
 4. Write/update tests alongside the code; run lint + tests locally.

@@ -29,6 +29,20 @@ Before writing any code, answer these six questions:
 
 If any answer is "I don't know" → stop, find out, then continue.
 
+## The reuse ladder (before writing any code)
+
+The best code is the code you never wrote. Walk down the ladder and stop at the first rung that answers — be lazy about the solution, **never about reading** (trace the real code first):
+
+1. **Does this need to exist?** If nothing breaks without it — skip it (YAGNI).
+2. **Already in this codebase?** Reuse or extend it (Grep first).
+3. **Stdlib does it?** Use the standard library before writing a helper.
+4. **Native platform feature?** Runtime/browser built-ins (`Intl`, `URLSearchParams`, `<dialog>`, CSS) over custom code.
+5. **An installed dependency does it?** Check the manifest before writing new code — or adding a new dep.
+6. **One line?** Then one line.
+7. Only then: write **the minimum that works**.
+
+The ladder never overrides the floors: trust-boundary validation, security, error handling, accessibility, and tests are not "unnecessary code".
+
 ## Workflow
 
 1. **State language and framework explicitly** before writing code. Follow that ecosystem's idioms.

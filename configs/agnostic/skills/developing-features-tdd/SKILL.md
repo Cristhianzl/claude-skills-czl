@@ -24,7 +24,7 @@ Lighten the formality for one-off scripts, throwaway exploration, prototypes the
 
 Every engineering standard in `developing-features` applies here **in full and unchanged**. TDD changes *how* you implement (test-first: RED → GREEN → REFACTOR), not *what* "good" means — it never relaxes or replaces these:
 
-- The **pre-implementation security check**, the **trade-off priority** (correctness → simplicity → testability → performance → reuse), and the **core code-quality rules**: SOLID, DRY/KISS/YAGNI/Law of Demeter, file-structure hard limits, intention-revealing naming, immutability, no global state, strong typing, guard clauses, complexity ≤ 10 / nesting ≤ 4, and no-WHAT-comments.
+- The **pre-implementation security check**, the **reuse ladder** (existing code → stdlib → platform → installed dep → only then new code), the **trade-off priority** (correctness → simplicity → testability → performance → reuse), and the **core code-quality rules**: SOLID, DRY/KISS/YAGNI/Law of Demeter, file-structure hard limits, intention-revealing naming, immutability, no global state, strong typing, guard clauses, complexity ≤ 10 / nesting ≤ 4, and no-WHAT-comments.
 - **Error handling**, **security**, **observability**, **data layer & scale** (pooling, indexes, no-N+1, pagination), and **platform-agnostic** rules.
 - Their full detail lives in `developing-features/references/{security,solid,pragmatic-principles,file-structure,observability,data-layer}.md` — read them as needed.
 

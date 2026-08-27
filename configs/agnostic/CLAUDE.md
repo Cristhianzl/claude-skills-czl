@@ -6,7 +6,13 @@ A project's own `CLAUDE.md`/`AGENTS.md`/`CONTRIBUTING.md` and any skill `learnin
 
 ## Language
 
-All code, comments, commit messages, and documentation in English, regardless of conversation language. Product UI copy stays in the language each app ships in.
+**The conversation language never sets the output language.** Reply to the user in whatever language they write in — that is a courtesy, not an instruction about the artifact. **Everything you write is in English, always.**
+
+English is mandatory in: source code and identifiers, comments and docstrings, log and error messages, test names and fixtures, commit messages, branch names, PR titles and descriptions, review comments, issue text, and documentation (README, ADRs, changelogs). A prompt written in Portuguese, Spanish, or any other language does **not** license a single line of that language in a file.
+
+The one exception is **product UI copy** — strings the app shows its own users. Those stay in the language the product ships in and live in an i18n catalog (`locales/`, `i18n/`, `*.po`, `pt-BR.json`), never hardcoded in logic. Mark a deliberate non-English line outside a catalog with `i18n-ok`.
+
+Enforced by `hooks/check-language.py`, which blocks a write whose new lines are not English.
 
 ## Code style
 
@@ -47,4 +53,4 @@ This repo drives git through `/commit`, `/push`, `/pr` — the agent stages/comm
 - **`rules/`** — per-stack rules applied by `globs`. The baseline itself is language-agnostic; ships with only `TEMPLATE.md`. Add a `rules/<stack>.md` per language your project uses (copy the template), keeping each short and deferring to the skills for depth.
 - **`commands/`** — `/init` `/next` `/check` `/test` `/review` `/done` `/commit` `/push` `/pr` `/roadmap` `/task` `/sync` `/security` `/help`.
 - **`skills/`** — the detailed HOW; this baseline defers to them for depth.
-- **`hooks/`** — PostToolUse checks (comments, file size, banned patterns) + `pre-push-smoke.sh`.
+- **`hooks/`** — PostToolUse checks (comments, file size, banned patterns, output language) + `pre-push-smoke.sh`.

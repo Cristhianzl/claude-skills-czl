@@ -28,7 +28,13 @@ This is the first thing to check on any Langflow change. It's **official Langflo
 
 ## Language
 
-All code, comments, commit messages, and documentation in English, regardless of conversation language.
+**The conversation language never sets the output language.** Reply to the user in whatever language they write in — that is a courtesy, not an instruction about the artifact. **Everything you write is in English, always.**
+
+English is mandatory in: source code and identifiers, comments and docstrings, log and error messages, test names and fixtures, commit messages, branch names, PR titles and descriptions, review comments, issue text, and documentation (README, ADRs, changelogs). A prompt written in Portuguese, Spanish, or any other language does **not** license a single line of that language in a file.
+
+The one exception is **product UI copy** — strings the app shows its own users. Those stay in the language the product ships in and live in an i18n catalog (`locales/`, `i18n/`, `*.po`, `pt-BR.json`), never hardcoded in logic. Mark a deliberate non-English line outside a catalog with `i18n-ok`.
+
+Enforced by `hooks/check-language.py`, which blocks a write whose new lines are not English.
 
 ## Code style
 

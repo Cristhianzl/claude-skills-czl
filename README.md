@@ -5,7 +5,7 @@
 
 > Battle-tested [Claude Code](https://docs.claude.com/en/docs/claude-code) configurations — opinionated `CLAUDE.md` baselines, **skills**, **slash commands**, and **enforcement hooks** you drop into any project so the AI follows your engineering standards by default.
 
-Stop re-explaining your standards every session. Drop a config into your project's `.claude/` folder and the agent already knows your rules for code style, security, testing, commits, and docs — and the hooks **enforce** the non-negotiable ones mechanically.
+Stop re-explaining your standards every session. Drop a config into your project's `.claude/` folder and the agent already knows your rules for code style, output language, security, testing, commits, and docs — and the hooks **enforce** the non-negotiable ones mechanically.
 
 ## What's in here
 
@@ -80,6 +80,7 @@ Every config is a drop-in `.claude/` folder made of five parts:
 | `check-comments.py` | on Write/Edit | No WHAT-comments; comment-density cap; doc-comments (`///`, `//!`) exempt |
 | `check-file-size.py` | on Write/Edit | ≤ 500 LOC per file (≤ 700 with justification) |
 | `check-banned-patterns.py` | on Write/Edit | `shell=True`, `eval`/`exec` on input, hardcoded paths, tokens in `localStorage`, bare `except:`, … |
+| `check-language.py` | on Write/Edit | Output is English — blocks non-English code, comments, or docs; i18n catalogs (`locales/`, `*.po`, `pt-BR.json`) exempt |
 | `check-doc-sync.py` | on Stop (turn end) | When you changed source: flags repo docs that may have drifted (so you don't have to ask), then suggests a Conventional-Commits message for the change — human commits, agent never runs git |
 | `check-real-validation.py` | on user prompt | When your request contains a cURL or local endpoint, auto-instructs the agent to treat it as the acceptance test — validate against the running system (request + DB + E2E), no assumptions |
 | `pre-push-smoke.sh` | before `git push` | Fast lint/test smoke on changed areas (project-configurable skeleton) |

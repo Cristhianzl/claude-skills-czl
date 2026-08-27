@@ -9,6 +9,38 @@ means: a hook starts blocking code it used to allow, a skill or rule reverses
 advice you may have built on, or a file moves so an existing install stops
 resolving it.
 
+## [2.0.0] - 2026-08-27
+
+### Added
+
+- **`check-language.py` hook** (both configs) — blocks any write whose new lines are not English.
+  Scores Portuguese and Spanish markers across the delta of the edit: one accented marker
+  (`configuração`, `usuário`, `função`, `contraseña`, …) blocks on its own; unaccented ones <!-- i18n-ok -->
+  (`arquivo`, `quando`, `retorna`, …) need several to agree. Only the lines the operation touched <!-- i18n-ok -->
+  are scanned, so editing an English line in a file with legacy non-English text does not block.
+
+### Changed
+
+- **`CLAUDE.md` — the `## Language` section is now explicit and enumerated.** It states that the
+  conversation language never sets the output language, and lists where English is mandatory:
+  code and identifiers, comments and docstrings, log and error messages, test names and fixtures,
+  commit messages, branch names, PR titles and descriptions, review comments, issue text, and
+  documentation. The previous one-line rule was true but easy to skip past.
+
+### Exempted from the language rule
+
+Product UI copy in a translation catalog — any path under `locale(s)/`, `i18n/`, `intl/`, `lang(s)/`,
+`translation(s)/`, `messages/`, any `*.po`, `*.pot`, `*.xliff`, `*.properties`, `*.arb`, and
+locale-named files such as `pt-BR.json` or `es.yml`. A deliberate non-English line outside a catalog
+can be marked `i18n-ok`.
+
+### Upgrade note
+
+**This is a major bump because the hook blocks writes that previously passed.** If your project has
+non-English comments or docs, the first edit that touches those lines will be blocked until they are
+rewritten in English, or the file is moved into an i18n catalog, or the line is marked `i18n-ok`.
+Nothing is rewritten for you and no existing file is scanned until you edit it.
+
 ## [1.0.0] - 2026-08-10
 
 First tagged release. Two drop-in `.claude/` configurations for
@@ -119,4 +151,5 @@ Per-stack files that auto-attach by `globs`: `api.md`, `frontend.md`,
   between the two configs, README coverage of every skill/command/hook, and the
   absence of absolute local paths.
 
+[2.0.0]: https://github.com/Cristhianzl/claude-skills-czl/releases/tag/2.0.0
 [1.0.0]: https://github.com/Cristhianzl/claude-skills-czl/releases/tag/1.0.0

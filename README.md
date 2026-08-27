@@ -9,14 +9,15 @@ Stop re-explaining your standards every session. Drop a config into your project
 
 ## What's in here
 
-Two ready-to-use configurations:
+Three ready-to-use configurations:
 
 | Config | Use it when | Highlights |
 |--------|-------------|------------|
 | [`configs/agnostic`](configs/agnostic) | **Any project, any language** | A clean, language-agnostic baseline. Nothing assumes a stack; the hooks never fight a language's idioms. |
 | [`configs/langflow`](configs/langflow) | Working in the **Langflow** codebase | Everything in `agnostic`, plus Langflow-specific rules, a `building-langflow-components` skill, and a hook that enforces Langflow conventions. |
+| [`configs/pr-reviewer`](configs/pr-reviewer) | You only want a **PR reviewer** | Lean and read-only. One skill, four commands, and a hook that blocks every mutation — it cannot edit, commit, push, or post. |
 
-Both are **self-contained** — each is a complete `.claude/` folder.
+All three are **self-contained** — each is a complete `.claude/` folder.
 
 ## Repository layout
 
@@ -30,13 +31,14 @@ claude-skills-czl/
 │   │   ├── hooks/               # PostToolUse / Stop / PreToolUse checks
 │   │   ├── rules/               # optional per-stack rules (auto-applied by globs)
 │   │   └── skills/              # the detailed "how" playbooks
-│   └── langflow/            # same shape, specialized for Langflow
+│   ├── langflow/            # same shape, specialized for Langflow
+│   └── pr-reviewer/         # read-only PR review, nothing else
 └── README.md
 ```
 
 ## What a config contains
 
-Every config is a drop-in `.claude/` folder made of five parts:
+Every config is a drop-in `.claude/` folder. The full ones (`agnostic`, `langflow`) are made of five parts; `pr-reviewer` deliberately ships only `CLAUDE.md`, one skill, four commands, and one hook:
 
 - **`CLAUDE.md`** — the single source of truth: a short, actionable baseline (code style, security, tests, commits, workflow). It's the *what*; it defers to the skills for the *how*.
 - **`skills/`** — detailed, self-contained playbooks the agent reads before a matching task. Each has a `SKILL.md`, `references/`, and a `learnings/` folder for project-specific knowledge that accumulates over time.
@@ -71,7 +73,13 @@ Every config is a drop-in `.claude/` folder made of five parts:
 
 ### Commands
 
+`agnostic` and `langflow`:
+
 `/init` · `/next` · `/check` · `/test` · `/review` · `/done` · `/commit` · `/push` · `/pr` · `/roadmap` · `/task` · `/sync` · `/security` · `/help` · `/learn` · `/verify` · `/dual-review` · `/evolve` · `/update-agnostic` · `/update-langflow`
+
+`pr-reviewer` ships only what a reviewer needs:
+
+`/review` (working tree, staged, or a branch against its base) · `/review-pr` (a GitHub PR by number) · `/dual-review` · `/help`
 
 ### Hooks (what gets enforced)
 
@@ -85,6 +93,7 @@ Every config is a drop-in `.claude/` folder made of five parts:
 | `check-real-validation.py` | on user prompt | When your request contains a cURL or local endpoint, auto-instructs the agent to treat it as the acceptance test — validate against the running system (request + DB + E2E), no assumptions |
 | `pre-push-smoke.sh` | before `git push` | Fast lint/test smoke on changed areas (project-configurable skeleton) |
 | `check-langflow-rules.py` | on Write/Edit | *(Langflow only)* `SecretStrInput` for API keys, no top-level SDK init in components, Alembic `Phase:` markers |
+| `block-mutations.sh` | before every Bash | *(pr-reviewer only)* Read-only guard — blocks `git commit`/`add`/`push`/`merge`, `gh pr review`/`comment`/`merge`, `gh issue`, and mutating `gh api` calls, **including when they hide after `&&` or `;` in a compound command** |
 
 ## Quick start
 
@@ -93,11 +102,11 @@ Every config is a drop-in `.claude/` folder made of five parts:
 **1. Copy a config into your project as `.claude/`** (this both copies and renames):
 
 ```bash
-# from the root of YOUR project — pick agnostic (any language) or langflow
+# from the root of YOUR project — pick agnostic, langflow, or pr-reviewer
 cp -R /path/to/claude-skills-czl/configs/agnostic .claude
 ```
 
-Use `configs/langflow` instead when working inside the Langflow codebase.
+Use `configs/langflow` instead when working inside the Langflow codebase, or `configs/pr-reviewer` when you want a reviewer and nothing else.
 
 **2. Git-ignore it** so your project repo doesn't track it:
 

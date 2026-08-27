@@ -9,6 +9,31 @@ means: a hook starts blocking code it used to allow, a skill or rule reverses
 advice you may have built on, or a file moves so an existing install stops
 resolving it.
 
+## [2.1.0] - 2026-08-27
+
+### Added
+
+- **`configs/pr-reviewer`** — a third configuration that does one job: review a pull request.
+  16 files against the full configs' 307. It ships `CLAUDE.md`, the `reviewing-code` skill with all
+  six references, four commands (`/review`, `/review-pr`, `/dual-review`, `/help`), and one hook.
+  No skills for writing code, no commit or PR workflow, no per-stack rules.
+- **The reviewer is read-only, and that is enforced twice.** `settings.json` denies `Write`, `Edit`,
+  `MultiEdit`, and `NotebookEdit` outright, and denies the mutating `git` and `gh` subcommands.
+  `hooks/block-mutations.sh` then inspects the whole Bash command string before it runs, so a
+  mutation hidden after `&&` or `;` in a compound line — which a permission prefix rule does not
+  catch — is blocked too. Mutating `gh api` calls (`-X POST`/`PATCH`/`PUT`/`DELETE`) are blocked;
+  read-only ones pass.
+- **`/review-pr <n>`** — reviews a GitHub PR by number through `gh`, comparing the PR description
+  against the diff. It reads the PR; it never posts to it.
+
+### Changed
+
+- **`.variant` accepts an optional `standalone` marker on a second line.** A config that declares it
+  is exempt from the baseline-parity check, so a deliberately focused config no longer has to carry
+  every skill and command that `agnostic` has. Existing single-line `.variant` files are unaffected.
+- `validate_configs.py` enforces the new marker: the first line must still match the directory name,
+  and `standalone` is the only extra value allowed.
+
 ## [2.0.0] - 2026-08-27
 
 ### Added
@@ -151,5 +176,6 @@ Per-stack files that auto-attach by `globs`: `api.md`, `frontend.md`,
   between the two configs, README coverage of every skill/command/hook, and the
   absence of absolute local paths.
 
+[2.1.0]: https://github.com/Cristhianzl/claude-skills-czl/releases/tag/2.1.0
 [2.0.0]: https://github.com/Cristhianzl/claude-skills-czl/releases/tag/2.0.0
 [1.0.0]: https://github.com/Cristhianzl/claude-skills-czl/releases/tag/1.0.0

@@ -11,6 +11,8 @@ REPO = Path(__file__).resolve().parents[2]
 CONFIGS = REPO / "configs"
 BASELINE = "agnostic"
 SHARED_LIB = "_hooklib.py"
+# Why: a focused config (a reviewer, say) deliberately ships a subset, so baseline parity must not apply to it.
+STANDALONE = "standalone"
 HOOK_REF = re.compile(r"\$CLAUDE_PROJECT_DIR/\.claude/hooks/([\w.-]+)")
 LOCAL_PATH = re.compile(r"/(?:Users|home)/[A-Za-z0-9_.-]+/")
 
@@ -39,12 +41,27 @@ def frontmatter(skill: Path) -> dict[str, str]:
     return fields
 
 
-def check_variant(config: Path) -> None:
+def variant_lines(config: Path) -> list[str]:
     variant = config / ".variant"
     if not variant.is_file():
-        fail(f"{rel(config)}: missing .variant")
-    elif variant.read_text(encoding="utf-8").strip() != config.name:
-        fail(f"{rel(variant)}: must contain exactly '{config.name}'")
+        return []
+    return [line.strip() for line in variant.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+
+def is_standalone(config: Path) -> bool:
+    return STANDALONE in variant_lines(config)[1:]
+
+
+def check_variant(config: Path) -> None:
+    lines = variant_lines(config)
+    if not lines:
+        fail(f"{rel(config)}: missing or empty .variant")
+        return
+    if lines[0] != config.name:
+        fail(f"{rel(config)}/.variant: first line must be '{config.name}'")
+    for extra in lines[1:]:
+        if extra != STANDALONE:
+            fail(f"{rel(config)}/.variant: unknown marker '{extra}' (only '{STANDALONE}' is allowed)")
 
 
 def check_settings(config: Path) -> None:
@@ -90,7 +107,7 @@ def check_skills(config: Path) -> None:
 def check_parity(configs: list[Path]) -> None:
     baseline = CONFIGS / BASELINE
     for config in configs:
-        if config == baseline:
+        if config == baseline or is_standalone(config):
             continue
         for kind, pattern in (("skills", "*/SKILL.md"), ("commands", "*.md")):
             base_names = {p.parent.name if kind == "skills" else p.stem for p in (baseline / kind).glob(pattern)}

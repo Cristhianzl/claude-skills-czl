@@ -53,4 +53,4 @@ This repo drives git through `/commit`, `/push`, `/pr` — the agent stages/comm
 - **`rules/`** — per-stack rules applied by `globs`. The baseline itself is language-agnostic; ships with only `TEMPLATE.md`. Add a `rules/<stack>.md` per language your project uses (copy the template), keeping each short and deferring to the skills for depth.
 - **`commands/`** — `/init` `/next` `/check` `/test` `/review` `/done` `/commit` `/push` `/pr` `/roadmap` `/task` `/sync` `/security` `/help`.
 - **`skills/`** — the detailed HOW; this baseline defers to them for depth.
-- **`hooks/`** — PostToolUse checks (comments, file size, banned patterns, output language) + `pre-push-smoke.sh`.
+- **`hooks/`** — PostToolUse checks (comments, file size, banned patterns, output language, duplication) + `pre-push-smoke.sh`.

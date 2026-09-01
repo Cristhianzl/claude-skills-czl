@@ -89,4 +89,4 @@ If the repo ships its own agent docs (`.agents/skills/`, `AGENTS.md`), read them
 - **`rules/`** — per-stack rules applied by `globs`: `langflow.md` (this repo's Python/component/migration rules) + `TEMPLATE.md` for adding more.
 - **`commands/`** — `/init` `/next` `/check` `/test` `/review` `/done` `/commit` `/push` `/pr` `/roadmap` `/task` `/sync` `/security` `/help`.
 - **`skills/`** — the detailed HOW, incl. **`building-langflow-components`**; the generic skills carry Langflow `learnings/`.
-- **`hooks/`** — PostToolUse checks (comments, file size, banned patterns, **Langflow rules**), a `Stop` doc-sync check, and `pre-push-smoke.sh`.
+- **`hooks/`** — PostToolUse checks (comments, file size, banned patterns, duplication, **Langflow rules**), a `Stop` doc-sync check, and `pre-push-smoke.sh`.

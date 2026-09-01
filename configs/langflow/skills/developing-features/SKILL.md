@@ -34,7 +34,7 @@ If any answer is "I don't know" → stop, find out, then continue.
 The best code is the code you never wrote. Walk down the ladder and stop at the first rung that answers — be lazy about the solution, **never about reading** (trace the real code first):
 
 1. **Does this need to exist?** If nothing breaks without it — skip it (YAGNI).
-2. **Already in this codebase?** Reuse or extend it (Grep first).
+2. **Already in this codebase?** Do a real sweep, not one grep: search the exact concept, 2–3 synonyms, and the project's conventional homes (`utils/`, `helpers/`, `services/`, `hooks/`, `components/`, the feature's sibling modules). **Name what you found and why it doesn't fit before writing anything new** — reuse or extend always beats a second copy. (`hooks/check-duplication.py` flags same-name re-definitions after the fact; passing it is the floor, not the sweep.)
 3. **Stdlib does it?** Use the standard library before writing a helper.
 4. **Native platform feature?** Runtime/browser built-ins (`Intl`, `URLSearchParams`, `<dialog>`, CSS) over custom code.
 5. **An installed dependency does it?** Check the manifest before writing new code — or adding a new dep.

@@ -175,8 +175,12 @@ def main() -> None:
             ]
     else:
         lines = [COMMIT_LINE]
-    print("\n".join(lines), file=sys.stderr)
-    sys.exit(2)
+    print(json.dumps({
+        "decision": "block",
+        "reason": "\n".join(lines),
+        "suppressOutput": True,
+    }))
+    sys.exit(0)
 
 
 if __name__ == "__main__":

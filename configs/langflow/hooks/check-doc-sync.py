@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+import hashlib
 import json
 import subprocess
 import sys
 from pathlib import Path
+from typing import Optional
 
 DOC_EXTS = {".md", ".mdx", ".rst", ".adoc"}
 DOC_NAME_HINTS = ("readme", "changelog", "contributing", "architecture")
@@ -15,8 +17,14 @@ SOURCE_EXTS = {
 DOC_PATHSPECS = ("*.md", "*.mdx", "*.rst", "*.adoc", "*README*", "*CHANGELOG*")
 MAX_READ = 256 * 1024
 MAX_DOCS = 4000
-MAX_LIST = 5
-COMMIT_LINE = "Then suggest a Conventional-Commit message for only this turn's changes (`type: subject`, ≤ 50 chars, English). You never run git."
+COMMIT_LINE = (
+    "End with ONE commit suggestion for this turn's changes — a single `type: subject` line "
+    "(<= 50 chars, English), no alternatives, no character counting. You never run git."
+)
+DOC_LINE = (
+    "Update only the docs this change made inaccurate and name just those; "
+    "say nothing about docs that are still correct."
+)
 
 
 def is_doc(rel: str) -> bool:
@@ -65,6 +73,49 @@ def topic_from(source: list[str]) -> tuple[set[str], set[str]]:
     return tokens, dirs
 
 
+def state_path(cwd: str) -> Optional[Path]:
+    git_dir = git(cwd, "rev-parse", "--git-dir").stdout.strip()
+    if not git_dir:
+        return None
+    p = Path(git_dir)
+    if not p.is_absolute():
+        p = Path(cwd) / p
+    return p / "claude-doc-sync-state"
+
+
+def tree_fingerprint(cwd: str) -> str:
+    status = git(cwd, "status", "--porcelain").stdout
+    stat = git(cwd, "diff", "--stat", "HEAD").stdout
+    untracked = []
+    for line in status.splitlines():
+        if line.startswith("??"):
+            rel = line[3:].strip().strip('"')
+            try:
+                meta = (Path(cwd) / rel).stat()
+                untracked.append(f"{rel}:{meta.st_size}:{meta.st_mtime_ns}")
+            except Exception:
+                continue
+    payload = "\n".join([status, stat, *untracked])
+    return hashlib.sha256(payload.encode("utf-8", "replace")).hexdigest()
+
+
+def tree_changed_since_last_stop(cwd: str) -> bool:
+    fingerprint = tree_fingerprint(cwd)
+    path = state_path(cwd)
+    if path is None:
+        return True
+    try:
+        if path.read_text(encoding="utf-8").strip() == fingerprint:
+            return False
+    except Exception:
+        pass
+    try:
+        path.write_text(fingerprint, encoding="utf-8")
+    except Exception:
+        pass
+    return True
+
+
 def main() -> None:
     try:
         data = json.load(sys.stdin)
@@ -75,6 +126,9 @@ def main() -> None:
 
     cwd = data.get("cwd") or "."
     if git(cwd, "rev-parse", "--is-inside-work-tree").returncode != 0:
+        sys.exit(0)
+
+    if not tree_changed_since_last_stop(cwd):
         sys.exit(0)
 
     changed = changed_paths(cwd)
@@ -100,11 +154,25 @@ def main() -> None:
             related.append(rel)
 
     if related:
-        lines = ["Doc-sync: docs that may reference your change — update any now inaccurate, else say it's fine:"]
-        lines += [f"  - {p}" for p in related[:MAX_LIST]]
-        if len(related) > MAX_LIST:
-            lines.append(f"  (+{len(related) - MAX_LIST} more)")
-        lines.append(COMMIT_LINE)
+        list_path = state_path(cwd)
+        doc_list_file = None
+        if list_path is not None:
+            doc_list_file = list_path.with_name("claude-doc-sync-docs")
+            try:
+                doc_list_file.write_text("\n".join(related) + "\n", encoding="utf-8")
+            except Exception:
+                doc_list_file = None
+        if doc_list_file is not None:
+            lines = [
+                f"Doc-sync: {len(related)} doc(s) may reference this turn's change — read the list in "
+                f"{doc_list_file} (do not print it). {DOC_LINE}",
+                COMMIT_LINE,
+            ]
+        else:
+            lines = [
+                f"Doc-sync: check docs related to this turn's changed files. {DOC_LINE}",
+                COMMIT_LINE,
+            ]
     else:
         lines = [COMMIT_LINE]
     print("\n".join(lines), file=sys.stderr)

@@ -71,8 +71,6 @@
       "Bash(git remote:*)"
     ],
     "deny": [
-      "Read(**/secrets/**)",
-      "Read(**/credentials.json)",
       "Edit(.env)",
       "Edit(**/.env)",
       "Edit(**/.env.*)",

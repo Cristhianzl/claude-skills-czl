@@ -48,8 +48,6 @@
       "Edit",
       "MultiEdit",
       "NotebookEdit",
-      "Read(**/secrets/**)",
-      "Read(**/credentials.json)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",

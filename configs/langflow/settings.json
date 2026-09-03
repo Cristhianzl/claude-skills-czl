@@ -72,8 +72,6 @@
       "Bash(git commit:*)"
     ],
     "deny": [
-      "Read(**/secrets/**)",
-      "Read(**/credentials.json)",
       "Edit(.env)",
       "Edit(**/.env)",
       "Edit(**/.env.*)",

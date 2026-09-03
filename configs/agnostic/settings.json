@@ -25,9 +25,6 @@
       "Bash(gh:*)"
     ],
     "deny": [
-      "Read(.env)",
-      "Read(**/.env)",
-      "Read(**/.env.*)",
       "Read(**/secrets/**)",
       "Read(**/credentials.json)",
       "Edit(.env)",

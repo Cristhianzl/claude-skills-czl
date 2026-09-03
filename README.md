@@ -89,7 +89,8 @@ Every config is a drop-in `.claude/` folder. The full ones (`agnostic`, `langflo
 | `check-file-size.py` | on Write/Edit | ≤ 500 LOC per file (≤ 700 with justification) |
 | `check-banned-patterns.py` | on Write/Edit | `shell=True`, `eval`/`exec` on input, hardcoded paths, tokens in `localStorage`, bare `except:`, … |
 | `check-language.py` | on Write/Edit | Output is English — blocks non-English code, comments, or docs; i18n catalogs (`locales/`, `*.po`, `pt-BR.json`) exempt |
-| `check-doc-sync.py` | on Stop (turn end) | When you changed source: flags repo docs that may have drifted (so you don't have to ask), then suggests a Conventional-Commits message for the change — human commits, agent never runs git |
+| `check-duplication.py` | on Write/Edit | Anti-duplication — when a written function/class name is already defined elsewhere in the repo, feeds back "reuse or justify" with the existing location (test files and generic names exempt) |
+| `check-doc-sync.py` | on Stop (turn end) | Only when the turn actually changed source: points the agent at possibly-drifted docs (full list goes to a file, never the terminal) and asks for ONE commit suggestion — silent on discussion-only turns; human commits, agent never runs git |
 | `check-real-validation.py` | on user prompt | When your request contains a cURL or local endpoint, auto-instructs the agent to treat it as the acceptance test — validate against the running system (request + DB + E2E), no assumptions |
 | `pre-push-smoke.sh` | before `git push` | Fast lint/test smoke on changed areas (project-configurable skeleton) |
 | `check-langflow-rules.py` | on Write/Edit | *(Langflow only)* `SecretStrInput` for API keys, no top-level SDK init in components, Alembic `Phase:` markers |

@@ -73,6 +73,7 @@ The `/commit`, `/push`, `/pr` commands stay available for the human to drive. (d
 5. State assumptions when ambiguous; surface tradeoffs instead of burying them.
 6. Write prose answer-first — lead with the conclusion/recommendation, then grouped reasons, then detail (Minto Pyramid / SCQA). Applies to docs, PRDs, PR descriptions, reviews, and updates. (detail: `skills/documenting-features/references/communication.md`)
 7. When the user provides a cURL, endpoint, or repro, it **is the acceptance test** — validate against the running system (request before/after, DB state, E2E when there's UI) before claiming done. Real evidence, no assumptions. (detail: `skills/validating-in-reality`)
+8. **Terse wrap-ups.** A work turn ends with: what changed in ≤ 3 short bullets (only when not already obvious), the docs actually updated (name only those), and ONE commit suggestion. No step-by-step narratives, no re-justifying decisions, no listing docs/files that are fine, no multiple commit alternatives. A discussion turn ends with the answer — nothing appended.
 
 ## Langflow
 
@@ -89,4 +90,4 @@ If the repo ships its own agent docs (`.agents/skills/`, `AGENTS.md`), read them
 - **`rules/`** — per-stack rules applied by `globs`: `langflow.md` (this repo's Python/component/migration rules) + `TEMPLATE.md` for adding more.
 - **`commands/`** — `/init` `/next` `/check` `/test` `/review` `/done` `/commit` `/push` `/pr` `/roadmap` `/task` `/sync` `/security` `/help`.
 - **`skills/`** — the detailed HOW, incl. **`building-langflow-components`**; the generic skills carry Langflow `learnings/`.
-- **`hooks/`** — PostToolUse checks (comments, file size, banned patterns, **Langflow rules**), a `Stop` doc-sync check, and `pre-push-smoke.sh`.
+- **`hooks/`** — PostToolUse checks (comments, file size, banned patterns, duplication, **Langflow rules**), a `Stop` doc-sync check, and `pre-push-smoke.sh`.

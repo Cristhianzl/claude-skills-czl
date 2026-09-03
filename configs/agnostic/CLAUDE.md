@@ -47,10 +47,11 @@ This repo drives git through `/commit`, `/push`, `/pr` — the agent stages/comm
 5. State assumptions when the request is ambiguous; surface tradeoffs instead of burying them.
 6. Write prose answer-first — lead with the conclusion/recommendation, then grouped reasons, then detail (Minto Pyramid / SCQA). Applies to docs, PRDs, PR descriptions, reviews, and updates. (detail: `skills/documenting-features/references/communication.md`)
 7. When the user provides a cURL, endpoint, or repro, it **is the acceptance test** — validate against the running system (request before/after, DB state, E2E when there's UI) before claiming done. Real evidence, no assumptions. (detail: `skills/validating-in-reality`)
+8. **Terse wrap-ups.** A work turn ends with: what changed in ≤ 3 short bullets (only when not already obvious), the docs actually updated (name only those), and ONE commit suggestion. No step-by-step narratives, no re-justifying decisions, no listing docs/files that are fine, no multiple commit alternatives. A discussion turn ends with the answer — nothing appended.
 
 ## Map of this configuration
 
 - **`rules/`** — per-stack rules applied by `globs`. The baseline itself is language-agnostic; ships with only `TEMPLATE.md`. Add a `rules/<stack>.md` per language your project uses (copy the template), keeping each short and deferring to the skills for depth.
 - **`commands/`** — `/init` `/next` `/check` `/test` `/review` `/done` `/commit` `/push` `/pr` `/roadmap` `/task` `/sync` `/security` `/help`.
 - **`skills/`** — the detailed HOW; this baseline defers to them for depth.
-- **`hooks/`** — PostToolUse checks (comments, file size, banned patterns, output language) + `pre-push-smoke.sh`.
+- **`hooks/`** — PostToolUse checks (comments, file size, banned patterns, output language, duplication) + `pre-push-smoke.sh`.

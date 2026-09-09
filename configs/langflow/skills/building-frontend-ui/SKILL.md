@@ -1,6 +1,6 @@
 ---
 name: building-frontend-ui
-description: Build, refactor, and review frontend UI in any framework — components, accessibility, forms, client state and data fetching, responsive layout, performance, and client-side security/PII. Use whenever the task touches the UI layer: creating or changing a component, page, or screen; styling or theming; accessibility/a11y; forms; client state; responsive/mobile layout; or reviewing/refactoring frontend code. Use even when the user doesn't say "frontend" — if they mention a component, button, form, modal, page, screen, layout, CSS/Tailwind, ARIA, focus, or a UI bug, this applies. Not for pure backend/API/database work.
+description: Build, refactor, and review frontend UI in any framework — components, accessibility, forms, client state and data fetching, responsive layout, performance, client-side security/PII, and UX/visual design (design plan, tokens, typography, color, spacing, motion). Use whenever the task touches the UI layer: creating or changing a component, page, or screen; designing a site, landing page, or product surface from scratch; styling or theming; accessibility/a11y; forms; client state; responsive/mobile layout; or reviewing/refactoring frontend code. Use even when the user doesn't say "frontend" — if they mention a component, button, form, modal, page, screen, layout, CSS/Tailwind, ARIA, focus, UX, design, or a UI bug, this applies. Not for pure backend/API/database work.
 license: MIT
 ---
 
@@ -11,6 +11,10 @@ A frontend change is good when it **reuses what already exists**, is **accessibl
 ## Read first (always)
 
 List `learnings/` and read every file relevant to the current task — project conventions, the design system, banned dependencies, and component patterns live there and override the defaults in this file. If a learning conflicts with this skill, **the learning wins** — mention it.
+
+## Starting from zero?
+
+If there is **no existing design to extend** (new site, new product surface, greenfield page), read `references/designing-from-scratch.md` **before Step 0** and deliver its design plan as text before any code: strategy (one measurable goal, one primary action) → structure (sitemap, wireframe, section jobs) → tokens → components → pages. Visual decisions (type, color, space, motion, the generic-page anti-patterns) follow `references/design-craft.md`.
 
 ## Step 0 — Audit before you build (do not skip)
 
@@ -38,7 +42,8 @@ When concerns compete, resolve in this order. Each row points to its deep-dive r
 | 7 | **Responsive & layout** | Mobile-first; break by content, not device | `references/responsive.md` |
 | 8 | **Performance** | Real data and real devices, not the happy path | `references/performance.md` |
 | 9 | **Typography & UX writing** | Clarity and polish that read as professional | `references/ux-writing.md` |
-| 10 | **Testing** | Behavior, a11y, and visual — see the testing skills | `skills/writing-tests` |
+| 10 | **Design craft** | Deliberate type/color/space/motion; avoid the generated-page look | `references/design-craft.md` |
+| 11 | **Testing** | Behavior, a11y, and visual — see the testing skills | `skills/writing-tests` |
 
 ## Component design (agnostic)
 
@@ -89,10 +94,12 @@ Semantic HTML before ARIA. `<button>` for actions, `<a>` for navigation — neve
 - [ ] Typed props/state; small single-responsibility components; stable keys.
 - [ ] Responsive at the project's breakpoints; animations honor reduced-motion.
 - [ ] If the project has i18n: no hardcoded user-facing strings; every new key present in **all** locale files.
+- [ ] Visual decisions are deliberate: ≤2 font families with fixed roles; spacing on the 8pt grid; consistent section rhythm; none of the generic-page anti-patterns (`references/design-craft.md`).
+- [ ] From-scratch work: the design plan was delivered before code; placeholders marked, no invented facts or lorem ipsum; SEO floor applied (`references/designing-from-scratch.md`).
 - [ ] Tests for behavior and accessibility; existing tests still pass.
 
 ## See also
 
-- `references/accessibility.md` · `references/state-and-data.md` · `references/forms.md` · `references/performance.md` · `references/responsive.md` · `references/ux-writing.md`
+- `references/accessibility.md` · `references/state-and-data.md` · `references/forms.md` · `references/performance.md` · `references/responsive.md` · `references/ux-writing.md` · `references/design-craft.md` · `references/designing-from-scratch.md`
 - Framework specifics: `references/react.md` · `references/vue.md` · `references/svelte.md` · `references/web-components.md`
 - `skills/writing-tests` (test strategy), `skills/developing-features` (general production-code rules, security depth), `skills/reviewing-code` (review output), `rules/frontend.md` (the enforced subset).

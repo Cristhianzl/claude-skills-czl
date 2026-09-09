@@ -54,6 +54,8 @@ Avoid unless the brief explicitly asks:
 
 The test: **if the result could belong to any company in any sector, it's wrong.** Identity comes from the subject — the materials, vocabulary, setting, and audience of *this* business.
 
+This list is the design-time lens. The full delivery audit — Vibe Check, console script, five final tests, and the blocker scorecard — lives in `anti-vibe-coded.md` and is mandatory before declaring from-scratch work done.
+
 ## See also
 
 - `ux-writing.md` — type-scale mechanics, microcopy, typographic details.

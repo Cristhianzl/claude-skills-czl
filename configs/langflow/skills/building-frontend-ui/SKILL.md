@@ -1,6 +1,6 @@
 ---
 name: building-frontend-ui
-description: Build, refactor, and review frontend UI in any framework — components, accessibility, forms, client state and data fetching, responsive layout, performance, client-side security/PII, and UX/visual design (design plan, tokens, typography, color, spacing, motion). Use whenever the task touches the UI layer: creating or changing a component, page, or screen; designing a site, landing page, or product surface from scratch; styling or theming; accessibility/a11y; forms; client state; responsive/mobile layout; or reviewing/refactoring frontend code. Use even when the user doesn't say "frontend" — if they mention a component, button, form, modal, page, screen, layout, CSS/Tailwind, ARIA, focus, UX, design, or a UI bug, this applies. Not for pure backend/API/database work.
+description: Build, refactor, and review frontend UI in any framework — components, accessibility, forms, client state and data fetching, responsive layout, performance, client-side security/PII, and UX/visual design (design plan, tokens, typography, color, spacing, motion). Use whenever the task touches the UI layer: creating or changing a component, page, or screen; designing a site, landing page, or product surface from scratch; styling or theming; accessibility/a11y; forms; client state; responsive/mobile layout; or reviewing/refactoring frontend code. Use even when the user doesn't say "frontend" — if they mention a component, button, form, modal, page, screen, layout, CSS/Tailwind, ARIA, focus, UX, design, "vibe coded", "looks AI-generated", or a UI bug, this applies. Not for pure backend/API/database work.
 license: MIT
 ---
 
@@ -14,7 +14,9 @@ List `learnings/` and read every file relevant to the current task — project c
 
 ## Starting from zero?
 
-If there is **no existing design to extend** (new site, new product surface, greenfield page), read `references/designing-from-scratch.md` **before Step 0** and deliver its design plan as text before any code: strategy (one measurable goal, one primary action) → structure (sitemap, wireframe, section jobs) → tokens → components → pages. Visual decisions (type, color, space, motion, the generic-page anti-patterns) follow `references/design-craft.md`.
+If there is **no existing design to extend** (new site, new product surface, greenfield page), read `references/designing-from-scratch.md` **before Step 0** and deliver its design plan as text before any code: strategy (one measurable goal, one primary action) → structure (sitemap, wireframe, section jobs) → tokens → components → pages. Visual decisions (type, color, space, motion, the generic-page anti-patterns) follow `references/design-craft.md`. **Before declaring from-scratch work done, run the Vibe Check + delivery scorecard in `references/anti-vibe-coded.md` and report item by item** — it is the definition of done for greenfield UI.
+
+When a design system **already exists**, the opposite applies: the existing tokens, components, and layout **are the law** (Step 0) — never introduce a parallel style, and never use the from-scratch rules to justify restyling what's already consistent. Only the functional layers of the anti-vibe audit still apply (states, dead clicks, semantics, mobile, a11y).
 
 ## Step 0 — Audit before you build (do not skip)
 
@@ -96,10 +98,11 @@ Semantic HTML before ARIA. `<button>` for actions, `<a>` for navigation — neve
 - [ ] If the project has i18n: no hardcoded user-facing strings; every new key present in **all** locale files.
 - [ ] Visual decisions are deliberate: ≤2 font families with fixed roles; spacing on the 8pt grid; consistent section rhythm; none of the generic-page anti-patterns (`references/design-craft.md`).
 - [ ] From-scratch work: the design plan was delivered before code; placeholders marked, no invented facts or lorem ipsum; SEO floor applied (`references/designing-from-scratch.md`).
+- [ ] From-scratch work: Vibe Check < 5 marks and no open blocker on the delivery scorecard (`references/anti-vibe-coded.md`) — reported item by item.
 - [ ] Tests for behavior and accessibility; existing tests still pass.
 
 ## See also
 
-- `references/accessibility.md` · `references/state-and-data.md` · `references/forms.md` · `references/performance.md` · `references/responsive.md` · `references/ux-writing.md` · `references/design-craft.md` · `references/designing-from-scratch.md`
+- `references/accessibility.md` · `references/state-and-data.md` · `references/forms.md` · `references/performance.md` · `references/responsive.md` · `references/ux-writing.md` · `references/design-craft.md` · `references/designing-from-scratch.md` · `references/anti-vibe-coded.md`
 - Framework specifics: `references/react.md` · `references/vue.md` · `references/svelte.md` · `references/web-components.md`
 - `skills/writing-tests` (test strategy), `skills/developing-features` (general production-code rules, security depth), `skills/reviewing-code` (review output), `rules/frontend.md` (the enforced subset).

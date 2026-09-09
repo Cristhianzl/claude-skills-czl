@@ -59,7 +59,7 @@ Every config is a drop-in `.claude/` folder. The full ones (`agnostic`, `langflo
 | `documenting-features` | Living, DDD-aligned feature docs (ADRs, C4, Gherkin) |
 | `ensuring-cross-platform` | Linux/macOS/Windows portability rules |
 | `playwright-cli` | Browser automation & E2E testing with Playwright |
-| `building-frontend-ui` | Framework-agnostic frontend UI — reuse & design tokens, components, accessibility, forms, state & data, responsive, performance, client security/PII, plus UX/visual design: a from-scratch flow (strategy → structure → tokens → screens) and design craft (typography, color 60/30/10, 8pt spacing, motion, generic-page anti-patterns) — with per-framework references for React/Vue/Svelte/Web Components |
+| `building-frontend-ui` | Framework-agnostic frontend UI — reuse & design tokens, components, accessibility, forms, state & data, responsive, performance, client security/PII, plus UX/visual design: a from-scratch flow (strategy → structure → tokens → screens), design craft (typography, color 60/30/10, 8pt spacing, motion), and an **anti vibe-coded audit** (Vibe Check, console script, delivery scorecard — from-scratch UI must pass it; existing design systems are followed, never restyled) — with per-framework references for React/Vue/Svelte/Web Components |
 | `building-langflow-components` | *(Langflow only)* Create and evolve Langflow components safely |
 | `exploratory-testing` | Structured manual/exploratory testing — charters, time-boxed sessions, heuristics & oracles, solid bug reports |
 | `writing-prd` | Product requirements — PRDs, one-pagers, PR-FAQs; problem-first, testable metrics, explicit non-goals |

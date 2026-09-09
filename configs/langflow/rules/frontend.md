@@ -41,6 +41,11 @@ The short, non-negotiable subset. The skill carries the full reasoning, checklis
 - Keep data fetching out of leaf components.
 - Derive state instead of duplicating it; reflect navigable state (filters, tabs, pagination) in the URL.
 
+## Anti vibe-coded (floor)
+
+- **Existing design system = the law.** Follow its tokens, components, and layout; never introduce a parallel style.
+- **From-scratch UI**: before calling it done, run the Vibe Check + delivery scorecard in `skills/building-frontend-ui/references/anti-vibe-coded.md`. The floor: zero emoji/sparkles in UI, no purple/gradient without brand justification, ≤3 border radii, ≤2 shadows, spacing 100% on the 4/8pt scale, one real `<h1>` + semantic landmarks, zero dead clicks / `href="#"`, loading state on every async action, no unmarked placeholder or fake testimonial.
+
 ## i18n (when the project has one)
 
 - If the repo has a `locales/` dir or i18n config, **never hardcode a user-facing string** — use the translation function.

@@ -82,6 +82,12 @@ IMPORTANT — Accessibility (when the diff touches UI; see building-frontend-ui/
 [ ] No color-only meaning; composite widgets (grid/tree/menu) are one tab stop with roving tabindex
 [ ] If the project has a11y scanners, they ran green on the changed states (not just default render) — all engines, not just one
 
+IMPORTANT — Anti vibe-coded (when the diff creates new UI; see building-frontend-ui/references/anti-vibe-coded.md)
+[ ] Follows the existing design system (tokens/components/layout) — no parallel style introduced
+[ ] No generated-page tells: emoji/sparkles in UI, unjustified purple/gradients, >3 radii, off-scale spacing, dead clicks / href="#", missing loading states
+[ ] Real semantics (one <h1>, landmarks, <button>/<a> not <div onClick>); no unmarked placeholders or fake content
+[ ] From-scratch delivery: Vibe Check < 5 marks and scorecard blockers clear, reported item by item
+
 IMPORTANT — i18n (when the repo has a locales/ dir or i18n config)
 [ ] No hardcoded user-facing strings in the diff — new UI text goes through the translation function
 [ ] Every new translation key exists in ALL locale files (missing in one language = broken UI for that language)

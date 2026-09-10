@@ -12,7 +12,7 @@ The short, non-negotiable subset. The skill carries the full reasoning, checklis
 ## Reuse first
 
 - Before creating anything, grep for an existing component/utility that does the job and **reuse or extend it**.
-- Use the project's design tokens / theme. **Never hardcode raw hex, spacing, or font sizes** in a component — reference the token source.
+- Use the project's design tokens / theme. **Never hardcode raw hex, spacing, or font sizes** in a component — reference the token source. Before defining a new color, sweep the existing palette — a token duplicating a color that already has a name is a defect (enforced by `hooks/check-design-tokens.py`).
 
 ## Components
 

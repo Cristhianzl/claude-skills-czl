@@ -22,7 +22,7 @@ When a design system **already exists**, the opposite applies: the existing toke
 
 Most bad frontend work is *net-new code that should have been reuse*. Before writing anything:
 
-1. **Find the design system.** Grep for the token/theme source — CSS custom properties (`--color-*`, `--space-*`), a `tailwind.config`, a theme file, design-token JSON. Use those tokens; **never hardcode raw hex, px spacing, or font sizes** in a component.
+1. **Find the design system.** Grep for the token/theme source — CSS custom properties (`--color-*`, `--space-*`), a `tailwind.config`, a theme file, design-token JSON. Use those tokens; **never hardcode raw hex, px spacing, or font sizes** in a component. **Before defining any new color, sweep the existing palette and name the closest existing tokens** — a new token that duplicates (or nearly duplicates) a color that already has a name is a defect, not a choice (`hooks/check-design-tokens.py` flags this after the fact; the sweep comes first).
 2. **Find existing components and utilities.** Grep/glob for a component that already does this (button, modal, field, table, empty-state) and **reuse or extend it** instead of creating a parallel one. Match the established prop and naming patterns.
 3. **Find the i18n system, if any.** Grep for a `locales/` dir, i18n config, or translation calls (`t(...)`, `$t`, `useTranslation`, `FormattedMessage`). If the project has one, **every user-facing string goes through it** — a hardcoded string in a translated app is a bug, and **every new key must be added to all locale files** (a key present in one language and missing in another ships broken UI).
 4. **Read the surrounding files** to copy the project's conventions (file layout, styling approach, state approach, test location).

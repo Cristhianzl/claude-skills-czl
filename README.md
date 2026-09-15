@@ -71,6 +71,7 @@ Every config is a drop-in `.claude/` folder. The full ones (`agnostic`, `langflo
 | `evaluating-ai-output` | Eval non-deterministic LLM/AI output — define expected behavior first, measure pass@k / pass^k, grade with code / model / human graders |
 | `validating-in-reality` | Prove a bugfix/feature against the real running system — the user's cURL is the acceptance test (request before/after, DB state, E2E), real evidence over assumptions |
 | `optimizing-discoverability` | Be found everywhere — SEO (rank + click), AEO (be the direct answer: question→40-60-word answer blocks, snippets, schema), GEO (be the source AI engines cite: citable passages, statistics + named sources, original data, AI-crawler policy) — grounded in Google's official AI guidance and the KDD 2024 GEO study |
+| `stress-testing` | Load/stress testing on explicit request only — the six test types (smoke → average → stress/spike/soak/breakpoint), open-model workload with coordinated-omission awareness, SLO thresholds on p95/p99, knee-of-the-curve and bottleneck interpretation |
 
 ### Commands
 

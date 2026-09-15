@@ -44,6 +44,8 @@ Define the tokens first (color roles, 4/8pt space scale, type scale, radius/shad
 
 ## SEO & technical foundation (floor)
 
+> This is the technical floor only. For the discipline on top — SEO strategy, being the direct answer (AEO), and being cited by AI engines (GEO) — use `skills/optimizing-discoverability`.
+
 One `h1` and a real heading hierarchy; unique `title` (≤60 chars) and `meta description` (≤155) per page; Open Graph + social image; clean descriptive URLs, `canonical`, `sitemap.xml`, `robots.txt`; structured data where it applies (`LocalBusiness`, `Product`, `Article`, `FAQPage`); links with descriptive text (never "click here"); legal pages exist (privacy, terms, cookies); a useful `404` with a way back.
 
 ## Delivery

@@ -70,6 +70,7 @@ Every config is a drop-in `.claude/` folder. The full ones (`agnostic`, `langflo
 | `debugging-agent-runs` | Recover a stuck/looping agent run — restate the goal, verify world state, shrink scope, run one discriminating check, then retry |
 | `evaluating-ai-output` | Eval non-deterministic LLM/AI output — define expected behavior first, measure pass@k / pass^k, grade with code / model / human graders |
 | `validating-in-reality` | Prove a bugfix/feature against the real running system — the user's cURL is the acceptance test (request before/after, DB state, E2E), real evidence over assumptions |
+| `optimizing-discoverability` | Be found everywhere — SEO (rank + click), AEO (be the direct answer: question→40-60-word answer blocks, snippets, schema), GEO (be the source AI engines cite: citable passages, statistics + named sources, original data, AI-crawler policy) — grounded in Google's official AI guidance and the KDD 2024 GEO study |
 
 ### Commands
 

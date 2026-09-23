@@ -9,7 +9,25 @@ means: a hook starts blocking code it used to allow, a skill or rule reverses
 advice you may have built on, or a file moves so an existing install stops
 resolving it.
 
-## [2.1.0] - 2026-08-27
+## [2.2.0] - 2026-09-23
+
+### Added
+
+- **`hooks/check-duplication.py`** — anti-duplication guard. When a written function/class name is already defined elsewhere in the repo, the agent gets immediate feedback with the existing location: reuse or justify. Test files and generic names are exempt. Paired with a verifiable "reuse sweep" in `developing-features` (search the concept + synonyms + conventional homes, and name what you found before writing anything new).
+- **`hooks/check-design-tokens.py`** — design-system guard. Flags raw color literals hardcoded in components (naming the matching existing token) and new tokens that duplicate or nearly duplicate a color the palette already names. Understands hex, `rgb()`, and shadcn-style HSL triplets.
+- **UX/visual design in `building-frontend-ui`** — `references/designing-from-scratch.md` (strategy → structure → design plan delivered before code → tokens → screens, content honesty, SEO floor) and `references/design-craft.md` (typography pairing and weights, color 60/30/10, 8pt spacing and vertical rhythm, motion discipline).
+- **Anti-vibe-coded audit** — `building-frontend-ui/references/anti-vibe-coded.md`: the Vibe Check, a paste-in-console audit script, five final tests, and a delivery scorecard with blockers. From-scratch UI must pass it; on an existing design system the system is the law and only the functional layers apply. Enforced as a floor in `rules/frontend.md` and a review-checklist group.
+- **`skills/optimizing-discoverability`** — SEO (rank + click), AEO (be the direct answer: question-shaped headings with 40–60-word answer blocks), and GEO (be the source AI engines cite: citable passages, statistics + named sources, original data, AI-crawler policy). Grounded in Google's official AI-features guidance and the KDD 2024 GEO study, with the officially debunked myths called out.
+- **`skills/stress-testing`** — the six load-test types with the golden order (smoke → average → stress/spike/soak/breakpoint), open-vs-closed workload modeling with coordinated-omission awareness, SLO thresholds on p95/p99, knee-of-the-curve interpretation. Activates on explicit request only — it never runs or suggests load tests proactively.
+
+### Changed
+
+- **Reviews are human prose, in the PR's language.** `reviewing-code` output dropped the robotic scaffolding (finding IDs, metadata tables, emoji headers, label lines) for first-person prose: evidence first, cause and consequence inside the sentence, a disposition on every finding, severity as internal triage only. Hard-wrapping prose is banned (one paragraph = one logical line). Reviews and PR comments now match the PR's own language — the second official exception to the English-always baseline (`REVIEWS/`/`CZL/` paths exempted in `check-language.py`).
+- **`check-doc-sync.py` is quiet.** It fires only when the turn actually changed source (working-tree fingerprint), sends the doc list to a file instead of the terminal, and speaks through the Stop hook's JSON `decision/reason` channel so the user sees only "Ran 1 stop hook". Wording now demands one commit suggestion and silence about docs that are fine.
+
+### Fixed
+
+- Permission settings that muted read-only bash (env-read denies) and caused prompt noise.
 
 ### Added
 

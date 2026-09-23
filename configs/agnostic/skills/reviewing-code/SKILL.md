@@ -1,12 +1,12 @@
 ---
 name: reviewing-code
-description: Review a pull request and produce a GitHub-comment-shaped review document with severity-labeled findings (Blocker / Important / Recommended / Nice-to-have) plus a copy-paste-safe action checklist for the author. Use when the user asks to review a PR, "code review", "review this diff", "verify the changes before merge", or asks for a second opinion on someone else's branch. Output is the review comment in chat — never run git or post to GitHub directly.
+description: Review a pull request and produce a human-voiced, copy-paste-safe review — first person, evidence first, findings as complete sentences ordered by severity (Blocker / Important / Recommended / Nice-to-have as internal triage, never as labels), each with file:line evidence and a disposition. Use when the user asks to review a PR, "code review", "review this diff", "verify the changes before merge", or asks for a second opinion on someone else's branch. Output is the review in chat — never run git or post to GitHub directly.
 license: MIT
 ---
 
 # Reviewing Code
 
-Produce a PR review optimized for posting as a single GitHub comment. The review applies a security lens, a comprehension audit, and a structural check, then labels findings by severity with a copy-paste-safe action checklist.
+Produce a PR review that reads like a competent engineer wrote it after doing the work. It applies a security lens, a comprehension audit, and structural checks, triages findings by severity internally, and delivers them as first-person prose — evidence first, disposition in every finding, copy-paste-safe for GitHub.
 
 ## Read first (always)
 
@@ -25,12 +25,14 @@ Apply the same restrictions as the `writing-pull-requests` skill, plus review-sp
 - **Never** run `gh pr review`, `gh pr comment`, or any GitHub-mutating command. The user posts the review themselves.
 - **Never** run `git commit`, `git add`, `git push`. Only the human commits.
 - **Never** write the review to a file. Output goes in the chat.
-- **Never** use `#N` to label findings — GitHub auto-links it to PR/issue `N`. Use `B1`, `I2`, `R3`, etc.
+- **Never** use `#N` anywhere in the output — GitHub auto-links it to PR/issue `N`.
+- **Never hard-wrap prose**: one paragraph = one logical line; Enter only at paragraph/list/heading boundaries. Manual 72/80-column wrapping is the strongest "a tool wrote this" tell.
+- **Write like a person** — first person, evidence first, findings as complete sentences with the disposition inside them. No finding IDs, no `**File:**`-style label lines, no emoji headers, no metadata tables. Full voice rules: `references/output-format.md`.
 - **Never** `@mention` users unless the user explicitly asks.
 - **Never** include `Fixes #N`, `Closes #N`, `Resolves #N` — they auto-close issues on merge.
 - **Never** paste full file contents — link with `path/to/file.ts:42` and quote 3-10 relevant lines max.
 - **Never** use absolute local paths (`/Users/...`, `/home/...`). Use repo-relative paths only.
-- All review documents are written **entirely in English**, regardless of the conversation language.
+- **Match the PR's language.** The review or comment is written in the language of the PR itself (title, description, discussion): a pt-BR PR gets a pt-BR review, an English PR gets English. Code identifiers, paths, and quoted code stay verbatim. Mixed or unclear → default to English. (This is the one exception to the English-always baseline.)
 
 ## Workflow
 
@@ -44,7 +46,7 @@ Apply the same restrictions as the `writing-pull-requests` skill, plus review-sp
    → verify: every non-obvious choice has a durable anchor for its rationale. Red flags trigger a finding (see `references/security-checks.md` § Comprehension Audit).
 
 4. **Apply the structural checks** (see `references/structural-checks.md`). File-structure hard limits (500 LOC / 5 different-prefix functions / 10 same-prefix / 1 main class / cyclomatic ≤ 10 / nesting ≤ 4). SOLID. Pragmatic principles (DRY, KISS, YAGNI, Demeter). Architecture / layer separation.
-   → verify: every violation is labeled by severity; "would a senior call this overengineered/duplicated?" is your gut check.
+   → verify: every violation is triaged by severity; "would a senior call this overengineered/duplicated?" is your gut check.
 
 5. **Apply the platform-agnostic checks.** Paths, encoding, shell, temp/config dirs, line endings, time, CI matrix. Full grep recipes in `references/grep-recipes.md`. See `ensuring-cross-platform` for the rationale.
    → verify: no Windows-only bug ships through this PR.
@@ -55,24 +57,24 @@ Apply the same restrictions as the `writing-pull-requests` skill, plus review-sp
 7. **Apply the testing checks.** Coverage gate (≥75%, target 80%) shown by the author. Tests challenge the code, not confirm it. Both happy path AND adversarial. Anti-patterns absent (Mirror, Liar, Giant, Mockery, Inspector, Chain Gang, Flaky, Snowball). See `writing-tests` for the full list.
    → verify: if you removed a line of business logic, at least one test would fail.
 
-8. **Compile the findings** by severity (B = Blocker, I = Important, R = Recommended, N = Nice-to-have). Output format in `references/output-format.md`.
-   → verify: every finding has a label, a file:line reference, a problem statement, an impact statement, and a suggested fix.
+8. **Triage the findings** by severity (Blocker / Important / Recommended / Nice-to-have) — this taxonomy is your internal ordering tool, not output scaffolding.
+   → verify: every finding has file:line evidence, the cause and consequence, and a disposition (fix before merge / follow-up / take-or-leave).
 
-9. **Render the review** in the structure below (one `## Code Review Summary` section, severity sections in order, then the Action Checklist).
-   → verify: the rendered output passes the copy-paste safety check (no `#N`, no `@mentions`, no absolute paths, length under cap).
+9. **Render the review as human prose** (`references/output-format.md`): open with what you did and the verdict in plain words, then findings most-important-first as complete sentences with links inside them, follow-ups clearly marked; a checklist only if the user asks or the list is long.
+   → verify: it passes the copy-paste safety check AND reads aloud like a person — no IDs, no label-lines, no hard-wrapped lines.
 
 10. **Capture a learning (final step).** Ask: *did I encounter a review pattern, codebase quirk, recurring violation, or severity adjustment not in this SKILL.md or `references/`?* If yes, append a `learnings/YYYY-MM-DD-slug.md`. If no, skip.
 
-## Severity scoring
+## Severity scoring (internal triage — expressed in prose, never as labels)
 
-| Severity         | Label | Meaning                                                          |
-|------------------|-------|------------------------------------------------------------------|
-| Blocker          | `B1`  | Must be fixed before merge. PII in logs, security defect, file-structure violation, missing test for a high-risk path. |
-| Important        | `I1`  | Preferably this PR. SOLID violations, architecture leaks, weak error handling, missing adversarial tests. |
-| Recommended      | `R1`  | Can ship as a follow-up. Observability gaps, naming clarity, minor duplication. |
-| Nice-to-have     | `N1`  | Polish. Idiomatic suggestions, refactor opportunities that don't affect correctness. |
+| Severity         | Meaning                                                          | How it sounds in the review |
+|------------------|------------------------------------------------------------------|------------------------------|
+| Blocker          | Must be fixed before merge. PII in logs, security defect, file-structure violation, missing test for a high-risk path. | "This needs to change before merge: …" |
+| Important        | Preferably this PR. SOLID violations, architecture leaks, weak error handling, missing adversarial tests. | "I'd fix this here rather than later: …" |
+| Recommended      | Can ship as a follow-up. Observability gaps, naming clarity, minor duplication. | "Fine as a follow-up: …" |
+| Nice-to-have     | Polish. Idiomatic suggestions, refactor opportunities that don't affect correctness. | "Take it or leave it: …" |
 
-Use these labels consistently throughout the review. **Never `#N` — GitHub auto-links it.**
+The taxonomy orders the review; the words above carry it. **Never `#N` anywhere — GitHub auto-links it.**
 
 ## Required output structure
 

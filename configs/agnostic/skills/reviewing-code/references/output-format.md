@@ -1,170 +1,66 @@
-# Output format — GitHub comment rules
+# Output format — write like a person
 
-The review is posted as a single GitHub PR comment. The rules below prevent the most common broken-output failures. Follow them strictly.
+The review is read by a colleague, on GitHub or in a `.md` file. It must read like a competent engineer wrote it after actually doing the work — not like a tool filled in a form. The severity taxonomy (Blocker / Important / Recommended / Nice-to-have) stays as your **internal triage**; the output expresses it in prose and in ordering, not in labeled scaffolding.
 
----
+## The exemplar shape
 
-## Hard rules — never do these
+A strong human review looks like this (structure, not content):
 
-| Anti-pattern                                                                 | Why it fails                                                                                  |
-|------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|
-| `#1`, `#2`, `#3` as finding labels                                            | GitHub auto-links `#N` to PR/issue `N` in the repo, creating false references to unrelated PRs |
-| `GH-N`, `gh-N`, or bare issue/PR numbers                                     | Same auto-link problem                                                                        |
-| `@username` mentions                                                          | Sends an unwanted notification                                                                |
-| `Fixes #N`, `Closes #N`, `Resolves #N`                                       | Auto-closes issues on merge                                                                   |
-| Pasting full file contents                                                    | Comment becomes unreadable; GitHub truncates                                                  |
-| Including the full checklist verbatim                                         | The checklist is an internal tool; the output is the **findings** the checklist produced     |
-| Absolute local paths (`/Users/...`, `/home/...`)                              | Leaks local environment                                                                       |
-| Emojis in section headers (when user requests "clean" or "professional")      | Adds visual noise; default emojis OK in severity badges                                       |
+> Checked X in all N directions, with live tests. A, B and C all come through unchanged. I pushed three small fixes, each with a test that fails without it:
+>
+> - [abc1234](link): `add_embeddings` raises above its `bulk_size` of 500, so a batch of 501+ failed. It now writes in slices.
+> - …
+>
+> I wouldn't apply <bot>'s `text_field` suggestion as written: similarity search also reads `text`, so writes should keep matching ingestion. That can go in a follow-up.
 
----
+What makes it work: it **opens with what the reviewer did** (the evidence), findings are **complete sentences with the cause and the consequence in them**, links live **inside the sentence**, and every judgment ends with a **disposition** (fix now / follow-up / won't do, with the reason).
 
-## Required label format
+## Voice rules
 
-Use one scheme consistently within a single review. **Never `#N`.**
+- **First person, evidence first.** Open with what you checked/ran/read — "Ran the migration against a copy of the staging DB", "Traced the auth path end to end" — then what you found. Never open with a metadata table or a verdict badge.
+- **Prose paragraphs, not forms.** No `**File:**` / `**Issue:**` / `**Why it matters:**` / `**Suggested fix:**` label lines — that information goes *inside* the sentences: "`chroma.py:56` coerces metadata to scalars, so a nested dict silently flattens and the round-trip loses it; the other two backends keep it. Either flatten everywhere or reject nested metadata at the interface."
+- **No invented finding IDs** (`B1`, `I2`, `F3`), no findings-count line, no emoji section headers, no severity badges. Severity is carried by **order** (what blocks the merge comes first) and by **plain words** ("this needs to happen before merge"; "fine as a follow-up"; "take it or leave it").
+- **Every judgment gets a disposition and a reason.** "I wouldn't do X as written: <reason>. <where it should go instead>." A finding without a recommended disposition is a complaint, not a review.
+- **Bullets only for true enumerations** (commits, repro steps, a list of affected files) — and each bullet is a complete thought, written to the end.
+- Headings only when the review is genuinely long enough to need navigation; most reviews need none.
+- **Write in the PR's language** (title/description/discussion decide): pt-BR PR → pt-BR review; English PR → English. Code, paths, and quotes stay verbatim; mixed or unclear defaults to English.
 
-| Scheme                           | Example                         | When to use                                       |
-|----------------------------------|---------------------------------|---------------------------------------------------|
-| Severity-prefixed (**preferred**)| `B1`, `B2`, `I1`, `I2`, `R1`     | Default. B = Blocker, I = Important, R = Recommended, N = Nice-to-have |
-| Plain numeric                    | `1.`, `2.`, `3.`                | Short reviews with < 5 findings, no severity grouping |
-| Finding-prefixed                 | `F1`, `F2`, `F3`                | Mixed-severity flat list                          |
+## Never hard-wrap prose
 
-When cross-referencing a finding elsewhere in the document, use the same label (e.g., "Test suggestions post-split (**B1**)") — never `(#1)`.
+**One paragraph = one logical line.** Press Enter only at a real boundary: end of paragraph, end of list item, before/after a heading or code fence. Never wrap at 72/80/100 columns — GitHub and every editor soft-wrap, and manual mid-sentence line breaks are the single strongest "a tool wrote this" tell in a `.md` file. This applies to every prose file you write, not just reviews.
 
----
+## Structure (only as much as the content needs)
 
-## Required structure (skeleton)
+1. **What you did and the headline conclusion**, in the first paragraph — including the verdict in plain words ("Good to merge after the rebase"; "Two things need to change first").
+2. **Findings that block or should change this PR**, most important first, each as a paragraph (or a short bullet list when they're small and parallel).
+3. **Follow-ups and take-or-leave suggestions**, clearly marked as such in the sentence itself.
+4. **Optionally**, when the user asks for it or there are many items: a short action checklist at the end (`- [ ]` one line per action, matching the findings one-for-one).
 
-```markdown
-## Code Review Summary
+No fixed length. A clean PR earns three sentences; a loaded one earns as much as its findings demand — and nothing more. Quote code sparingly (3–10 lines, in a fence with a language tag; `<details>` for anything longer).
 
-<2-4 sentence verdict: ship / changes-requested / blocked, and the headline reason>
+## Mechanics that prevent broken output (unchanged, non-negotiable)
 
-**Verdict:** <Approve | Approve with comments | Request changes | Block>
-**Findings:** <N blockers, M important, K recommended>
+| Never | Why |
+|---|---|
+| `#N` / `GH-N` / bare issue numbers as references or labels | GitHub auto-links to unrelated PRs/issues |
+| `@username` mentions | Unwanted notifications |
+| `Fixes/Closes/Resolves #N` | Auto-closes issues on merge |
+| Absolute local paths (`/Users/...`, `/home/...`) | Leaks local environment |
+| Pasting full files | Unreadable; GitHub truncates |
+| The internal checklist verbatim | The output is the findings the checklist produced |
 
----
+Links: repo-relative `path/to/file.ts:42` by default; `[file.ts:42](path#L42)` only when anchors resolve; commit short-hashes linked when reviewing on GitHub.
 
-## ⛔ Blockers (resolve before merge)
+## Copy-paste safety check (before delivering)
 
-### B1 — <Short title>
-**File:** `path/to/file.ts:42-58`
-**Issue:** <1-3 sentence problem statement>
-**Why it matters:** <impact / blast radius>
-**Suggested fix:** <concrete action>
+- [ ] No `#N` outside code fences; no `@mentions`; no `Fixes/Closes #N`; no local paths.
+- [ ] No hard-wrapped prose — every paragraph is one logical line.
+- [ ] Reads aloud like a person: no label-lines, no finding IDs, no emoji headers, no metadata table.
+- [ ] Every finding has file:line evidence in the sentence and a disposition.
+- [ ] Renders cleanly (fences closed, no broken tables).
 
-<details>
-<summary>Code reference</summary>
+## Raising specific finding kinds (same voice)
 
-```ts
-// quote only the 3-10 most relevant lines
-```
-</details>
-
-### B2 — <Short title>
-...
-
----
-
-## ⚠️ Important (preferably this PR)
-
-### I1 — <Short title>
-...
-
----
-
-## 💡 Recommended (can ship as a follow-up)
-
-### R1 — <Short title>
-...
-
----
-
-## ✅ Action checklist for the author
-
-**Blockers (resolve before merge):**
-- [ ] **B1** — <one-line restatement>
-- [ ] **B2** — <one-line restatement>
-
-**Important (preferably this PR):**
-- [ ] **I1** — <one-line restatement>
-
-**Recommended (can ship as a follow-up PR):**
-- [ ] **R1** — <one-line restatement>
-
-**Test suggestions (post-B1 split):**
-- [ ] <test 1>
-- [ ] <test 2>
-```
-
----
-
-## Length and density
-
-- **Target length:** 300–800 lines of markdown for a typical PR.
-- **Hard cap:** 1500 lines. GitHub truncates very long comments.
-- **One finding = one section.** Don't merge unrelated issues into a single bullet.
-- **Quote sparingly.** 3–10 lines per `<details>` block. If the reader needs more, they open the file.
-- **Use `<details>` / `<summary>`** for: code quotes longer than 5 lines, long rationale, grep output, command transcripts. Keeps the comment scannable.
-- **Use code fences with language tags** (\`\`\`ts, \`\`\`py, \`\`\`bash) for syntax highlighting.
-
----
-
-## Link format
-
-| Format                                              | Use                                                                 |
-|-----------------------------------------------------|---------------------------------------------------------------------|
-| `path/to/file.ts:42` (repo-relative, plain)         | Default. GitHub renders as plain text; humans copy-navigate.        |
-| `[file.ts:42](path/to/file.ts#L42)`                  | Only when posting to a known repo URL where line anchors resolve.   |
-| `/Users/<you>/...` (absolute local path)             | Forbidden — leaks local environment.                                |
-| `#42` referring to a line number                     | Forbidden — GitHub will think it's PR #42.                          |
-
----
-
-## Copy-paste safety check (before posting)
-
-Before declaring the review done, verify the rendered output:
-
-- [ ] No `#N` patterns anywhere except inside fenced code blocks.
-- [ ] No `@username` mentions (unless explicitly requested).
-- [ ] No `Fixes/Closes/Resolves #N` keywords.
-- [ ] No absolute local paths.
-- [ ] All finding labels follow the chosen scheme consistently (no mixing `#1` with `B1`).
-- [ ] Total length under the cap; long quotes are inside `<details>`.
-- [ ] Renders cleanly in GitHub's markdown preview (no broken tables, unclosed code fences, stray HTML).
-- [ ] The action checklist at the bottom matches the findings above one-for-one.
-
----
-
-## How to raise a security finding
-
-When you find a security issue, the finding must include:
-
-1. **What the assumption is** — "This assumes the body is the signed content."
-2. **Why it's wrong or unverified** — "Mercado Pago signs a specific constructed string, not the raw body."
-3. **What the blast radius is** — "Anyone can forge a payment webhook and credit arbitrary accounts."
-4. **What the fix is** — "Read the official Mercado Pago notification docs and implement the `x-signature` verification exactly."
-
-## How to raise a comprehension finding
-
-When a block fails the comprehension audit:
-
-1. **Quote the block** (or link to `file:line`).
-2. **Ask the author to explain** the *why*, not the *what*: "Why this dispatch table instead of the existing strategy pattern in `payment_strategies.py`?"
-3. **Block the PR** until either: (a) the author defends the choice and captures the rationale durably (test name, `Why:` comment, PR `## Design Decisions`, or ADR), or (b) the author rewrites the block with full understanding.
-
-This is not gatekeeping. This is preventing comprehension debt from being merged.
-
-## How to raise an AI-untrusted-code finding
-
-```
-Location: <file:line>
-Block: <quote or summary>
-Concern: This block is in a high-risk path (<auth | payments | signatures | ...>) and was AI-generated. The following assumption needs verification against <official documentation source>:
-
-  Assumption in the code: "<quote or paraphrase>"
-  Where to verify: <link to provider docs or reference implementation>
-  Risk if assumption is wrong: <data exposure | privilege escalation | forged events | ...>
-
-Required action: Verify against the authoritative source, then either confirm in a `Why:` comment or refactor.
-```
+- **Security:** state the assumption, why it's wrong or unverified, the blast radius, and the fix — as sentences: "This assumes the body is the signed content, but the provider signs a constructed string — anyone can forge the webhook. Implement the `x-signature` check per the official docs before merge."
+- **Comprehension:** quote or link the block and ask for the *why* ("Why this dispatch table instead of the strategy pattern already in `payment_strategies.py`?"); the PR shouldn't merge until the rationale is defended and captured durably or the block is rewritten with understanding.
+- **AI-generated code in a high-risk path:** name the assumption in the code, where to verify it (official docs/reference implementation), and the risk if it's wrong — and require that verification before merge.

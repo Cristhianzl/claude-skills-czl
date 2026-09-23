@@ -54,7 +54,7 @@ Every config is a drop-in `.claude/` folder. The full ones (`agnostic`, `langflo
 | `developing-features-tdd` | Strict red-green-refactor TDD for new features |
 | `fixing-bugs` | Reproduce-first bug fixing (failing test before the fix) |
 | `writing-tests` | Testing pyramid, AAA, naming, coverage gate |
-| `reviewing-code` | Severity-labeled PR review with an action checklist + correctness lenses (enum/state-machine completeness, control-flow exceptions, degrade-don't-crash) |
+| `reviewing-code` | Human-voiced PR review — first-person prose in the PR's language, evidence and disposition in every finding, severity as internal triage (never labels), no hard-wrapped lines + correctness lenses (enum/state-machine completeness, control-flow exceptions, degrade-don't-crash) |
 | `writing-pull-requests` | Conventional-commit PR titles, messages, descriptions |
 | `documenting-features` | Living, DDD-aligned feature docs (ADRs, C4, Gherkin) |
 | `ensuring-cross-platform` | Linux/macOS/Windows portability rules |

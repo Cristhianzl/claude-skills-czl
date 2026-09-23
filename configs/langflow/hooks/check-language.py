@@ -17,6 +17,7 @@ TEXT_EXTS = {
 SKIP_PARTS = {"node_modules", ".venv", "venv", "__pycache__", "build", "dist", "target", ".next"}
 # Why: product UI copy legitimately ships in the product's language; only translation catalogs are exempt.
 I18N_PARTS = {"locale", "locales", "i18n", "intl", "lang", "langs", "translation", "translations", "messages"}
+REVIEW_PARTS = {"reviews", "czl"}
 I18N_EXTS = {".po", ".pot", ".xliff", ".xlf", ".properties", ".arb"}
 I18N_NAME_RE = re.compile(r"^[a-z]{2}([_-][A-Za-z]{2,4})?\.(json|ya?ml|ts|js)$")
 # Why: this file's own marker tables are data, not prose, and would otherwise trip the rule they define.
@@ -56,7 +57,7 @@ def should_skip(path: Path) -> bool:
     if path.name == SELF_NAME:
         return True
     lowered = {part.lower() for part in path.parts}
-    if lowered & SKIP_PARTS or lowered & I18N_PARTS:
+    if lowered & SKIP_PARTS or lowered & I18N_PARTS or lowered & REVIEW_PARTS:
         return True
     if path.suffix.lower() in I18N_EXTS or I18N_NAME_RE.match(path.name):
         return True

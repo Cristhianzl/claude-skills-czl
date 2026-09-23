@@ -10,7 +10,7 @@ A project's own `CLAUDE.md`/`AGENTS.md`/`CONTRIBUTING.md` and any skill `learnin
 
 English is mandatory in: source code and identifiers, comments and docstrings, log and error messages, test names and fixtures, commit messages, branch names, PR titles and descriptions, review comments, issue text, and documentation (README, ADRs, changelogs). A prompt written in Portuguese, Spanish, or any other language does **not** license a single line of that language in a file.
 
-The one exception is **product UI copy** — strings the app shows its own users. Those stay in the language the product ships in and live in an i18n catalog (`locales/`, `i18n/`, `*.po`, `pt-BR.json`), never hardcoded in logic. Mark a deliberate non-English line outside a catalog with `i18n-ok`.
+Two exceptions. **Product UI copy** — strings the app shows its own users — stays in the language the product ships in and lives in an i18n catalog (`locales/`, `i18n/`, `*.po`, `pt-BR.json`), never hardcoded in logic; mark a deliberate non-English line outside a catalog with `i18n-ok`. And **PR reviews/comments match the PR's language** — a pt-BR PR gets a pt-BR review (detail: `skills/reviewing-code`).
 
 Enforced by `hooks/check-language.py`, which blocks a write whose new lines are not English.
 

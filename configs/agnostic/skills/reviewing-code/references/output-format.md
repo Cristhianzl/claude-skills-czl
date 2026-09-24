@@ -22,21 +22,49 @@ What makes it work: it **opens with what the reviewer did** (the evidence), find
 - **No invented finding IDs** (`B1`, `I2`, `F3`), no findings-count line, no emoji section headers, no severity badges. Severity is carried by **order** (what blocks the merge comes first) and by **plain words** ("this needs to happen before merge"; "fine as a follow-up"; "take it or leave it").
 - **Every judgment gets a disposition and a reason.** "I wouldn't do X as written: <reason>. <where it should go instead>." A finding without a recommended disposition is a complaint, not a review.
 - **Bullets only for true enumerations** (commits, repro steps, a list of affected files) — and each bullet is a complete thought, written to the end.
-- Headings only when the review is genuinely long enough to need navigation; most reviews need none.
+- **Structure is not the enemy — walls of text are.** Use real GitHub markup: `##` section headings, `###` per finding, `code` spans, fenced code, bold sparingly. What stays banned is the *robotic* scaffolding: emoji in headings, finding IDs, metadata tables, label-lines.
+- **A paragraph carries one finding-sized idea.** More than ~5 sentences means it needs a split or its own `###`. Six ten-sentence paragraphs in a row is a bible, not a review — nobody reads it.
 - **Write in the PR's language** (title/description/discussion decide): pt-BR PR → pt-BR review; English PR → English. Code, paths, and quotes stay verbatim; mixed or unclear defaults to English.
 
 ## Never hard-wrap prose
 
 **One paragraph = one logical line.** Press Enter only at a real boundary: end of paragraph, end of list item, before/after a heading or code fence. Never wrap at 72/80/100 columns — GitHub and every editor soft-wrap, and manual mid-sentence line breaks are the single strongest "a tool wrote this" tell in a `.md` file. This applies to every prose file you write, not just reviews.
 
-## Structure (only as much as the content needs)
+## Structure (the skeleton — human voice inside real sections)
 
-1. **What you did and the headline conclusion**, in the first paragraph — including the verdict in plain words ("Good to merge after the rebase"; "Two things need to change first").
-2. **Findings that block or should change this PR**, most important first, each as a paragraph (or a short bullet list when they're small and parallel).
-3. **Follow-ups and take-or-leave suggestions**, clearly marked as such in the sentence itself.
-4. **Optionally**, when the user asks for it or there are many items: a short action checklist at the end (`- [ ]` one line per action, matching the findings one-for-one).
+Reviews with more than ~2 findings use this shape. A trivial PR can be a single short paragraph with no headings at all.
 
-No fixed length. A clean PR earns three sentences; a loaded one earns as much as its findings demand — and nothing more. Quote code sparingly (3–10 lines, in a fence with a language tag; `<details>` for anything longer).
+```markdown
+## Summary
+
+<First person, 2-5 sentences: what you checked/ran (the evidence) and the verdict in plain words. The verdict follows the mechanical rule in SKILL.md: Request changes ONLY with a true Blocker; Important findings alone = "Good to merge — a few things worth addressing"; never "needs to change before merge" for something that doesn't meet the Blocker bar. Full-width lines, no hard wrap.>
+
+## Needs to change before merge
+
+<ONLY true Blockers (security defect, data loss/PII, broken build/tests, untested high-risk path). If nothing meets that bar, this section does not exist.>
+
+### <Short descriptive title — no ID, no emoji>
+
+<Prose: the cause, the consequence, the evidence (file:line inside the sentence), and the fix. One finding-sized idea per paragraph.>
+
+## Worth fixing in this PR
+
+### <Short title>
+
+<...>
+
+## Follow-ups and take-it-or-leave-it
+
+<Smaller items; a short list is fine when they're parallel. Each entry says its disposition.>
+
+## Tests
+
+<What the tests prove, what's missing, what you ran.>
+```
+
+Omit any section with nothing in it — empty sections are scaffolding. When the user asks for it or the list is long, close with a short action checklist (`- [ ]` one line per action, matching the findings one-for-one).
+
+No fixed length. A clean PR earns three sentences; a loaded one earns as much as its findings demand — and nothing more. Quote code sparingly (3–10 lines, fenced with a language tag; `<details>` for anything longer).
 
 ## Mechanics that prevent broken output (unchanged, non-negotiable)
 
@@ -55,6 +83,8 @@ Links: repo-relative `path/to/file.ts:42` by default; `[file.ts:42](path#L42)` o
 
 - [ ] No `#N` outside code fences; no `@mentions`; no `Fixes/Closes #N`; no local paths.
 - [ ] No hard-wrapped prose — every paragraph is one logical line.
+- [ ] Scannable: real `##`/`###` headings when there are more than ~2 findings; no paragraph over ~5 sentences; no wall of text.
+- [ ] Verdict not inflated: Request changes only if a finding meets the Blocker bar; "Needs to change before merge" contains only true Blockers.
 - [ ] Reads aloud like a person: no label-lines, no finding IDs, no emoji headers, no metadata table.
 - [ ] Every finding has file:line evidence in the sentence and a disposition.
 - [ ] Renders cleanly (fences closed, no broken tables).

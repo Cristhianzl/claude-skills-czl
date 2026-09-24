@@ -9,6 +9,13 @@ means: a hook starts blocking code it used to allow, a skill or rule reverses
 advice you may have built on, or a file moves so an existing install stops
 resolving it.
 
+## [2.2.1] - 2026-09-24
+
+### Fixed
+
+- **Review output is sectioned prose, not a wall of text.** The 2.2.0 human-voice reform overcorrected: real reviews came out as six giant paragraphs with zero headings. The format is now a hybrid — `## Summary` / `## Needs to change before merge` / `## Worth fixing in this PR` / `## Follow-ups` / `## Tests` with a `###` per finding — human first-person prose written to the end of the line inside each section, a ~5-sentence cap per paragraph, and still zero emoji, IDs, metadata tables, or label-lines.
+- **Request changes only on true Blockers.** The verdict now maps mechanically from the triage: at least one finding meeting the Blocker bar (security defect, data loss/PII, broken build or tests, untested high-risk path) → Request changes; Important findings alone → Approve with comments; otherwise Approve. "Needs to change before merge" may contain only true Blockers, and a tie between two severities resolves to the lower one.
+
 ## [2.2.0] - 2026-09-23
 
 ### Added

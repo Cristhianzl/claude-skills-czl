@@ -60,10 +60,22 @@ Apply the same restrictions as the `writing-pull-requests` skill, plus review-sp
 8. **Triage the findings** by severity (Blocker / Important / Recommended / Nice-to-have) — this taxonomy is your internal ordering tool, not output scaffolding.
    → verify: every finding has file:line evidence, the cause and consequence, and a disposition (fix before merge / follow-up / take-or-leave).
 
-9. **Render the review as human prose** (`references/output-format.md`): open with what you did and the verdict in plain words, then findings most-important-first as complete sentences with links inside them, follow-ups clearly marked; a checklist only if the user asks or the list is long.
-   → verify: it passes the copy-paste safety check AND reads aloud like a person — no IDs, no label-lines, no hard-wrapped lines.
+9. **Render the review as human prose inside real sections** (`references/output-format.md`): a `## Summary` with what you did and the verdict, then `##` sections by disposition (before merge / this PR / follow-ups / tests) with a `###` per finding — prose written to the end of the line inside each. No emoji, no IDs, no paragraphs over ~5 sentences.
+   → verify: it passes the copy-paste safety check, is scannable by headings, AND reads aloud like a person — no label-lines, no hard-wrapped lines, no walls of text.
 
 10. **Capture a learning (final step).** Ask: *did I encounter a review pattern, codebase quirk, recurring violation, or severity adjustment not in this SKILL.md or `references/`?* If yes, append a `learnings/YYYY-MM-DD-slug.md`. If no, skip.
+
+## Verdict rule — Request changes means BLOCKERS, nothing else
+
+The verdict maps mechanically from the triage. **Never inflate it.**
+
+| Situation | Verdict |
+|---|---|
+| At least one true Blocker | **Request changes** — and name exactly what unblocks it |
+| Important findings, zero Blockers | **Approve with comments** — the PR can merge; the author decides when to address them |
+| Only Recommended / Nice-to-have | **Approve** |
+
+A finding only counts as a Blocker if it meets the Blocker bar below (security defect, data loss/PII, broken build or tests, high-risk path with no test) — "I'd strongly prefer this changed" is Important, **not** a Blocker, and never justifies Request changes. The same discipline applies to section placement: only true Blockers go under "Needs to change before merge"; everything else lives in "Worth fixing in this PR" or later. When in doubt between two severities, pick the lower one.
 
 ## Severity scoring (internal triage — expressed in prose, never as labels)
 

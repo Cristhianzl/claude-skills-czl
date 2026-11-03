@@ -1,8 +1,22 @@
 # CLAUDE.md — baseline
 
-Single source of truth for AI coding agents in any project that uses this `.claude/` folder. This file is the **short, actionable baseline**; the `.claude/skills/` hold the detailed HOW (features, TDD, bug fixing, testing, review, PRs, docs, cross-platform). Optional per-stack rules live in `.claude/rules/*.md` and auto-apply by their `globs` (the baseline itself is language-agnostic). Reusable workflows live in `.claude/commands/`.
+Single source of truth for AI coding agents in any project that uses this `.claude/` folder. This file is the **short, actionable baseline**; the `.claude/skills/` hold the detailed HOW (scope discipline, features, TDD, bug fixing, testing, review, PRs, docs, cross-platform). Optional per-stack rules live in `.claude/rules/*.md` and auto-apply by their `globs` (the baseline itself is language-agnostic). Reusable workflows live in `.claude/commands/`.
 
 A project's own `CLAUDE.md`/`AGENTS.md`/`CONTRIBUTING.md` and any skill `learnings/` entry are more specific than this file — when they conflict, the more specific one wins; surface it.
+
+## Scope discipline — applies to EVERY task
+
+Deliver what was asked, at the scope intended — **nothing more, nothing less, nothing different**. This holds in every phase: designing, planning, implementing, fixing a bug, writing tests or docs, reviewing, and running agent loops. Scope creep and gold plating are defects, not initiative. (detail: `skills/guarding-scope`)
+
+- **The user owns the scope.** Only an explicit signal from the user widens it. "Better", "cleaner", "more robust", "for consistency", "while I'm here", and "for the future" are never reasons to change code.
+- **Every changed line traces to the request.** If reverting a hunk leaves the requested outcome working, it doesn't belong. No drive-by refactors, renames, reformatting, new helpers/files/deps/config options, docstrings on untouched code, or unrequested tests, docs, or summary files.
+- **A bug fix changes only the causal lines.** A second bug you notice is reported, not fixed.
+- **Never weaken, skip, or rewrite an existing test to get green** — report the test you believe is wrong.
+- **Asked for ideas, a plan, options, or a review? Deliver that and stop** — no edits until the user says go.
+- **Ambiguous in a way that changes the work?** Present the readings and ask — never pick silently. Request looks mistaken? Say so in one sentence, then do it as asked; never quietly narrow, widen, or transform it.
+- **A necessary expansion** (the requested outcome cannot work without it): make the smallest version and disclose it. Anything materially bigger — a redesign, a new module, a dependency, an API/contract change — **ask first**.
+- **Ideas go to the parking lot, not the diff.** Noticed bugs, refactors, tests, or docs are listed at the end under "Out of scope — noticed, not done", never done.
+- **Before claiming done, audit the diff file by file against the request** and remove the slop you added. Enforced by `hooks/check-scope.py` at the end of every turn that changed files.
 
 ## Language
 
@@ -47,11 +61,11 @@ This repo drives git through `/commit`, `/push`, `/pr` — the agent stages/comm
 5. State assumptions when the request is ambiguous; surface tradeoffs instead of burying them.
 6. Write prose answer-first — lead with the conclusion/recommendation, then grouped reasons, then detail (Minto Pyramid / SCQA). Applies to docs, PRDs, PR descriptions, reviews, and updates. (detail: `skills/documenting-features/references/communication.md`)
 7. When the user provides a cURL, endpoint, or repro, it **is the acceptance test** — validate against the running system (request before/after, DB state, E2E when there's UI) before claiming done. Real evidence, no assumptions. (detail: `skills/validating-in-reality`)
-8. **Terse wrap-ups.** A work turn ends with: what changed in ≤ 3 short bullets (only when not already obvious), the docs actually updated (name only those), and ONE commit suggestion. No step-by-step narratives, no re-justifying decisions, no listing docs/files that are fine, no multiple commit alternatives. A discussion turn ends with the answer — nothing appended.
+8. **Terse wrap-ups.** A work turn ends with: what changed in ≤ 3 short bullets (only when not already obvious), the docs actually updated (name only those), the two scope lists from `skills/guarding-scope` when non-empty ("Beyond the literal request (required)", "Out of scope — noticed, not done"), and ONE commit suggestion. No step-by-step narratives, no re-justifying decisions, no listing docs/files that are fine, no multiple commit alternatives. A discussion turn ends with the answer — nothing appended.
 
 ## Map of this configuration
 
 - **`rules/`** — per-stack rules applied by `globs`. The baseline itself is language-agnostic; ships with only `TEMPLATE.md`. Add a `rules/<stack>.md` per language your project uses (copy the template), keeping each short and deferring to the skills for depth.
 - **`commands/`** — `/init` `/next` `/check` `/test` `/review` `/done` `/commit` `/push` `/pr` `/roadmap` `/task` `/sync` `/security` `/help`.
 - **`skills/`** — the detailed HOW; this baseline defers to them for depth.
-- **`hooks/`** — PostToolUse checks (comments, file size, banned patterns, output language, duplication) + `pre-push-smoke.sh`.
+- **`hooks/`** — PostToolUse checks (comments, file size, banned patterns, output language, duplication), `Stop` checks (doc sync, **scope audit** — `check-scope.py`), + `pre-push-smoke.sh`.

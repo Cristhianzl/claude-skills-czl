@@ -104,7 +104,7 @@ Don't proceed to FIX until the failure reason is clean.
 
 ## Phase 4 — FIX
 
-Change the **minimum** code necessary. Do **not** refactor, optimize, or add features in the same diff.
+Change the **minimum** code necessary. Do **not** refactor, optimize, or add features in the same diff. Touch only lines on the bug's causal path. Another bug you notice during the investigation is reported under "Out of scope — noticed, not done", not fixed here. Never edit an existing test to make it pass — if one is wrong, say so. Before VALIDATE ends, run the scope audit from `guarding-scope`.
 
 **Root cause analysis** (write this down before coding):
 

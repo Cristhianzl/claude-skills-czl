@@ -111,6 +111,7 @@ Full template with placeholders in `references/template.md`. Diagram syntax in `
 - **No commits.** Per `writing-pull-requests` rules — print the doc in the chat or write to the planned `docs/features/<feature-name>.md` path, but never run `git commit`, `git add`, or `git push`.
 - **Don't invent.** If you don't have a number for a metric threshold, mark it `TBD` and flag it to the user — don't fabricate.
 - **Code references must exist.** Every `ClassName` or `method_name` cited in the glossary must be searchable in the current code.
+- **Document what was asked.** No extra doc files, no summary `.md` nobody requested, no rewriting docs the change didn't make inaccurate (`guarding-scope`).
 - **Mermaid only for diagrams.** No external image links, no PlantUML, no ASCII art beyond the C4 Mermaid blocks.
 
 ## Final step: capture a learning

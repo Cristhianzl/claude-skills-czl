@@ -30,6 +30,10 @@ Every engineering standard in `developing-features` applies here **in full and u
 
 The phases below weave these into the RED/GREEN/REFACTOR/VALIDATE loop; they are the **same bar**, reached test-first.
 
+## Scope — the spec is the boundary
+
+RED encodes the requested behavior and nothing else; GREEN is the minimum to pass it; REFACTOR touches only code this feature added or had to change — never a sweep of the neighbourhood. Pre-existing tests are never edited to get green. Before VALIDATE ends, run the scope audit from `guarding-scope`; unrequested ideas go to **Out of Scope (Follow-Ups)**, not the diff.
+
 ## The cycle (strict order)
 
 ```
@@ -193,7 +197,7 @@ Run the same test from Phase 3. It MUST now pass.
 
 ## Phase 7 — REFACTOR
 
-Refactor **only** when tests are GREEN. After every small step, re-run tests.
+Refactor **only** when tests are GREEN, and only code this feature added or had to change — not neighbouring code (`guarding-scope`). After every small step, re-run tests.
 
 | Smell                                                                  | Refactor                                                  |
 |------------------------------------------------------------------------|------------------------------------------------------------|

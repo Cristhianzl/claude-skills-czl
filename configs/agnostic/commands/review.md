@@ -14,6 +14,7 @@ Review `git diff HEAD` against the rules in `.claude/rules/`.
 - Security: parameterized SQL, no raw `dangerouslySetInnerHTML`, validated inputs
 - Auth: new private endpoints have an auth dependency when needed
 - Tests: new code has a corresponding test
+- Scope: every changed file and hunk traces to the request; no drive-by refactors, reformatting, unrequested files/deps/config, or weakened existing assertions (`skills/guarding-scope`)
 
 ## Report
 

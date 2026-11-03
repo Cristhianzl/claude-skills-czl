@@ -22,7 +22,7 @@ If none produce changes, say so and stop. Do not review a clean tree.
 ## Review
 
 Follow `skills/reviewing-code/SKILL.md` end to end: read the diff completely first, then apply the
-lenses in order — security, comprehension, structural, platform, correctness, tests. Read the
+lenses in order — security, scope (`references/scope-checks.md`), comprehension, structural, platform, correctness, tests. Read the
 `references/` that match what the diff touches, and any relevant `learnings/`.
 
 Read the full file around a changed hunk when the diff alone can't tell you whether a finding is

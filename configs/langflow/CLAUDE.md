@@ -1,6 +1,6 @@
 # CLAUDE.md — baseline (Langflow build)
 
-Single source of truth for AI coding agents in this Langflow repo. This is the **robust** baseline + the **Langflow-specific** rules. The baseline below is the short, actionable layer; `.claude/skills/` hold the detailed HOW (features, TDD, bug fixing, testing, review, PRs, docs, cross-platform, and **building-langflow-components**). Per-stack rules live in `.claude/rules/*.md` and auto-apply by `globs` (see `rules/langflow.md`). Reusable workflows live in `.claude/commands/`.
+Single source of truth for AI coding agents in this Langflow repo. This is the **robust** baseline + the **Langflow-specific** rules. The baseline below is the short, actionable layer; `.claude/skills/` hold the detailed HOW (scope discipline, features, TDD, bug fixing, testing, review, PRs, docs, cross-platform, and **building-langflow-components**). Per-stack rules live in `.claude/rules/*.md` and auto-apply by `globs` (see `rules/langflow.md`). Reusable workflows live in `.claude/commands/`.
 
 The project's `AGENTS.md` and the relevant `.agents/skills/` are canonical for area expertise — read them first; when they conflict with this file, the more specific one wins.
 
@@ -25,6 +25,20 @@ This is the first thing to check on any Langflow change. It's **official Langflo
 - Reason about — and where feasible test — the change across OSes and the run modes it touches; CI runs the cross-platform matrix.
 
 > Gate before merging any Langflow change: **"Could this break a saved flow or an existing component? Does it still run on Windows/Linux/Docker, via the API, and from `lfx`?"** If unsure → stop and verify.
+
+## Scope discipline — applies to EVERY task
+
+Deliver what was asked, at the scope intended — **nothing more, nothing less, nothing different**. This holds in every phase: designing, planning, implementing, fixing a bug, writing tests or docs, reviewing, and running agent loops. Scope creep and gold plating are defects, not initiative. (detail: `skills/guarding-scope`)
+
+- **The user owns the scope.** Only an explicit signal from the user widens it. "Better", "cleaner", "more robust", "for consistency", "while I'm here", and "for the future" are never reasons to change code.
+- **Every changed line traces to the request.** If reverting a hunk leaves the requested outcome working, it doesn't belong. No drive-by refactors, renames, reformatting, new helpers/files/deps/config options, docstrings on untouched code, or unrequested tests, docs, or summary files.
+- **A bug fix changes only the causal lines.** A second bug you notice is reported, not fixed.
+- **Never weaken, skip, or rewrite an existing test to get green** — report the test you believe is wrong.
+- **Asked for ideas, a plan, options, or a review? Deliver that and stop** — no edits until the user says go.
+- **Ambiguous in a way that changes the work?** Present the readings and ask — never pick silently. Request looks mistaken? Say so in one sentence, then do it as asked; never quietly narrow, widen, or transform it.
+- **A necessary expansion** (the requested outcome cannot work without it): make the smallest version and disclose it. Anything materially bigger — a redesign, a new module, a dependency, an API/contract change — **ask first**.
+- **Ideas go to the parking lot, not the diff.** Noticed bugs, refactors, tests, or docs are listed at the end under "Out of scope — noticed, not done", never done.
+- **Before claiming done, audit the diff file by file against the request** and remove the slop you added. Enforced by `hooks/check-scope.py` at the end of every turn that changed files.
 
 ## Language
 
@@ -73,7 +87,7 @@ The `/commit`, `/push`, `/pr` commands stay available for the human to drive. (d
 5. State assumptions when ambiguous; surface tradeoffs instead of burying them.
 6. Write prose answer-first — lead with the conclusion/recommendation, then grouped reasons, then detail (Minto Pyramid / SCQA). Applies to docs, PRDs, PR descriptions, reviews, and updates. (detail: `skills/documenting-features/references/communication.md`)
 7. When the user provides a cURL, endpoint, or repro, it **is the acceptance test** — validate against the running system (request before/after, DB state, E2E when there's UI) before claiming done. Real evidence, no assumptions. (detail: `skills/validating-in-reality`)
-8. **Terse wrap-ups.** A work turn ends with: what changed in ≤ 3 short bullets (only when not already obvious), the docs actually updated (name only those), and ONE commit suggestion. No step-by-step narratives, no re-justifying decisions, no listing docs/files that are fine, no multiple commit alternatives. A discussion turn ends with the answer — nothing appended.
+8. **Terse wrap-ups.** A work turn ends with: what changed in ≤ 3 short bullets (only when not already obvious), the docs actually updated (name only those), the two scope lists from `skills/guarding-scope` when non-empty ("Beyond the literal request (required)", "Out of scope — noticed, not done"), and ONE commit suggestion. No step-by-step narratives, no re-justifying decisions, no listing docs/files that are fine, no multiple commit alternatives. A discussion turn ends with the answer — nothing appended.
 
 ## Langflow
 
@@ -90,4 +104,4 @@ If the repo ships its own agent docs (`.agents/skills/`, `AGENTS.md`), read them
 - **`rules/`** — per-stack rules applied by `globs`: `langflow.md` (this repo's Python/component/migration rules) + `TEMPLATE.md` for adding more.
 - **`commands/`** — `/init` `/next` `/check` `/test` `/review` `/done` `/commit` `/push` `/pr` `/roadmap` `/task` `/sync` `/security` `/help`.
 - **`skills/`** — the detailed HOW, incl. **`building-langflow-components`**; the generic skills carry Langflow `learnings/`.
-- **`hooks/`** — PostToolUse checks (comments, file size, banned patterns, duplication, **Langflow rules**), a `Stop` doc-sync check, and `pre-push-smoke.sh`.
+- **`hooks/`** — PostToolUse checks (comments, file size, banned patterns, duplication, **Langflow rules**), `Stop` checks (doc sync, **scope audit** — `check-scope.py`), and `pre-push-smoke.sh`.

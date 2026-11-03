@@ -29,6 +29,7 @@ The review is a chat message the human copies and posts. It is never a side effe
 - **Never** `@mention` users unless the user explicitly asks.
 - **Never** include `Fixes #N`, `Closes #N`, `Resolves #N` — they auto-close issues on merge.
 - **Never** paste full file contents — link with `path/to/file.ts:42` and quote 3-10 relevant lines max.
+- **Never request out-of-scope work as a blocker.** Pre-existing issues in code the PR doesn't touch and "while you're here" ideas are follow-ups, phrased as optional. Judge the PR against its own purpose; ask for less code, not more, unless a real defect requires more (`references/scope-checks.md` § 2).
 - **Never** use absolute local paths (`/Users/...`, `/home/...`). Use repo-relative paths only.
 - All review documents are written **entirely in English**, regardless of the conversation language.
 
@@ -36,6 +37,9 @@ The review is a chat message the human copies and posts. It is never a side effe
 
 1. **Read the PR end-to-end before commenting.** Files, diffs, test changes, and the PR description. If the description claims something not in the diff, that's a finding by itself.
    → verify: you can summarize the PR in 1–3 sentences and name the dominant risk area (auth, payments, AI, infra, UI, refactor, etc.).
+
+   **Then check scope** (`references/scope-checks.md`): walk the diff file by file against the PR's stated purpose. Unrelated refactors/renames/reformatting, behavior changes the description doesn't mention, weakened or deleted test assertions, unneeded deps/abstractions/config, unrequested artifacts, and slop on added lines are findings.
+   → verify: every changed file maps to the PR's purpose, is a disclosed required change, or is a finding.
 
 2. **Apply the security lens** to every significant block (see `references/security-checks.md`). Five questions: what is being trusted unverified? what's the authoritative source for this behavior? what happens on the failure path? who controls each value and could they lie? what is the blast radius if this is wrong?
    → verify: every "unverified assumption" has been mapped to either a finding or a defensible justification in the diff.
@@ -175,6 +179,7 @@ Detailed rules — labeling schemes, length, length, link format, copy-paste saf
 - `references/security-checks.md` — PII zero-tolerance, AI security, third-party integration, AI-untrusted-code lens, AI runtime resilience.
 - `references/structural-checks.md` — file structure hard limits, SOLID verification, pragmatic principles, layer separation, error handling, testing, platform agnosticism.
 - `references/correctness-checks.md` — enum/state-machine completeness, control-flow exceptions propagate unwrapped, degrade-don't-crash contracts + the failure-path test spec.
+- `references/scope-checks.md` — is the PR in scope (unrelated hunks, unmentioned behavior changes, weakened tests, slop) and is the review in scope (no out-of-scope blockers).
 - `references/grep-recipes.md` — copy-paste grep commands for catching common violations across languages.
 - `references/checklist.md` — the full checklist + perfect-score criteria + framework-specific layouts.
 - `learnings/` — project-specific review conventions, recurring violation patterns, severity adjustments.

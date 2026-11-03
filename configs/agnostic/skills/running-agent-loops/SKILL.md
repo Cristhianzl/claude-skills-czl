@@ -34,7 +34,7 @@ Independent steps lose memory. Persist a single **`SHARED_TASK_NOTES.md`** (or t
 
 ## The de-sloppify pass
 
-After each implement step, run a **dedicated cleanup pass** (separate agent/context) whose only job is to remove slop: dead code, stray comments, debug prints, half-finished branches, inconsistent naming, over-engineering. Keep it separate from the implementer so neither job is diluted.
+After each implement step, run a **dedicated cleanup pass** (separate agent/context) whose only job is to remove slop: dead code, stray comments, debug prints, half-finished branches, inconsistent naming, over-engineering. Keep it separate from the implementer so neither job is diluted. The pass is bounded: it removes slop from lines the step added and never redesigns, renames, or expands the step's scope (catalog and procedure: `guarding-scope/references/slop.md`). Check every step against the **original** contract, not the previous step's output — drift compounds across iterations.
 
 ## Safety before you launch an unattended loop
 

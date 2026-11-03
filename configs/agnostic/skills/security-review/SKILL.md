@@ -23,6 +23,8 @@ List `learnings/` and read anything relevant. **Reuse, don't re-derive:**
 3. **Report findings — don't blind-fix.** For each: severity, the exact risk, the concrete fix, and how to verify it caused no regression. Prove access-control findings (logged in as user A, try user B's resource).
 4. **Fix under the anti-regression protocol** (`references/safe-remediation.md`): one change per branch/commit, backup before DB changes, test the legitimate flow before and after, report-only rollout for CSP/rate-limit, transparent re-hash for password migration, staging before prod, fail closed.
 
+**Scope:** remediate only the findings the user approved, each in its own change, touching only the lines that finding needs. A review is not a license to refactor, upgrade unrelated dependencies, or restyle — and a finding outside the agreed audit scope is reported, not fixed (`guarding-scope`).
+
 ## The one principle under all of it
 
 Never mix **user data** with **command/structure** — parametrize, escape, or allow-list at the right interpreter (DB, shell, template, browser, AI model). Enforce **authorization server-side on every request**, keep **secrets off the client**, and **fail closed**. Every rule below is an application of these.

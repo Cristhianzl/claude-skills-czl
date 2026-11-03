@@ -196,6 +196,7 @@ When you save a `.py` file under `src/backend/base/langflow/components/...`, the
 - **Never** suppress errors silently — surface as `ValueError` / `ToolError` / `MessageError` with context, and set `self.status` for the UI.
 - **Never** commit with bare `git commit` — pre-commit needs `uv run git commit` to find the right Python.
 - **Never** add a new bundle component without updating the bundle's `BUNDLE_API.md` — the changelog gate is enforced.
+- **Never** expand the request's scope inside a component: no renaming or "cleaning up" existing inputs/outputs, no extra providers, inputs, or options nobody asked for. Required companions (keeping a deprecated field, `legacy=true`, `BUNDLE_API.md`) are disclosed, not creep — see `skills/guarding-scope` and its Langflow learning.
 - **Never** decorate the component with WHAT-comments. The `inputs` and `outputs` declarations are self-describing; the method names say what they do. Reserve comments for the WHY that isn't obvious from naming — e.g., "this SDK's timeout default is `None`; pin it explicitly" or "API returns 200 with `error` in body; treat as failure". Section dividers (`# === Identity ===`, `# === Outputs ===`) belong nowhere in real components.
 
 ## See also

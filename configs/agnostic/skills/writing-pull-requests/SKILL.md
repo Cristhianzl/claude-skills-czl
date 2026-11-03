@@ -15,6 +15,7 @@ Apply when the user says any of: "create a PR", "PR title", "PR description", "c
 **Skip / push back** when:
 - The diff is empty or untracked-only — ask the user what to compare against.
 - The diff bundles multiple unrelated changes — propose splitting first; a PR whose title needs "and" is a smell.
+- The diff contains hunks the PR's purpose doesn't need (drive-by refactors, reformatting, unrelated files) — point them out and suggest reverting or splitting before writing anything; never describe them as intended. A required change beyond the literal ask gets one line in the description saying why. (`guarding-scope`)
 - The user already pasted a title/description — don't rewrite unless asked.
 
 ## Read first (always)

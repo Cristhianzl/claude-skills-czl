@@ -50,11 +50,12 @@ Every config is a drop-in `.claude/` folder. The full ones (`agnostic`, `langflo
 
 | Skill | What it covers |
 |-------|----------------|
+| `guarding-scope` | Scope discipline in every phase — the scope contract, per-phase scope-creep and AI-slop signals, the diff-vs-request audit before "done", the parking lot for ideas, and stop → justify → ask for necessary expansions. Grounded in Anthropic's over-engineering guidance, Google's small-CL practice, and PM change control |
 | `developing-features` | Production code: security-first, SOLID, pragmatic principles, observability, file-structure limits |
 | `developing-features-tdd` | Strict red-green-refactor TDD for new features |
 | `fixing-bugs` | Reproduce-first bug fixing (failing test before the fix) |
 | `writing-tests` | Testing pyramid, AAA, naming, coverage gate |
-| `reviewing-code` | Human-voiced PR review — first-person prose in the PR's language, evidence and disposition in every finding, severity as internal triage (never labels), no hard-wrapped lines + correctness lenses (enum/state-machine completeness, control-flow exceptions, degrade-don't-crash) |
+| `reviewing-code` | Human-voiced PR review — first-person prose in the PR's language, evidence and disposition in every finding, severity as internal triage (never labels), no hard-wrapped lines + correctness lenses (enum/state-machine completeness, control-flow exceptions, degrade-don't-crash) + scope lens (every hunk traces to the PR's purpose; no out-of-scope blockers from the reviewer) |
 | `writing-pull-requests` | Conventional-commit PR titles, messages, descriptions |
 | `documenting-features` | Living, DDD-aligned feature docs (ADRs, C4, Gherkin) |
 | `ensuring-cross-platform` | Linux/macOS/Windows portability rules |
@@ -94,6 +95,7 @@ Every config is a drop-in `.claude/` folder. The full ones (`agnostic`, `langflo
 | `check-duplication.py` | on Write/Edit | Anti-duplication — when a written function/class name is already defined elsewhere in the repo, feeds back "reuse or justify" with the existing location (test files and generic names exempt) |
 | `check-design-tokens.py` | on Write/Edit | Design-system guard — flags raw color literals hardcoded in components (naming the matching existing token) and new tokens that duplicate or nearly duplicate a color the palette already names |
 | `check-doc-sync.py` | on Stop (turn end) | Only when the turn actually changed source: points the agent at possibly-drifted docs (full list goes to a file, never the terminal) and asks for ONE commit suggestion — silent on discussion-only turns; human commits, agent never runs git |
+| `check-scope.py` | on user prompt + on Stop | Scope audit — snapshots the working tree when you send a request, and at turn end lists only the files *this turn* changed and makes the agent justify each against the request (revert what doesn't trace, remove added slop, list required extras and parking-lot ideas) — silent when nothing changed |
 | `check-real-validation.py` | on user prompt | When your request contains a cURL or local endpoint, auto-instructs the agent to treat it as the acceptance test — validate against the running system (request + DB + E2E), no assumptions |
 | `pre-push-smoke.sh` | before `git push` | Fast lint/test smoke on changed areas (project-configurable skeleton) |
 | `check-langflow-rules.py` | on Write/Edit | *(Langflow only)* `SecretStrInput` for API keys, no top-level SDK init in components, Alembic `Phase:` markers |

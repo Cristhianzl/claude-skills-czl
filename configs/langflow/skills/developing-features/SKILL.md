@@ -16,6 +16,10 @@ List `learnings/` and read every file relevant to the current task. Project-spec
 
 Apply the full discipline when the code is **production-bound, multi-user, or persists state**. Lighten the formality (still keep security and naming) when the code is a one-off script, a throwaway exploration, or a sample under 50 lines. Don't impose SRP/DIP/file-structure ceremony on a 10-line CLI helper.
 
+## Scope contract (before anything else)
+
+Before writing code, state the goal, what is in scope, what is explicitly out of scope, and the done-when check. Every file you touch must trace to the request; ideas go to the parking lot, never the diff; a necessary expansion is disclosed — and asked first when it is materially bigger (a new module, dependency, or contract change). Full rules, per-phase signals, and the pre-done diff audit: `guarding-scope`.
+
 ## Pre-implementation check (mandatory)
 
 Before writing any code, answer these six questions:
@@ -51,7 +55,7 @@ The ladder never overrides the floors: trust-boundary validation, security, erro
 2. **Plan the file structure first** (see `references/file-structure.md`). List the functions and classes you'll need, categorize each by responsibility, create the empty files, then write code into them.
    → verify: no file you plan exceeds 500 lines, no file mixes responsibilities.
 
-3. **Implement incrementally**: core logic first, then edge cases, then refinements. Don't gold-plate.
+3. **Implement incrementally**: core logic first, then edge cases, then refinements. Don't gold-plate: no unrequested features, refactors, renames, reformatting, config options, or docs in code the task doesn't need (`guarding-scope`).
    → verify: each commit-sized slice solves a present problem, not a speculative one.
 
 4. **Validate inputs at system boundaries**, then trust them inside. Boundary = HTTP handler, queue consumer, file reader, env var reader.
@@ -66,7 +70,10 @@ The ladder never overrides the floors: trust-boundary validation, security, erro
 7. **Run the test suite.** Every existing test must still pass. New behavior needs new tests (delegate to `writing-tests` skill).
    → verify: green test run.
 
-8. **Capture a learning (final step).** Ask: *did I encounter a convention, constraint, or trap that wasn't in this SKILL.md or `references/`?* If yes, append a `learnings/YYYY-MM-DD-slug.md`. If no, skip.
+8. **Run the scope audit** (`guarding-scope`) on the real diff: every changed file and hunk traces to the request; revert what doesn't; remove the slop you added.
+   → verify: required extras are disclosed and parking-lot items are listed, not done.
+
+9. **Capture a learning (final step).** Ask: *did I encounter a convention, constraint, or trap that wasn't in this SKILL.md or `references/`?* If yes, append a `learnings/YYYY-MM-DD-slug.md`. If no, skip.
 
 ## Trade-offs (priority order when they conflict)
 

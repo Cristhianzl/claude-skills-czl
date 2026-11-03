@@ -9,6 +9,19 @@ means: a hook starts blocking code it used to allow, a skill or rule reverses
 advice you may have built on, or a file moves so an existing install stops
 resolving it.
 
+## [2.3.0] - 2026-11-03
+
+### Added
+
+- **`skills/guarding-scope`** — scope discipline in every phase (design, planning, implementation, bug fix, tests, docs, review, agent loops). The scope contract before any change (goal / in scope / out of scope / done when), observable scope-creep signals per phase, the AI-slop catalog with a bounded deslop pass on added lines, the mandatory diff-vs-request audit before claiming done, the parking lot ("Out of scope — noticed, not done") for ideas, and stop → classify → ask for necessary expansions. Grounded in Anthropic's over-engineering and task-scope guidance, the Karpathy-inspired "surgical changes" rules, Google's small-CL practice, and project-management change control (sources quoted in `references/sources.md`). The Langflow build adds a learning on what counts as required vs. creep under backward-compat rules.
+- **`hooks/check-scope.py`** — snapshots the working tree on each user prompt; at turn end, lists only the files *this turn* changed and makes the agent justify each against the request, revert what doesn't trace, and remove the slop it added. Silent on turns that changed nothing and never loops (`stop_hook_active`).
+- **`reviewing-code/references/scope-checks.md`** (agnostic, langflow, pr-reviewer) — the PR's scope (unrelated hunks, unmentioned behavior changes, weakened tests as Blockers, slop) and the review's own scope (pre-existing issues and "while you're here" ideas are follow-ups, never blockers).
+
+### Changed
+
+- **`CLAUDE.md`** (agnostic, langflow) — new always-loaded "Scope discipline — applies to EVERY task" section; wrap-ups carry the "Beyond the literal request (required)" and "Out of scope — noticed, not done" lists when non-empty. **`pr-reviewer/CLAUDE.md`** — new "Scope creep — in the PR and in the review" section; scope joins the lens order after security.
+- **Phase skills now gate on scope:** `developing-features` (scope contract first, scope audit before learnings), `developing-features-tdd` (the spec is the boundary; refactor only feature code), `fixing-bugs` (causal lines only; second bugs reported, not fixed), `writing-tests` (never weaken an existing assertion to get green), `running-agent-loops` (de-sloppify is bounded; check against the original contract), `writing-pull-requests`, `building-frontend-ui`, `security-review`, `documenting-features`, `building-langflow-components`, and the `/review` and `/done` commands.
+
 ## [2.2.1] - 2026-09-24
 
 ### Fixed

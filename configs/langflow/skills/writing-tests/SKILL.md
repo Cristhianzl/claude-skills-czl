@@ -188,6 +188,13 @@ Full bash commands per language in `references/pre-commit.md`. Summary:
 
 If any step fails → fix before declaring done.
 
+## Scope — tests for the change, not a rewrite of the suite
+
+- Test the behavior the task changed or added. Tests for untouched behavior are a separate, requested task.
+- **Never loosen, skip, delete, or rewrite an existing assertion to get green.** A failing pre-existing test is either a real regression (fix the code) or a wrong test (report it and ask).
+- Asked only to write or run tests? Don't change production code — report the bug the test exposes.
+- No new test framework, fixture system, or helper library for one test. (`guarding-scope`)
+
 ## Anti-patterns to avoid
 
 Eight named anti-patterns (Mirror, Liar, Giant, Mockery, Inspector, Chain Gang, Flaky, Snowball) — full examples in `references/anti-patterns.md`. Quick summary:

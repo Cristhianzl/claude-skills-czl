@@ -29,6 +29,8 @@ Most bad frontend work is *net-new code that should have been reuse*. Before wri
 
 → verify: you can name the token source, the existing components you're reusing, the pattern you're following — and whether the project has i18n — or you've confirmed none exists.
 
+**Scope:** audit findings outside the requested change go to the parking lot. Fixing the requested screen doesn't license restyling its neighbours, swapping components, or migrating the design system. Accessibility and security defects *in the lines you are changing* are fixed in place; elsewhere they are reported (`guarding-scope`).
+
 ## Priority order
 
 When concerns compete, resolve in this order. Each row points to its deep-dive reference.

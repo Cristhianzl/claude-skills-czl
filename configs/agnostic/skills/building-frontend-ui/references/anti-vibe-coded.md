@@ -8,8 +8,9 @@
 
 A site doesn't look vibe-coded because of the tool or the speed. It looks vibe-coded because of **inconsistency, randomness, and the absence of a system** holding it together. No single fatal error — the sum of twenty decisions nobody made: seven border radii, four shadows, spacing without rhythm, a component that changes per page, a button that doesn't respond. Each is small; together they scream.
 
-Two corollaries:
+Three corollaries:
 - **The fastest path to premium is consistency, not visual novelty.** Less effect, more deliberate repetition.
+- **The fastest path to clarity is subtraction.** Generated UI explains itself — a tagline under every heading, helper text under every field, an eyebrow over every section. Designed UI doesn't need to: if a screen needs those words to make sense, the layout is wrong (the root directive: `simplicity-first.md`).
 - Vibe-coded sites are **pretty and hollow**: the screenshot passes; what fails is everything that only shows when someone clicks, shares, or opens it on a phone. (Audits of hundreds of shipped AI-generated sites found: 66% have **no `<h1>` tag** — a giant styled `div` instead; 62% no canonical; 29% touch targets under 44px; 18% dead clicks; 18% zoom blocked. Appearance without structure — and the cheapest fixes there are.)
 
 ## Layer A — the visual signature (recognized in 2 seconds)
@@ -42,6 +43,7 @@ Two corollaries:
 - **Em-dash chains** (—) across the hero are the mark of generated, unedited text. Short sentences with periods read better.
 - **Fake testimonials** — AI-face avatars, "Sarah Chen", no role/company/link, repeated phrasing, the same photo twice — are perceived instantly. A testimonial without a real person is a visible `[PLACEHOLDER: awaiting client testimonial]`. Better one section fewer than one section lying.
 - **The footer is the last thing read**: dynamic year (`new Date().getFullYear()`), real business name, proofread text.
+- **Copy that props up the layout**: taglines under section headings, helper text restating its label, secondary labels and eyebrows everywhere, tooltips explaining obvious controls. Cut them and fix the layout instead (the layout-fix ladder in `simplicity-first.md`). Labels, errors, and required legal text stay.
 - **Overloaded hero**: one promise, one support line, one primary action; a second button only for a real second audience. After assembling, **remove one element**.
 - **Forgotten placeholders**: lorem ipsum, `John Doe`, `example@email.com`, fake partner logos, invented metrics ("+500 clients"). **The substitution test:** swap the name and logo for a competitor's — whatever stays true is generic and must be rewritten.
 
@@ -60,19 +62,20 @@ No overflowing text or collapsing cards; touch targets ≥44×44px with ≥8px s
 
 Count what exists on the site. **5 or more = it reads as vibe-coded.**
 
-Purple/gradient without brand justification · sparkle/emoji in UI · animated hover on every card · emoji in heading or button · fake/unverifiable testimonial · giant icon with tiny text · framework-default font with no declared decision · blurred header with contrast issues · >3 border radii · component inconsistent across pages · missing loading state · misaligned grid · slow interaction · jittery sticky header · off-scale spacing · no OG image · no own favicon · a control that doesn't work · broken mobile layout · live placeholder · generic tagline · wrong footer text/year · buzzword pile · no clear value proposition.
+Purple/gradient without brand justification · sparkle/emoji in UI · animated hover on every card · emoji in heading or button · fake/unverifiable testimonial · giant icon with tiny text · framework-default font with no declared decision · blurred header with contrast issues · >3 border radii · component inconsistent across pages · missing loading state · misaligned grid · slow interaction · jittery sticky header · off-scale spacing · no OG image · no own favicon · a control that doesn't work · broken mobile layout · live placeholder · generic tagline · helper text or secondary labels the layout should carry · wrong footer text/year · buzzword pile · no clear value proposition.
 
-## The five final tests
+## The six final tests
 
 1. **Substitution** — swap name/logo for the competitor's; what stays true is generic.
 2. **Thumb** — real phone, one hand: complete the primary action with the thumb only.
 3. **Blind click** — click everything that looks clickable, social icons and footer included; anything silent is a dead click.
 4. **View-source** — is there an `<h1>`? `<main>`? canonical? OG? Or div soup?
 5. **Removal** — delete one thing (the section that exists because "every site has one", the gradient, the third generic icon). Generators add; designers edit.
+6. **Mute** — hide every tagline, helper line, subtitle, tooltip, and secondary label. Can a first-time user still understand each screen and complete its primary action? If not, fix the layout — don't restore the words (`simplicity-first.md`).
 
 ## Automated audit (paste in the browser console)
 
-Run on **every page** at 375px and 1440px. Targets: `radii` ≤3 · `shadows` ≤2 · `fonts` ≤2 · `fontSizes` ≤8 · `offScaleSpacing` empty · `purpleGradients` 0 (unless brand) · `emojiInUI` 0 · `h1Count` 1 · `skippedHeadings` empty · `zoomBlocked` false · `missingLandmarks` empty · every counter in the last table 0 · `copyrightYear` current. Complement with Lighthouse (all categories ≥90) and axe.
+Run on **every page** at 375px and 1440px. Targets: `radii` ≤3 · `shadows` ≤2 · `fonts` ≤2 · `fontSizes` ≤8 · `offScaleSpacing` empty · `purpleGradients` 0 (unless brand) · `emojiInUI` 0 · `helperCopy` as low as the layout allows (review each one against the mute test) · `h1Count` 1 · `skippedHeadings` empty · `zoomBlocked` false · `missingLandmarks` empty · every counter in the last table 0 · `copyrightYear` current. Complement with Lighthouse (all categories ≥90) and axe.
 
 ```js
 const els = [...document.querySelectorAll('body *')];
@@ -98,6 +101,7 @@ const signature = {
   emojiInUI: [...document.querySelectorAll('button,a,h1,h2,h3,label,[role=button]')]
     .filter(e => /\p{Extended_Pictographic}/u.test(e.textContent)).length,
   emDashes: (document.body.innerText.match(/—/g) || []).length,
+  helperCopy: document.querySelectorAll('[class*=helper],[class*=hint],[class*=subtitle],[class*=tagline],[class*=eyebrow],[class*=description],[class*=caption]').length,
 };
 
 const foundation = {
@@ -143,12 +147,12 @@ console.groupEnd();
 
 ## Delivery scorecard (any blocker at ✗ = not done)
 
-Blockers: unique semantic `<h1>` per page · heading hierarchy + landmarks · unique title/description · canonical · own OG image (share-tested) · own favicon · own 404 + legal pages · analytics tested (when conversion is the goal) · zero dead clicks / `href="#"` / decorative social icons · every widget actually works · form submits with loading/success/error and no double-send · loading state on every async action · ≤3 radii, ≤2 shadows, ≤2 fonts, spacing 100% on scale · components identical across pages, grid aligned · zero emoji/sparkle in UI, zero unjustified purple · copy survives the substitution test, one-promise hero · zero unmarked fake content, correct footer · targets ≥44px, zoom enabled, no horizontal scroll at 375px · alt + labels everywhere · visible focus + full keyboard · AA contrast in all states · images sized/optimized, CWV on target · no secrets in the client, server-side validation, rate limiting · Vibe Check < 5 · the five final tests passed. Non-blocking: schema.org, robots/sitemap, hover/motion polish.
+Blockers: unique semantic `<h1>` per page · heading hierarchy + landmarks · unique title/description · canonical · own OG image (share-tested) · own favicon · own 404 + legal pages · analytics tested (when conversion is the goal) · zero dead clicks / `href="#"` / decorative social icons · every widget actually works · form submits with loading/success/error and no double-send · loading state on every async action · ≤3 radii, ≤2 shadows, ≤2 fonts, spacing 100% on scale · components identical across pages, grid aligned · zero emoji/sparkle in UI, zero unjustified purple · copy survives the substitution test, one-promise hero · zero unmarked fake content, correct footer · targets ≥44px, zoom enabled, no horizontal scroll at 375px · alt + labels everywhere · visible focus + full keyboard · AA contrast in all states · images sized/optimized, CWV on target · no secrets in the client, server-side validation, rate limiting · Vibe Check < 5 · mute test passed (or each kept helper line justified) · the six final tests passed. Non-blocking: schema.org, robots/sitemap, hover/motion polish.
 
 **Final report format:**
 
 ```
-Scorecard: X/28 | Vibe Check: N marks | Open blockers: M
+Scorecard: X/29 | Vibe Check: N marks | Open blockers: M
 Evidence: [how each item was verified]
 Client pending: [real content, photos, domain, analytics accounts]
 Known risks: [what couldn't be tested and why]

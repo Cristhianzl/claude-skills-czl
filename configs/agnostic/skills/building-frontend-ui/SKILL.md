@@ -1,12 +1,18 @@
 ---
 name: building-frontend-ui
-description: Build, refactor, and review frontend UI in any framework — components, accessibility, forms, client state and data fetching, responsive layout, performance, client-side security/PII, and UX/visual design (design plan, tokens, typography, color, spacing, motion). Use whenever the task touches the UI layer: creating or changing a component, page, or screen; designing a site, landing page, or product surface from scratch; styling or theming; accessibility/a11y; forms; client state; responsive/mobile layout; or reviewing/refactoring frontend code. Use even when the user doesn't say "frontend" — if they mention a component, button, form, modal, page, screen, layout, CSS/Tailwind, ARIA, focus, UX, design, "vibe coded", "looks AI-generated", or a UI bug, this applies. Not for pure backend/API/database work.
+description: Build, refactor, and review frontend UI in any framework — components, accessibility, forms, client state and data fetching, responsive layout, performance, client-side security/PII, and UX/visual design (design plan, tokens, typography, color, spacing, motion) — under one root directive: simple purpose, architecture, design, and implementation; no taglines, helper text, or secondary labels a better layout can replace; every decision raises UX, DX, and agent experience (AX) at once without breaking anything. Use whenever the task touches the UI layer: creating or changing a component, page, or screen; designing a site, landing page, or product surface from scratch; styling or theming; accessibility/a11y; forms; client state; responsive/mobile layout; or reviewing/refactoring frontend code. Use even when the user doesn't say "frontend" — if they mention a component, button, form, modal, page, screen, layout, CSS/Tailwind, ARIA, focus, UX, design, "vibe coded", "looks AI-generated", "too cluttered", "simplify the UI", "helper text", "like Linear / Apple Notes", or a UI bug, this applies. Not for pure backend/API/database work.
 license: MIT
 ---
 
 # Building Frontend UI
 
 A frontend change is good when it **reuses what already exists**, is **accessible by default**, **handles every state** (loading, error, empty, long content), **performs** under real data, and **leaks no data** to the client. This skill is framework-agnostic: the workflow and rules live here; framework-specific mechanics live in `references/<framework>.md` and are loaded only when relevant.
+
+## The root directive — simplicity first (read before anything else)
+
+> Make it as polished as Linear's website or Apple Notes: **simple purpose, simple architecture, simple design, simple implementation.** Cut taglines, helper text, and secondary labels. **If a screen needs them to make sense, fix the layout.** Every decision must raise the **user experience (UX)**, the **developer experience (DX)**, and the **agent experience (AX)** at once — **without breaking anything.**
+
+Every rule below applies this paragraph; when two options both satisfy the floors (accessibility, security, the existing design system), choose the simpler one. Words are the last resort: climb the **layout-fix ladder** (rename → remove → reorder/group → show, don't tell → disclose progressively → teach by acting → only then one helper line). Never cut labels, accessible names, errors, destructive-action consequences, or required legal/consent text. On existing products this governs new UI and the lines you're changing — removing existing copy or screens is proposed, not done (`guarding-scope`). Every screen passes the **mute test** before it ships. Full directive, the cut/never-cut lists, and the UX/DX/AX checks: `references/simplicity-first.md`.
 
 ## Read first (always)
 
@@ -91,6 +97,7 @@ Semantic HTML before ARIA. `<button>` for actions, `<a>` for navigation — neve
 
 ## Pre-delivery checklist
 
+- [ ] **Simplicity first:** one job and one primary action per screen; no tagline, helper text, or secondary label the layout could replace; **mute test passed** (or each kept line justified); the change raises UX, DX, and AX together and breaks nothing (`references/simplicity-first.md`).
 - [ ] Reused existing components/tokens; no hardcoded hex/spacing/font sizes.
 - [ ] Keyboard-operable; visible focus; semantic elements; labels/alt present (or `TODO` for contextual ones).
 - [ ] Loading, error, empty, and long-content states handled.
@@ -105,6 +112,6 @@ Semantic HTML before ARIA. `<button>` for actions, `<a>` for navigation — neve
 
 ## See also
 
-- `references/accessibility.md` · `references/state-and-data.md` · `references/forms.md` · `references/performance.md` · `references/responsive.md` · `references/ux-writing.md` · `references/design-craft.md` · `references/designing-from-scratch.md` · `references/anti-vibe-coded.md`
+- `references/simplicity-first.md` (the root directive) · `references/accessibility.md` · `references/state-and-data.md` · `references/forms.md` · `references/performance.md` · `references/responsive.md` · `references/ux-writing.md` · `references/design-craft.md` · `references/designing-from-scratch.md` · `references/anti-vibe-coded.md`
 - Framework specifics: `references/react.md` · `references/vue.md` · `references/svelte.md` · `references/web-components.md`
 - `skills/writing-tests` (test strategy), `skills/developing-features` (general production-code rules, security depth), `skills/reviewing-code` (review output), `rules/frontend.md` (the enforced subset).

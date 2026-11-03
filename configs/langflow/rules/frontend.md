@@ -9,6 +9,13 @@ globs: "**/*.{tsx,jsx,vue,svelte,astro,mdx,css,scss}"
 
 The short, non-negotiable subset. The skill carries the full reasoning, checklists, and per-framework detail.
 
+## Simplicity first (the root directive)
+
+- **Simple purpose, simple architecture, simple design, simple implementation** — the bar is Linear's website or Apple Notes. One job and one primary action per screen.
+- **Cut taglines, helper text, and secondary labels. If a screen needs them to make sense, fix the layout** (rename → remove → reorder/group → show, don't tell → disclose progressively → only then one helper line). Never cut labels, accessible names, errors, destructive-action consequences, or required legal/consent text.
+- **Every decision raises UX, DX, and AX (agent experience) at once, without breaking anything.** Agents read the accessibility tree: semantic elements, accessible names that match visible text, state in the URL and in ARIA attributes.
+- On existing products this governs new UI and the lines you change; removing existing copy or screens is proposed, never done unasked. Detail: `skills/building-frontend-ui/references/simplicity-first.md`.
+
 ## Reuse first
 
 - Before creating anything, grep for an existing component/utility that does the job and **reuse or extend it**.

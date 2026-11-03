@@ -83,6 +83,7 @@ IMPORTANT — Accessibility (when the diff touches UI; see building-frontend-ui/
 [ ] If the project has a11y scanners, they ran green on the changed states (not just default render) — all engines, not just one
 
 IMPORTANT — Anti vibe-coded (when the diff creates new UI; see building-frontend-ui/references/anti-vibe-coded.md)
+[ ] Simplicity first: one job + one primary action per screen; no tagline/helper text/secondary label the layout could carry (mute test); semantics an agent can drive (accessible names, state in URL/ARIA) — building-frontend-ui/references/simplicity-first.md
 [ ] Follows the existing design system (tokens/components/layout) — no parallel style introduced
 [ ] No generated-page tells: emoji/sparkles in UI, unjustified purple/gradients, >3 radii, off-scale spacing, dead clicks / href="#", missing loading states
 [ ] Real semantics (one <h1>, landmarks, <button>/<a> not <div onClick>); no unmarked placeholders or fake content

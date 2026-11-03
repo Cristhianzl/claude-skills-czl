@@ -82,6 +82,12 @@ IMPORTANT — Accessibility (when the diff touches UI)
 [ ] No color-only meaning; composite widgets (grid/tree/menu) are one tab stop with roving tabindex
 [ ] If the project has a11y scanners, they ran green on the changed states (not just default render) — all engines, not just one
 
+IMPORTANT — Simplicity first (when the diff creates or reshapes UI)
+[ ] One job and one primary action per new screen; no route, state, or component without a user need
+[ ] No tagline, helper text restating its label, secondary label, or eyebrow that a better layout (rename, remove, reorder, show-don't-tell) could replace — but labels, errors, destructive-action consequences, and required legal text stay
+[ ] Agent-drivable (AX): semantic elements, accessible names matching visible text, navigable state in the URL, states exposed via ARIA attributes, no hover/drag-only controls
+[ ] Simplifying didn't break anything: no capability, deep link, test selector, or in-use i18n key removed silently
+
 IMPORTANT — i18n (when the repo has a locales/ dir or i18n config)
 [ ] No hardcoded user-facing strings in the diff — new UI text goes through the translation function
 [ ] Every new translation key exists in ALL locale files (missing in one language = broken UI for that language)

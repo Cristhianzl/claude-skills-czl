@@ -18,10 +18,11 @@ Polish that reads as professional comes from restraint, consistent tokens, and c
 
 ## UX writing
 
+- **The best copy is the copy you didn't need.** Before writing a tagline, helper line, subtitle, or tooltip, try to make the layout carry it (`simplicity-first.md`). Labels, errors, and required legal text are never cut.
 - **Write from the user's side of the screen.** Name things by what the person controls ("Notifications", not "Webhook config").
 - **Active voice; say exactly what happens.** "Save changes", not "Submit". An action keeps the same name through the whole flow.
 - **Errors give direction, not apologies.** Say what went wrong and the next step; never vague ("Something went wrong").
-- **Empty states are an opportunity:** explain what goes here and offer the first action.
+- **Empty states teach by acting:** one short line on what goes here, plus the first action — not a paragraph.
 
 ## Typographic details
 

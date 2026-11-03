@@ -9,6 +9,20 @@ means: a hook starts blocking code it used to allow, a skill or rule reverses
 advice you may have built on, or a file moves so an existing install stops
 resolving it.
 
+## [2.4.0] - 2026-11-03
+
+### Added
+
+- **`building-frontend-ui/references/simplicity-first.md`** — the root directive for every UI: as polished as Linear's website or Apple Notes — simple purpose, simple architecture, simple design, simple implementation. Cut taglines, helper text, and secondary labels; if a screen needs them to make sense, fix the layout (the layout-fix ladder: rename → remove → reorder/group → show, don't tell → disclose progressively → teach by acting → only then one helper line). Every decision raises UX, DX, and AX (agent experience: semantics, accessible names, state in URL/ARIA) at once, without breaking anything. Explicit never-cut list (labels, accessible names, errors, destructive-action consequences, required legal text) and the **mute test**.
+
+### Changed
+
+- **`building-frontend-ui`** — the directive is the first section of the skill ("read before anything else"), part of its description and triggers, and the first pre-delivery check. On existing products it governs new UI and the lines being changed; removing existing copy or screens is proposed, never done unasked.
+- **Anti vibe-coded audit** — new corollary (clarity comes from subtraction), a "copy that props up the layout" signal, a Vibe Check item, the mute test as the sixth final test and a scorecard blocker (now 29 items), and a `helperCopy` counter in the console audit.
+- **`ux-writing.md` / `designing-from-scratch.md`** — eyebrows and hero sub-lines are no longer defaults; empty states teach by acting in one line.
+- **`rules/frontend.md`** — "Simplicity first" is now the first enforced section for UI files.
+- **Review checklists** (agnostic, langflow, pr-reviewer) — a simplicity-first check for diffs that create or reshape UI.
+
 ## [2.3.0] - 2026-11-03
 
 ### Added

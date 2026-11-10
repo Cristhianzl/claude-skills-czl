@@ -9,6 +9,12 @@ means: a hook starts blocking code it used to allow, a skill or rule reverses
 advice you may have built on, or a file moves so an existing install stops
 resolving it.
 
+## [2.5.0] - 2026-11-10
+
+### Changed
+
+- **`/pr` reviews the PR it opens** (agnostic, langflow) — after `gh pr create`, the command reads the PR back from GitHub and applies `reviewing-code` in the same turn, preferably in a fresh subagent that gets only the PR number. The review is printed in chat after the URL; it is never posted and findings are never fixed unasked. `writing-pull-requests` gains the matching workflow step, so a PR opened outside `/pr` gets the same review.
+
 ## [2.4.0] - 2026-11-03
 
 ### Added

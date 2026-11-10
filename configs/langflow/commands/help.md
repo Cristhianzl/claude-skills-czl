@@ -20,7 +20,7 @@ description: List the available commands
 |`/commit [msg]`|Lint + tests + commit|
 |`/done [msg]`|Review + check + commit|
 |`/push`|Push the current branch|
-|`/pr [title]`|Create a PR on GitHub|
+|`/pr [title]`|Create a PR on GitHub, then review it|
 
 ## Roadmap
 
@@ -45,5 +45,5 @@ description: List the available commands
 ... code ...
 /done "feat: ..."      # finalize
 /push                  # send
-/pr                    # open PR
+/pr                    # open PR + review it
 ```

@@ -43,7 +43,10 @@ If `learnings/` contains only `README.md`, proceed with the defaults below.
 
 6. **Print the output block** (format below) in chat. **Do not write a file.** **Do not run `git commit`, `git add`, or `git push`** — only the human commits.
 
-7. **Capture a learning (final step, mandatory ask).** Before closing the task, ask yourself: *did I encounter a convention, constraint, or trap that wasn't in this SKILL.md or in `references/`?* If yes, append a `learnings/YYYY-MM-DD-slug.md` per `learnings/README.md`. If no, skip — don't write filler.
+7. **Review the PR once it is open (always).** Whenever this task ends with a PR actually open on GitHub — created through `/pr`, or opened by the user who then hands you the number — review it in the same turn with the `reviewing-code` skill, without waiting to be asked. Read it back from GitHub (`gh pr view`, `gh pr diff`, `gh pr checks`), prefer a fresh subagent that gets only the PR number, and print the review in chat after the PR URL. Never post it (`gh pr review` / `gh pr comment`) and never fix findings unasked. A title/description that was only drafted in chat has no PR to review — skip.
+   → verify: the turn that returns a PR URL also contains its review.
+
+8. **Capture a learning (final step, mandatory ask).** Before closing the task, ask yourself: *did I encounter a convention, constraint, or trap that wasn't in this SKILL.md or in `references/`?* If yes, append a `learnings/YYYY-MM-DD-slug.md` per `learnings/README.md`. If no, skip — don't write filler.
 
 ## Type table
 
@@ -88,6 +91,7 @@ DESCRIPTION:
 ## See also
 
 - `../documenting-features/references/communication.md` — answer-first structure (Minto Pyramid); first line = what it does and why it's safe to merge.
+- `../reviewing-code/SKILL.md` — the review every opened PR gets (workflow step 7).
 - `references/examples.md` — wrong-vs-right titles and descriptions, distilled from common LLM mistakes.
 - `references/templates.md` — full template variants (feature, fix, refactor, revert, breaking change).
 - `learnings/` — project-specific conventions accumulated over time. **Read before generating.** **Append a new file when you discover a non-obvious convention** (see `learnings/README.md` for the append protocol).

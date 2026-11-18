@@ -23,7 +23,7 @@ If none produce changes, say so and stop. Do not review a clean tree.
 
 Follow `skills/reviewing-code/SKILL.md` end to end: read the diff completely first, then apply the
 lenses in order — security, scope (`references/scope-checks.md`), comprehension, structural, platform, correctness, tests. Read the
-`references/` that match what the diff touches, and any relevant `learnings/`.
+`references/` that match what the diff touches (`web-security-checks.md` for anything that renders data or handles a request; `pr-pentest.md` when the change can be run locally), and any relevant `learnings/`.
 
 Read the full file around a changed hunk when the diff alone can't tell you whether a finding is
 real. A finding you can't anchor to `file:line` is not ready to report.

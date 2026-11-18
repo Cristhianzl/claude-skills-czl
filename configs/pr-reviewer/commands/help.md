@@ -17,7 +17,7 @@ push, or post to GitHub. Those are blocked by `settings.json` and `hooks/block-m
 | `/help` | This message. |
 
 **The ruleset** lives in `skills/reviewing-code/`: `SKILL.md` is the workflow and the severity
-model; `references/` holds the depth — `security-checks.md`, `structural-checks.md`,
+model; `references/` holds the depth — `security-checks.md`, `web-security-checks.md`, `pr-pentest.md`, `structural-checks.md`,
 `correctness-checks.md`, `grep-recipes.md`, `output-format.md`, `checklist.md`.
 
 **To teach it your project:** drop a dated note in `skills/reviewing-code/learnings/`. A learning

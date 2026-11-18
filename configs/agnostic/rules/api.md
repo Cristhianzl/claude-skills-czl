@@ -5,7 +5,7 @@ globs: "**/{api,routes,controllers,handlers}/**"
 
 # API
 
-> Prerequisite: `CLAUDE.md` (general baseline). Depth: `skills/api-design` (and its `references/`).
+> Prerequisite: `CLAUDE.md` (general baseline). Depth: `skills/api-design` (and its `references/`); security depth: `skills/writing-secure-code`.
 
 The short, non-negotiable subset. The skill carries the full reasoning, method/status tables, pagination, versioning, and security detail.
 

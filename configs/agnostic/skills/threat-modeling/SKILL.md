@@ -84,6 +84,7 @@ After completing a threat model, ask: *did I encounter an asset, attacker person
 - `references/dfd-and-scope.md` — how to build a Data Flow Diagram (four element types + trust boundaries), how to scope assets and altitude, with a worked mini-example.
 - `references/methodologies-and-risk.md` — when to reach for PASTA, Attack Trees, LINDDUN (privacy), VAST, OCTAVE; risk ranking (likelihood × impact, DREAD and its criticism, CVSS); abuse cases and attacker personas.
 - `developing-features` skill — security implementation depth once threats are known; see its `references/security.md` for the controls (validation, authz, secrets, encryption) you map threats to.
+- `writing-secure-code` skill — the client and server controls (rendering, sessions, CSRF/CORS/CSP, authorization, SSRF, uploads, crypto, supply chain) that mitigations map to.
 - `reviewing-code` skill — the security checks that verify, at PR time, that the controls this model specified actually shipped.
 - `api-design` skill — API security (authn/authz, input validation, rate limiting) for threats found on API trust boundaries.
 - `learnings/` — project-specific assets, attacker personas, accepted risks, and recurring threat patterns.

@@ -41,7 +41,7 @@ The review is a chat message the human copies and posts. It is never a side effe
    **Then check scope** (`references/scope-checks.md`): walk the diff file by file against the PR's stated purpose. Unrelated refactors/renames/reformatting, behavior changes the description doesn't mention, weakened or deleted test assertions, unneeded deps/abstractions/config, unrequested artifacts, and slop on added lines are findings.
    → verify: every changed file maps to the PR's purpose, is a disclosed required change, or is a finding.
 
-2. **Apply the security lens** to every significant block (see `references/security-checks.md`). Five questions: what is being trusted unverified? what's the authoritative source for this behavior? what happens on the failure path? who controls each value and could they lie? what is the blast radius if this is wrong?
+2. **Apply the security lens** to every significant block (see `references/security-checks.md`; when the diff renders data, handles a request, or touches cookies, CORS, CSP, auth, queries, uploads, or outbound URLs, also `references/web-security-checks.md`). When such a PR can be run in a local or ephemeral environment, run the matching probes from `references/pr-pentest.md` under its rules of engagement — never against production or shared environments. Five questions: what is being trusted unverified? what's the authoritative source for this behavior? what happens on the failure path? who controls each value and could they lie? what is the blast radius if this is wrong?
    → verify: every "unverified assumption" has been mapped to either a finding or a defensible justification in the diff.
 
 3. **Apply the comprehension audit.** For every non-trivial block: can the author summarize it in 1–3 sentences? Is the *why* captured durably (test name, `Why:` comment, PR `## Design Decisions`, ADR)? Or is the block "AI wrote it, I trust it"?
@@ -177,6 +177,8 @@ Detailed rules — labeling schemes, length, length, link format, copy-paste saf
 
 - `references/output-format.md` — GitHub-comment formatting rules, label schemes, structure skeleton, copy-paste safety check.
 - `references/security-checks.md` — PII zero-tolerance, AI security, third-party integration, AI-untrusted-code lens, AI runtime resilience.
+- `references/pr-pentest.md` — minimal dynamic pentest for a PR: 13 safe `curl` probes (auth, BOLA, BFLA, mass assignment, CSRF, CORS, headers/cookies, stored XSS, open redirect, SSRF, injection, brute force/enumeration, error leakage) with rules of engagement and WSTG IDs.
+- `references/web-security-checks.md` — client and server security as diff checks: XSS sinks, URL schemes, tokens in storage, UI-only authorization, CSRF/CORS/CSP/cookies, injection, BOLA/BFLA, mass assignment, SSRF, uploads, parsers, passwords, JWT, plus the PR-level reads (dependencies, CI, permission migrations).
 - `references/structural-checks.md` — file structure hard limits, SOLID verification, pragmatic principles, layer separation, error handling, testing, platform agnosticism.
 - `references/correctness-checks.md` — enum/state-machine completeness, control-flow exceptions propagate unwrapped, degrade-don't-crash contracts + the failure-path test spec.
 - `references/scope-checks.md` — is the PR in scope (unrelated hunks, unmentioned behavior changes, weakened tests, slop) and is the review in scope (no out-of-scope blockers).

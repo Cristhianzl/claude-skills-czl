@@ -11,7 +11,7 @@ Review `git diff HEAD` against the rules in `.claude/rules/`.
 
 - Compliance with the rule of the edited area (`.claude/rules/<area>.md`)
 - `CLAUDE.md`: type hints, no `print`/`console.log`, no credentials, no duplication
-- Security: parameterized SQL, no raw `dangerouslySetInnerHTML`, validated inputs
+- Security: parameterized SQL, no unsanitized `dangerouslySetInnerHTML`, validated inputs, and the applicable items of `skills/reviewing-code/references/web-security-checks.md`
 - Auth: new private endpoints have an auth dependency when needed
 - Tests: new code has a corresponding test
 - Scope: every changed file and hunk traces to the request; no drive-by refactors, reformatting, unrequested files/deps/config, or weakened existing assertions (`skills/guarding-scope`)

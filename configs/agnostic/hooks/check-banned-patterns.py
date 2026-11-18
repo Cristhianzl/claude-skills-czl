@@ -11,6 +11,7 @@ TEST_DIR_NAMES = {"tests", "test", "__tests__", "spec", "fixtures"}
 TEST_NAME_PATTERNS = (re.compile(r"^test_"), re.compile(r"_test\.(py|go|ts|tsx|js|jsx)$"), re.compile(r"\.test\.(ts|tsx|js|jsx)$"), re.compile(r"\.spec\.(ts|tsx|js|jsx)$"), re.compile(r"^conftest\.py$"))
 SCRIPT_DIR_NAMES = {"scripts", "bin", "tools", "hooks"}
 DTS_RE = re.compile(r"\.d\.ts$")
+SANITIZED_HTML_RE = re.compile(r"__html\s*:\s*[\w.]*[Ss]anitiz\w*\s*\(")
 
 RULES = [
     {
@@ -85,7 +86,7 @@ RULES = [
         "id": "dangerous-html",
         "exts": {".tsx", ".jsx"},
         "regex": re.compile(r"\bdangerouslySetInnerHTML\b"),
-        "message": "dangerouslySetInnerHTML enables stored XSS. Sanitize and use safe rendering.",
+        "message": "dangerouslySetInnerHTML with an unsanitized value enables XSS. Pass the value through DOMPurify.sanitize(...) (or the project sanitizer) inside __html, or render it as text.",
     },
     {
         "id": "py-bare-except",
@@ -105,8 +106,8 @@ RULES = [
     {
         "id": "localStorage-token",
         "exts": {".ts", ".tsx", ".js", ".jsx"},
-        "regex": re.compile(r"localStorage\.setItem\s*\([^)]*[Tt]oken"),
-        "message": "Never store tokens in localStorage. Use httpOnly cookies with Secure + SameSite.",
+        "regex": re.compile(r"(local|session)Storage\.setItem\s*\([^)]*[Tt]oken"),
+        "message": "Never store tokens in localStorage/sessionStorage. Use httpOnly cookies with Secure + SameSite, or a backend-for-frontend.",
     },
 ]
 
@@ -159,6 +160,8 @@ def run_rule(rule: dict, content: str, path: Path) -> list[tuple[int, str]]:
         if rule["id"] == "py-datetime-now-no-utc":
             if datetime_now_utc_present(raw):
                 continue
+        if rule["id"] == "dangerous-html" and SANITIZED_HTML_RE.search(raw):
+            continue
         if rule["id"] == "hardcoded-paths" and any(s in raw for s in ("os.environ", "Path(__file__)", "tempfile.")):
             continue
         hits.append((lineno, raw.strip()[:120]))

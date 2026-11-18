@@ -18,7 +18,7 @@ If `$ARGUMENTS` is empty, ask which PR. Do not guess.
 ## Review
 
 Follow `skills/reviewing-code/SKILL.md`. Compare the PR description against the diff first — a
-description that claims something the diff doesn't do is a finding on its own.
+description that claims something the diff doesn't do is a finding on its own. Apply `references/web-security-checks.md` when the diff renders data or handles a request, and the probes in `references/pr-pentest.md` when the PR branch can be run locally — never against production or a shared environment.
 
 Read the surrounding file, not just the hunk, whenever the diff is not enough to decide whether a
 finding is real. `gh pr diff` shows the change; it does not show what the change breaks.

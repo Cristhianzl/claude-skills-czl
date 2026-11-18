@@ -3,6 +3,7 @@
 Security is a lens applied to every decision. Apply this when implementing **anything** that touches user input, external systems, persistence, authentication, or AI/LLM features.
 
 > For a dedicated audit pass (frontend + backend, OWASP Top 10 2025, with a safe-remediation protocol), use the `security-review` skill.
+> For the client and server build rules in depth — rendering untrusted data, cookies and sessions, CSRF/CORS/CSP, authorization, SSRF, uploads and parsers, crypto, supply chain — use the `writing-secure-code` skill. This file keeps the general lens, the AI/LLM guardrails, and third-party integration rules.
 
 ---
 
@@ -34,14 +35,14 @@ A task is **not complete** until these are answered. If you discover mid-impleme
 
 ## General rules
 
-- Sanitize and validate **all** user and external inputs.
+- Validate **all** user and external inputs at the boundary against an allow-list schema; encode output for its context; sanitize only user-authored markup, at render, keeping the raw value stored.
 - Never trust data from outside the system boundary.
 - Avoid exposing internal details in error messages to end users.
 - Keep secrets out of code; use environment variables or secret managers. **Never in a client-shipped file or a public-prefixed env var** (`NEXT_PUBLIC_`, `VITE_`, `PUBLIC_` ship to the browser bundle) — third-party keys are used only in server code.
 - Use HTTPS/TLS for **all** external communication. Never transmit sensitive data over plain HTTP.
 - Apply rate limiting on all public-facing endpoints to prevent abuse and brute-force attacks.
 - Use parameterized queries or ORMs for **all** database access. String concatenation in queries is forbidden.
-- Store passwords using strong adaptive hashing (bcrypt, Argon2, scrypt). Never MD5 or SHA-1.
+- Store passwords with an adaptive password hash at OWASP parameters (Argon2id, scrypt, bcrypt, or PBKDF2 — detail in `writing-secure-code/references/server.md`). Never MD5, SHA-1, or SHA-256/512.
 - Sensitive data at rest (PII, credentials, payment info) must be encrypted.
 - Apply the **Principle of Least Privilege** everywhere: every service, user, and component gets the minimum permissions it needs — nothing more.
 
@@ -61,10 +62,10 @@ A task is **not complete** until these are answered. If you discover mid-impleme
 
 - **Authentication** (who you are) and **Authorization** (what you can do) are enforced **server-side on every request** — never trust the client.
 - Implement token expiration and refresh flows. Access tokens must be short-lived.
-- Use industry-standard protocols: OAuth 2.0, OpenID Connect, JWT with RS256 (avoid HS256 with shared secrets).
+- Use industry-standard protocols (OAuth 2.0, OpenID Connect). For JWTs, pin the accepted algorithms and validate `exp`/`iss`/`aud`; sign asymmetrically when verifiers aren't the issuer, and use a shared-secret algorithm only when one service signs and verifies (detail: `writing-secure-code/references/server.md`).
 - Invalidate sessions server-side on logout. Do not rely solely on client-side token deletion.
 - Implement RBAC (Role-Based Access Control) or ABAC (Attribute-Based Access Control) for resource access.
-- Never store tokens or sensitive data in `localStorage` — prefer `httpOnly` cookies with `Secure` and `SameSite` flags.
+- Never store tokens or sensitive data in `localStorage`/`sessionStorage` — prefer `httpOnly` cookies with `Secure` and `SameSite` flags, or a backend-for-frontend.
 
 ---
 
@@ -162,7 +163,7 @@ Before writing a single line of integration code, answer these from the official
 - Implement idempotency keys for state-changing operations to prevent duplicate execution.
 - Never expose stack traces or internal identifiers in API error responses to external clients.
 - **Guard against mass assignment** — use a field allow-list; never let the client set fields like `role` / `is_admin`. Return only the fields needed (never `password_hash` or internal columns).
-- **Set security response headers** — CSP (start report-only), HSTS, `X-Content-Type-Options: nosniff`, `X-Frame-Options` / CSP `frame-ancestors`, `Referrer-Policy`, `Permissions-Policy` — and **CSRF protection** for cookie-session state-changing requests.
+- **Set security response headers** — CSP (start report-only), HSTS, `X-Content-Type-Options: nosniff`, `X-Frame-Options` / CSP `frame-ancestors`, `Referrer-Policy`, `Permissions-Policy` — and **CSRF protection** for cookie-session state-changing requests (detail: `writing-secure-code/references/browser-boundary.md`).
 
 ---
 

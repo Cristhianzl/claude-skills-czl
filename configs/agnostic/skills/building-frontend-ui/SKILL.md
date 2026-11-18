@@ -81,6 +81,7 @@ Semantic HTML before ARIA. `<button>` for actions, `<a>` for navigation — neve
 
 - **No tokens or secrets in `localStorage`/`sessionStorage`** — prefer httpOnly cookies. Store only what the UI needs, versioned, in a `try/catch`.
 - **Never render untrusted HTML** (`dangerouslySetInnerHTML`/`innerHTML`) without sanitizing.
+- Full client rules — raw-markup sinks per framework, URL schemes, redirects, frames and messages, third-party scripts, CSP/cookie interplay: `skills/writing-secure-code` (`references/client.md`, `references/browser-boundary.md`).
 - **Minimize PII** sent to the client, serialized into props/markup, or logged to analytics. Treat the client↔server boundary as a trust boundary.
 - No `console.log` in production. (These align with, and are partly enforced by, the baseline `CLAUDE.md` and hooks.)
 

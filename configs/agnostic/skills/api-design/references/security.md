@@ -1,6 +1,6 @@
 # API security
 
-The non-negotiable security floor for any API surface. Organized around the [OWASP API Security Top 10](https://owasp.org/API-Security/editions/2023/en/0x11-t10/). This complements the broader `developing-features` security reference — the API is one boundary.
+The non-negotiable security floor for any API surface. Organized around the [OWASP API Security Top 10](https://owasp.org/API-Security/editions/2023/en/0x11-t10/). This complements the broader `developing-features` security reference and the `writing-secure-code` skill — the API is one boundary.
 
 ## Transport & authentication
 
@@ -10,7 +10,7 @@ The non-negotiable security floor for any API surface. Organized around the [OWA
 
 ## Authorization — the top two API risks
 
-- **Object-level authorization (OWASP API #1, BOLA).** On every request that names an object, verify the caller is allowed to act on **that specific object** — not merely that they're authenticated. `GET /orders/{id}` must check the order belongs to the caller. This is the most common and most damaging API flaw.
+- **Object-level authorization (OWASP API #1, BOLA).** On every request that names an object, verify the caller is allowed to act on **that specific object** — not merely that they're authenticated. `GET /orders/{id}` must check the order belongs to the caller. This is the most common and most damaging API flaw. Scope the lookup by owner in the same query and return `404` when it finds nothing — a `403` confirms the object exists.
 - **Function-level authorization (OWASP API #2, BFLA).** Verify the caller may invoke this operation at all (e.g. admin-only endpoints). Don't rely on the UI hiding the button.
 - **Scopes for coarse access, per-object checks for fine access.** Scopes gate *which kinds* of operations; object checks gate *which instances*.
 - **Least privilege.** Tokens, service accounts, and DB users get the minimum rights the endpoint needs.

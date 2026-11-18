@@ -55,7 +55,7 @@ Every config is a drop-in `.claude/` folder. The full ones (`agnostic`, `langflo
 | `developing-features-tdd` | Strict red-green-refactor TDD for new features |
 | `fixing-bugs` | Reproduce-first bug fixing (failing test before the fix) |
 | `writing-tests` | Testing pyramid, AAA, naming, coverage gate |
-| `reviewing-code` | Human-voiced PR review — first-person prose in the PR's language, evidence and disposition in every finding, severity as internal triage (never labels), no hard-wrapped lines + correctness lenses (enum/state-machine completeness, control-flow exceptions, degrade-don't-crash) + scope lens (every hunk traces to the PR's purpose; no out-of-scope blockers from the reviewer) |
+| `reviewing-code` | Human-voiced PR review — first-person prose in the PR's language, evidence and disposition in every finding, severity as internal triage (never labels), no hard-wrapped lines + correctness lenses (enum/state-machine completeness, control-flow exceptions, degrade-don't-crash) + scope lens (every hunk traces to the PR's purpose; no out-of-scope blockers from the reviewer) + web security checks for client and server diffs + a **minimal PR pentest** (13 safe `curl` probes mapped to OWASP WSTG, run only against a local/ephemeral environment) |
 | `writing-pull-requests` | Conventional-commit PR titles, messages, descriptions |
 | `documenting-features` | Living, DDD-aligned feature docs (ADRs, C4, Gherkin) |
 | `ensuring-cross-platform` | Linux/macOS/Windows portability rules |
@@ -66,6 +66,7 @@ Every config is a drop-in `.claude/` folder. The full ones (`agnostic`, `langflo
 | `writing-prd` | Product requirements — PRDs, one-pagers, PR-FAQs; problem-first, testable metrics, explicit non-goals |
 | `api-design` | Contract-first, resource-oriented, backward-compatible, secure-by-default HTTP/REST APIs (with REST/GraphQL/gRPC guidance) |
 | `threat-modeling` | Security design analysis — data-flow diagrams & trust boundaries, STRIDE, abuse cases, threats → controls → tests |
+| `writing-secure-code` | Build-time security for any client and any server, in any language or architecture — safe rendering, cookies/sessions, CSRF/CORS/CSP and headers, injection, auth/passwords/tokens, BOLA/BFLA, service-to-service trust, SSRF, uploads/parsers, secrets, crypto, supply chain; every behavior claim tested in Chromium/Firefox/WebKit or against real libraries, every fact checked at its primary source, rejected popular advice listed |
 | `security-review` | Focused security audit of app code (frontend + backend) — OWASP Top 10 2025 + API Top 10 + privacy (LGPD/GDPR), with a safe, anti-regression remediation protocol |
 | `running-agent-loops` | Drive multi-step / unattended agent loops safely — sequential pipelines, PR loops, RFC→DAG, the shared-notes context bridge, the de-sloppify pass |
 | `debugging-agent-runs` | Recover a stuck/looping agent run — restate the goal, verify world state, shrink scope, run one discriminating check, then retry |
@@ -84,13 +85,15 @@ Every config is a drop-in `.claude/` folder. The full ones (`agnostic`, `langflo
 
 `/review` (working tree, staged, or a branch against its base) · `/review-pr` (a GitHub PR by number) · `/dual-review` · `/help`
 
+Its `reviewing-code` skill carries the same web security checks and minimal PR pentest as the full configs; the pentest's `curl` probes are not pre-allowed, so each one asks for approval.
+
 ### Hooks (what gets enforced)
 
 | Hook | Event | Enforces |
 |------|-------|----------|
 | `check-comments.py` | on Write/Edit | No WHAT-comments; comment-density cap; doc-comments (`///`, `//!`) exempt |
 | `check-file-size.py` | on Write/Edit | ≤ 500 LOC per file (≤ 700 with justification) |
-| `check-banned-patterns.py` | on Write/Edit | `shell=True`, `eval`/`exec` on input, hardcoded paths, tokens in `localStorage`, bare `except:`, … |
+| `check-banned-patterns.py` | on Write/Edit | `shell=True`, `eval`/`exec` on input, hardcoded paths, tokens in `localStorage`/`sessionStorage`, unsanitized `dangerouslySetInnerHTML`, bare `except:`, … |
 | `check-language.py` | on Write/Edit | Output is English — blocks non-English code, comments, or docs; i18n catalogs (`locales/`, `*.po`, `pt-BR.json`) exempt |
 | `check-duplication.py` | on Write/Edit | Anti-duplication — when a written function/class name is already defined elsewhere in the repo, feeds back "reuse or justify" with the existing location (test files and generic names exempt) |
 | `check-design-tokens.py` | on Write/Edit | Design-system guard — flags raw color literals hardcoded in components (naming the matching existing token) and new tokens that duplicate or nearly duplicate a color the palette already names |

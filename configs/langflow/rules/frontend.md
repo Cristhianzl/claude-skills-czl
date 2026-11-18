@@ -5,7 +5,7 @@ globs: "**/*.{tsx,jsx,vue,svelte,astro,mdx,css,scss}"
 
 # Frontend
 
-> Prerequisite: `CLAUDE.md` (general baseline). Depth: `skills/building-frontend-ui` (and its `references/`).
+> Prerequisite: `CLAUDE.md` (general baseline). Depth: `skills/building-frontend-ui` (and its `references/`); security depth: `skills/writing-secure-code`.
 
 The short, non-negotiable subset. The skill carries the full reasoning, checklists, and per-framework detail.
 
@@ -41,6 +41,7 @@ The short, non-negotiable subset. The skill carries the full reasoning, checklis
 
 - No tokens or secrets in `localStorage`/`sessionStorage` — prefer httpOnly cookies.
 - Never render untrusted HTML without sanitizing (`dangerouslySetInnerHTML` / `innerHTML`).
+- Never put a user-supplied URL in `href`/`src` without a scheme allow-list; never follow a redirect parameter without resolving it to your own origin.
 - Don't leak PII into props/markup/logs/analytics. No `console.log` in production.
 
 ## State & data

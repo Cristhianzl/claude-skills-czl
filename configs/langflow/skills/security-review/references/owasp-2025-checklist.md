@@ -19,12 +19,12 @@ A review checklist based on OWASP Top 10 **2025** + OWASP API Top 10. Items mark
 - The rest of the family — check what applies to the stack: **NoSQL** (reject operators like `$ne`/`$gt`/`$where`; validate types; never pass a raw request object into a query), **CSV/formula** (prefix fields starting with `= + - @` on export), **CRLF/header** (strip `\r\n` from anything placed in HTTP or email headers), **SSTI** (user input is *data* passed to the template, never part of the template string), **LDAP/XPath** (escape per interpreter), **GraphQL** (depth + complexity limits, introspection off in prod), **prompt injection** (see `../../developing-features/references/untrusted-content.md`).
 
 **Password storage (A04) ↗**
-- bcrypt / argon2id / scrypt with a per-password salt — never MD5 / SHA-1 / plain SHA-256, never reversible "encryption". Prefer a managed auth provider. Migrate old hashes **on next successful login** (transparent re-hash), never in bulk.
+- Argon2id (m=19 MiB, t=2, p=1), scrypt (N=2^17), bcrypt (cost ≥ 10, 72-byte input maximum), or PBKDF2-HMAC-SHA256 (600,000 iterations), salt embedded by the library — never MD5 / SHA-1 / SHA-256/512, never reversible "encryption". Prefer a managed auth provider. Migrate old hashes **on next successful login** (transparent re-hash), never in bulk.
 
 ## HIGH
 
 **Auth & session (A07)**
-- Rate limit / lockout on login, password reset, and signup. 2FA/MFA available (ideally required for admins).
+- Layered rate limits (per IP, per account, global) on login, password reset, and signup, answered with progressive delays or CAPTCHA — not a hard lockout anyone can use to lock users out. 2FA/MFA available (ideally required for admins).
 - JWT: short expiry, signed, **no sensitive data in the payload** (it's readable, only signed). Session cookies `HttpOnly` + `Secure` + `SameSite`. ↗ Logout invalidates the session server-side. ↗
 - Password reset: single-use, expiring token, invalidated after use.
 - **No user enumeration:** login and forgot-password return the same message whether or not the account exists ("If this email is registered, we'll send a link").
@@ -33,19 +33,22 @@ A review checklist based on OWASP Top 10 **2025** + OWASP API Top 10. Items mark
 - HTTPS everywhere with HTTP→HTTPS redirect; **HSTS** enabled. Sensitive data encrypted at rest. `Cache-Control: no-store` on responses carrying sensitive data. Don't store data you don't need.
 
 **Security response headers (A02)** — set at the server / proxy / CDN:
-- **CSP** — the strongest XSS defense; **start in `Content-Security-Policy-Report-Only`**, watch the reports, then enforce.
-- HSTS · `X-Content-Type-Options: nosniff` · `X-Frame-Options: DENY` (or CSP `frame-ancestors`) · `Referrer-Policy: strict-origin-when-cross-origin` · `Permissions-Policy` (disable unused browser APIs like camera/mic/geo).
+- **CSP** — a strict nonce- or hash-based policy as containment behind output encoding (a host allow-list is bypassable); **start in `Content-Security-Policy-Report-Only`**, watch the reports, then enforce.
+- HSTS · `X-Content-Type-Options: nosniff` · CSP `frame-ancestors` (plus `X-Frame-Options` for legacy browsers) · `Referrer-Policy: strict-origin-when-cross-origin` · `Permissions-Policy` (disable unused browser APIs like camera/mic/geo).
 
 **CORS & CSRF**
 - `Access-Control-Allow-Origin` is an explicit allow-list (never `*` with credentials); don't reflect an arbitrary `Origin`. ↗
-- State-changing requests authenticated by a **session cookie** need CSRF protection (a CSRF token or strict `SameSite`). APIs authenticated by an `Authorization` header token are naturally less exposed — confirm which you are.
+- State-changing requests authenticated by a **session cookie** need a primary CSRF defense — a token (synchronizer, or signed double-submit) or Fetch Metadata with a mandatory `Origin` fallback. `SameSite` is defense in depth only: it doesn't cover sibling subdomains or mutating GETs, and only Chromium defaults it. `GET` never changes state. APIs authenticated by an `Authorization` header token are not exposed — confirm which you are.
+
+**SSRF (CWE-918, mapped to A01)**
+- Every user-influenced outbound URL (webhooks, previews, imports, renderers) is validated against the **resolved** IP — private, loopback, link-local, and metadata ranges blocked after normalizing IPv4-mapped forms — with redirects disabled or re-validated. Also check open redirects, XXE, unsafe deserialization, and path traversal (`../../writing-secure-code/references/server.md`, `client.md`).
 
 **Supply chain (A03) ↗**
 - Run `npm`/`pnpm audit` / `pip-audit` / equivalent; fix high/critical. Lockfile committed. Remove unused deps. Enable Dependabot/Renovate. Consider an SBOM. Update one dep at a time; prefer security patches over major upgrades.
 
 ## MEDIUM
 
-**Misconfiguration (A02):** debug mode off in prod; no default credentials/keys; admin panel behind auth and not at an obvious route; directory listing, backup files, and `.git` not publicly accessible; unused ports/services closed.
+**Misconfiguration (A02):** debug mode off in prod; no default credentials/keys; admin panel behind authentication plus a role check (an unlisted route is not a control); directory listing, backup files, and `.git` not publicly accessible; unused ports/services closed.
 
 **Error handling (A10) ↗:** generic error to the user (no stack trace / SQL / file path / framework version); the detailed log stays server-side; the app doesn't crash or enter an insecure state on unexpected/null/malformed input; **fail closed** — if an authorization check errors, deny.
 

@@ -25,42 +25,41 @@ The #1 review priority. Any PII in a `logger` / `print` / `console.log` call is 
 | `user.stripe_id`          | Acceptable for payment context    |
 | `user.id`                 | Acceptable if it's an internal ID |
 
-Wrong vs right by language:
+**Wrong** — personal data reaches the log line (the same applies to logging a raw request body or user object that contains it):
 
 ```python
-# Wrong
 logger.info(f"User {user.email} logged in")
-logging.warning(f"Failed for {body.email}")
-print(f"Contact sent: {data}")  # if data contains email
-
-# Right
-logger.info(f"User auth_id={user.auth_id} logged in")
-logger.warning("Failed login", extra={"auth_id": user.auth_id})
+logger.warning(f"Failed for {body.email}")
 ```
 
 ```typescript
-// Wrong
-console.log(`User ${user.email} logged in`);
+logger.info(`User ${user.email} logged in`);
 logger.warn(`Failed for ${body.email}`);
-
-// Right
-console.log(`User auth_id=${user.authId} logged in`);
-logger.warn('Failed login', { authId: user.authId });
 ```
 
 ```java
-// Wrong
 logger.info("User {} logged in", user.getEmail());
+```
 
-// Right
-logger.info("User authId={} logged in", user.getAuthId());
+**Right** — a pseudonymous identifier, as a structured field, through the project logger (never `print`/`console.log` in production):
+
+```python
+logger.info("User logged in", extra={"auth_id": user.auth_id})
+```
+
+```typescript
+logger.info("User logged in", { authId: user.authId });
+```
+
+```java
+logger.info("User logged in authId={}", user.getAuthId());
 ```
 
 ---
 
 ## General security checks
 
-- All user inputs sanitized and validated at system boundaries.
+- All external inputs validated at system boundaries against an allow-list schema; output encoded for its context; user-authored markup sanitized at render (the raw value stays stored).
 - No secrets / credentials in code (env vars or secret managers).
 - No internal details exposed in error messages to end users.
 - External / untrusted data never trusted without validation.
@@ -69,7 +68,8 @@ logger.info("User authId={} logged in", user.getAuthId());
 - Sensitive data not stored in plain text.
 - HTTPS / TLS for all external communication.
 - Rate limiting implemented on all public-facing endpoints.
-- Passwords stored with bcrypt / Argon2 / scrypt — never MD5 / SHA-1.
+- Passwords hashed with Argon2id / scrypt / bcrypt / PBKDF2 at OWASP parameters — never MD5, SHA-1, or SHA-256/512, never reversible encryption.
+- Web-specific checks — raw-markup sinks, URL schemes, CSRF, CORS, CSP, cookies, BOLA/BFLA, mass assignment, SSRF, uploads, parsers, JWT: `web-security-checks.md`; dynamic probes when the PR can be run: `pr-pentest.md`.
 - Sensitive data at rest (PII, credentials, payment info) encrypted.
 
 ---

@@ -14,6 +14,7 @@ List `learnings/` and read anything relevant. **Reuse, don't re-derive:**
 
 - The **always-on blocker set** applied to every PR lives in `../reviewing-code/references/security-checks.md` (PII in logs, injection, HMAC/signature, the AI-generated-code lens). Apply it — don't re-list it.
 - The **build-time prevention rules** live in `../developing-features/references/security.md` (auth/session, DB least-privilege, TLS, supply chain, and the full AI/LLM guardrails) and `../developing-features/references/untrusted-content.md` (prompt injection).
+- The **client and server build rules** — rendering, cookies, CSRF/CORS/CSP, authorization, SSRF, uploads, parsers, crypto, supply chain — live in `../writing-secure-code/`; its `references/sources.md` records what was tested empirically and which popular advice is rejected. Judge findings against it.
 - This skill adds the **OWASP-2025 breadth**, the **frontend / infra / privacy gaps**, and the **safe-remediation protocol** (see `references/`).
 
 ## How to run a security review

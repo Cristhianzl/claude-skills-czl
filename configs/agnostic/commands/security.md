@@ -49,6 +49,11 @@ List private endpoints without an auth dependency. Flag the ones that look priva
 - Personal data (emails, IDs) in logs (Grep `logger.*email` and similar)
 - Sensitive fields hashed/encrypted in models
 
+## 8. Web surface
+
+- Run the grep starters in `skills/reviewing-code/references/web-security-checks.md` (raw-markup sinks, tokens in web storage, redirects, CORS/CSP/cookies, string-built queries, identity from the request, outbound fetches, unsafe parsers) and read each hit in context.
+- Judge findings against `skills/writing-secure-code` — it records which behaviors were tested and which popular advice is rejected.
+
 ## Report
 
 ```text

@@ -9,6 +9,20 @@ means: a hook starts blocking code it used to allow, a skill or rule reverses
 advice you may have built on, or a file moves so an existing install stops
 resolving it.
 
+## [2.6.0] - 2026-11-18
+
+### Added
+
+- **`skills/writing-secure-code`** (agnostic, langflow) — build-time security for any client and any server, independent of language, framework, and architecture: five invariants, a workflow that ends in abuse tests, architecture defaults, and references for clients (browser, webview, mobile, desktop), the browser–server boundary (cookies, sessions, CSRF, CORS, CSP, headers), servers (validation, injection, authentication, passwords, tokens, authorization, service-to-service trust, SSRF, files and parsers, secrets, crypto, logging, abuse limits), and supply chain. Distilled from six articles and seven talks, every factual claim checked against its primary source (OWASP, NIST SP 800-63B-4, MDN, CSP spec, RFC 9700/10017/8252, PCI DSS, MASVS) and every behavior claim tested — cookies, CSRF, CORS, CSP, Trusted Types, frames, and redirects in Chromium 159, Firefox 159, and WebKit 27.2; library behavior in Node and Python. `references/sources.md` records the versions, the results, and the popular advice that was rejected and why.
+- **`reviewing-code/references/web-security-checks.md`** (agnostic, langflow, pr-reviewer) — the same rules as diff checks for clients and servers, with triage guidance and grep starters.
+- **`reviewing-code/references/pr-pentest.md`** (agnostic, langflow, pr-reviewer) — a minimal dynamic pentest for PRs: 13 safe `curl` probes (unauthenticated access, BOLA read/write, BFLA, mass assignment, CSRF, CORS reflection, headers and cookie flags, stored XSS, open redirect, SSRF through four address encodings, filter injection, brute force and enumeration, error leakage), each mapped to an OWASP WSTG test, under rules of engagement (local or ephemeral environment only, disposable accounts, no load, human approval per command). Every probe was run against a deliberately vulnerable app and its fixed twin: 26/26 correct verdicts.
+
+### Changed
+
+- **`hooks/check-banned-patterns.py`** (agnostic, langflow) — no longer blocks `dangerouslySetInnerHTML` when the value passes through a sanitizer inside `__html` (the skills prescribe exactly that), and now also blocks tokens in `sessionStorage` (the rules ban both web storages). Behavior verified with a before/after test.
+- **Contradictions fixed across the configs:** password hashing everywhere now names OWASP parameters and rejects SHA-256/512, not only MD5/SHA-1; "sanitize inputs" became validate at the boundary, encode on output, sanitize only user-authored markup at render; the JWT rule pins algorithms instead of mandating RS256; CSRF guidance no longer treats `SameSite` as sufficient; CSP is containment, not "the strongest XSS defense"; admin routes need a role check, not an obscure path; hard account lockout replaced by layered rate limits; `404` for objects the caller doesn't own; the PII-in-logs examples no longer recommend `console.log` or carry code comments; SSRF added to the audit checklist.
+- **`reviewing-code`, `/review`, `/review-pr`, `/security`, `security-review`, `developing-features`, `api-design`, `building-frontend-ui`, `threat-modeling`, `rules/frontend.md`, `rules/api.md`, and both baselines** now point to `writing-secure-code`, `web-security-checks.md`, and `pr-pentest.md` where they apply.
+
 ## [2.5.0] - 2026-11-10
 
 ### Changed

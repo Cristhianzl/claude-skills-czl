@@ -124,7 +124,7 @@ TESTING (see writing-tests skill)
 To achieve a perfect review score, the code must:
 
 1. Zero PII in logs — verified by searching for email, name, phone patterns.
-2. Zero security issues — no hardcoded secrets, proper input validation.
+2. Zero security issues — no hardcoded secrets, proper input validation, and every applicable item in `web-security-checks.md` clean.
 3. Zero DRY violations — no duplicate logic, types, or classes.
 4. Zero file structure violations — ≤500 lines (600–700 only if all other rules pass), ≤5 functions (different responsibilities), ≤10 (same responsibility), ≤1 main class.
 5. Zero mixed responsibilities — no different function prefixes in the same file.

@@ -30,5 +30,4 @@ real. A finding you can't anchor to `file:line` is not ready to report.
 
 ## Output
 
-Render per `skills/reviewing-code/references/output-format.md` and run the copy-paste safety check
-before printing. Print it in the chat — never write it to a file, never post it.
+There's no PR here, so give the review in the chat in the shape `skills/reviewing-code/references/output-format.md` describes: the summary first, then each comment headed by its `path:line` and opening with its severity. Never write it to a file.

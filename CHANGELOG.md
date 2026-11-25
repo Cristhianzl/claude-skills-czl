@@ -9,6 +9,18 @@ means: a hook starts blocking code it used to allow, a skill or rule reverses
 advice you may have built on, or a file moves so an existing install stops
 resolving it.
 
+## [2.8.0] - 2026-11-25
+
+Reviews are now posted on the PR the way human reviewers work: short inline comments on the exact changed lines, each opening with its severity, plus a brief summary — instead of one long document at the end.
+
+### Changed
+
+- **`reviewing-code` posts the review on the PR** (agnostic, langflow, pr-reviewer) when the user asks for a review: one GitHub review through the reviews API, with inline comments that open with `**Blocker:**`, `**Important:**`, `**Recommended:**`, or `**Nit:**`, say what happens and what to do in plain English, and carry a one-click `suggestion` when the fix fits; findings with no line in the diff go in a short summary that also says what was checked and the verdict. The event is `COMMENT` unless the user asks for `APPROVE` or `REQUEST_CHANGES`. Local diffs, `/review`, and the `/pr` self-review give the same shape in the chat. Behavior verified on a live throwaway PR: anchors render on the intended lines (single and multi-line), suggestions render as "Suggested change", one comment outside the diff makes GitHub reject the entire review (`422`), and `REQUEST_CHANGES` on your own PR is refused — so the skill lists commentable lines first, with a snippet tested verbatim against real Langflow PRs.
+- **Reviews are always in English**; the per-PR language exception is gone from the reviewer and both baselines.
+- **Severity labels are back, as the opening word of each comment** — the 2.2 rule against labels is reversed now that findings are anchored comments. `Nice-to-have` is renamed `Nit`.
+- **`pr-reviewer` write guard** (`block-mutations.sh`) — allows exactly one write, creating a review at `repos/<owner>/<repo>/pulls/<n>/reviews`, and blocks every other mutating `gh api` call. It now also catches the implicit POST that `-f`/`-F`/`--field`/`--raw-field`/`--input` trigger (verified with `gh api --verbose`), which the previous guard let through — including a PR merge and a PR close. 22/22 guard cases pass; shellcheck clean.
+- **`pr-reviewer` contract, `/review-pr`, `/review`, `/dual-review`, `/help`** updated to the posting behavior.
+
 ## [2.7.0] - 2026-11-25
 
 Reviews now look where a maintainer looks: outside the diff, at what actually runs, and at what the change costs other users. Prompted by two Langflow PRs that passed a pre-push review and still drew a maintainer's requested changes. Measured by blind reviews of the original pre-fix commits, in isolated repos without the fix commits or comments, scored against the maintainer's six points: the incident's review detected 2 and applied none; the previous skill caught 5 plus 1 partial; the new skill caught all 6 in two separate runs.

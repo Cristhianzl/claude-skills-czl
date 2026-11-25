@@ -15,7 +15,7 @@ Three ready-to-use configurations:
 |--------|-------------|------------|
 | [`configs/agnostic`](configs/agnostic) | **Any project, any language** | A clean, language-agnostic baseline. Nothing assumes a stack; the hooks never fight a language's idioms. |
 | [`configs/langflow`](configs/langflow) | Working in the **Langflow** codebase | Everything in `agnostic`, plus Langflow-specific rules, a `building-langflow-components` skill, and a hook that enforces Langflow conventions. |
-| [`configs/pr-reviewer`](configs/pr-reviewer) | You only want a **PR reviewer** | Lean and read-only. One skill, four commands, and a hook that blocks every mutation — it cannot edit, commit, push, or post. |
+| [`configs/pr-reviewer`](configs/pr-reviewer) | You only want a **PR reviewer** | Lean. One skill, four commands, and a hook that blocks every mutation except posting the review you asked for — it cannot edit, commit, push, merge, or comment anywhere else. |
 
 All three are **self-contained** — each is a complete `.claude/` folder.
 
@@ -55,7 +55,7 @@ Every config is a drop-in `.claude/` folder. The full ones (`agnostic`, `langflo
 | `developing-features-tdd` | Strict red-green-refactor TDD for new features |
 | `fixing-bugs` | Reproduce-first bug fixing (failing test before the fix) |
 | `writing-tests` | Testing pyramid, AAA, naming, coverage gate |
-| `reviewing-code` | Human-voiced PR review — first-person prose in the PR's language, evidence and disposition in every finding, severity as internal triage (never labels), no hard-wrapped lines + correctness lenses (enum/state-machine completeness, control-flow exceptions, degrade-don't-crash) + scope lens (every hunk traces to the PR's purpose; no out-of-scope blockers from the reviewer) + **risk tiers and a context sweep beyond the diff** (callers and transaction owners, consumers of changed values, contention map, CI wiring, precedent) + **test-evidence checks** (fails without the fix per arm, runs in CI, concurrency tests force the interleaving) + a locks-and-transactions lens + a self-review rule (the author never waives a finding; `## Unresolved findings`) + web security checks for client and server diffs + a **minimal PR pentest** (13 safe `curl` probes mapped to OWASP WSTG, run only against a local/ephemeral environment) |
+| `reviewing-code` | PR review posted on the PR like a human reviewer's — short inline comments on the changed lines, each opening with `**Blocker:**` / `**Important:**` / `**Recommended:**` / `**Nit:**`, plus a brief summary of what was checked and the verdict, in plain English; anchors validated before posting (one bad line rejects the whole review), event `COMMENT` unless you ask otherwise + correctness lenses (enum/state-machine completeness, control-flow exceptions, degrade-don't-crash) + scope lens (every hunk traces to the PR's purpose; no out-of-scope blockers from the reviewer) + **risk tiers and a context sweep beyond the diff** (callers and transaction owners, consumers of changed values, contention map, CI wiring, precedent) + **test-evidence checks** (fails without the fix per arm, runs in CI, concurrency tests force the interleaving) + a locks-and-transactions lens + a self-review rule (the author never waives a finding; `## Unresolved findings`) + web security checks for client and server diffs + a **minimal PR pentest** (13 safe `curl` probes mapped to OWASP WSTG, run only against a local/ephemeral environment) |
 | `writing-pull-requests` | Conventional-commit PR titles, messages, descriptions |
 | `documenting-features` | Living, DDD-aligned feature docs (ADRs, C4, Gherkin) |
 | `ensuring-cross-platform` | Linux/macOS/Windows portability rules |
@@ -102,7 +102,7 @@ Its `reviewing-code` skill carries the same web security checks and minimal PR p
 | `check-real-validation.py` | on user prompt | When your request contains a cURL or local endpoint, auto-instructs the agent to treat it as the acceptance test — validate against the running system (request + DB + E2E), no assumptions |
 | `pre-push-smoke.sh` | before `git push` | Fast lint/test smoke on changed areas (project-configurable skeleton) |
 | `check-langflow-rules.py` | on Write/Edit | *(Langflow only)* `SecretStrInput` for API keys, no top-level SDK init in components, Alembic `Phase:` markers |
-| `block-mutations.sh` | before every Bash | *(pr-reviewer only)* Read-only guard — blocks `git commit`/`add`/`push`/`merge`, `gh pr review`/`comment`/`merge`, `gh issue`, and mutating `gh api` calls, **including when they hide after `&&` or `;` in a compound command** |
+| `block-mutations.sh` | before every Bash | *(pr-reviewer only)* Write guard — blocks `git commit`/`add`/`push`/`merge`, `gh pr review`/`comment`/`merge`, `gh issue`, and every mutating `gh api` call (including the implicit POST that `-f`/`-F`/`--field`/`--raw-field`/`--input` trigger) except creating a review at `repos/<owner>/<repo>/pulls/<n>/reviews`, **including when they hide after `&&`, `;`, or `|` in a compound command** |
 
 ## Quick start
 

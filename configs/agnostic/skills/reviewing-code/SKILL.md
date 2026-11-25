@@ -1,12 +1,12 @@
 ---
 name: reviewing-code
-description: Review a pull request and produce a human-voiced, copy-paste-safe review — first person, evidence first, findings as complete sentences ordered by severity (Blocker / Important / Recommended / Nice-to-have as internal triage, never as labels), each with file:line evidence and a disposition. Use when the user asks to review a PR, "code review", "review this diff", "verify the changes before merge", or asks for a second opinion on someone else's branch. Output is the review in chat — never run git or post to GitHub directly.
+description: Review a pull request and post it on the PR as one GitHub review — short inline comments on the exact changed lines, each opening with its severity (Blocker / Important / Recommended / Nit), plus a brief summary of what was checked and the verdict, written in plain, friendly English like a colleague. Goes beyond the diff (callers, other writers, CI wiring, precedent) and checks the test evidence. Use when the user asks to review a PR, "code review", "review this diff", "verify the changes before merge", or asks for a second opinion on someone else's branch. Local diffs and self-reviews get the same shape in chat. Never merges, approves, or requests changes unless asked; never runs git.
 license: MIT
 ---
 
 # Reviewing Code
 
-Produce a PR review that reads like a competent engineer wrote it after doing the work. It applies a security lens, a comprehension audit, and structural checks, triages findings by severity internally, and delivers them as first-person prose — evidence first, disposition in every finding, copy-paste-safe for GitHub.
+Produce a PR review that reads like a competent engineer wrote it after doing the work, and deliver it the way good reviewers do: inline comments on the lines they're about, each starting with its severity, plus a short summary of what you checked and the verdict. It applies a security lens, a context sweep beyond the diff, test-evidence checks, a comprehension audit, and structural checks.
 
 ## Read first (always)
 
@@ -18,22 +18,22 @@ Apply the full discipline (security lens + comprehension audit + checklist + gre
 
 Lighten formality for: docs-only changes, lockfile bumps with no API change, single-line typo fixes, internal-tooling-only changes behind a feature flag not yet enabled. Still apply the security lens — even doc PRs can leak secrets in examples.
 
-## Hard rules — output is a chat message, not a side effect
+## Hard rules — what the reviewer may and may not do
 
-Apply the same restrictions as the `writing-pull-requests` skill, plus review-specific ones:
-
-- **Never** run `gh pr review`, `gh pr comment`, or any GitHub-mutating command. The user posts the review themselves.
+- **When the user asks you to review a PR, post the review on it** — one GitHub review with inline comments and a summary, through the reviews API, exactly as `references/output-format.md` describes. Report the review's URL afterwards. Post nothing else to GitHub: no separate comments, no edits to the PR, no labels, no merges, no closing.
+- **The event is `COMMENT` unless the user asks for `APPROVE` or `REQUEST_CHANGES`.** The verdict is written in the summary. Never `REQUEST_CHANGES` on the user's own PR (GitHub refuses it).
+- **No PR to post on** (a local diff, a branch, a self-review before push, the review `/pr` runs on the PR you just opened): give the same shape in the chat — summary first, then each comment headed by its `path:line`.
 - **Never** run `git commit`, `git add`, `git push`. Only the human commits.
-- **Never** write the review to a file. Output goes in the chat.
+- **Never** save the review in the repository; the payload goes in a temporary file outside it.
 - **Never** use `#N` anywhere in the output — GitHub auto-links it to PR/issue `N`.
 - **Never hard-wrap prose**: one paragraph = one logical line; Enter only at paragraph/list/heading boundaries. Manual 72/80-column wrapping is the strongest "a tool wrote this" tell.
-- **Write like a person** — first person, evidence first, findings as complete sentences with the disposition inside them. No finding IDs, no `**File:**`-style label lines, no emoji headers, no metadata tables. Full voice rules: `references/output-format.md`.
+- **Write like a person** — plain, friendly English, short sentences, one idea per comment: what happens, why it matters, what to change. The only label is the bold severity that opens each comment; no finding IDs, no `**File:**`-style lines, no emoji, no metadata tables. Full voice rules: `references/output-format.md`.
 - **Never** `@mention` users unless the user explicitly asks.
 - **Never** include `Fixes #N`, `Closes #N`, `Resolves #N` — they auto-close issues on merge.
 - **Never** paste full file contents — link with `path/to/file.ts:42` and quote 3-10 relevant lines max.
 - **Never request out-of-scope work as a blocker.** Pre-existing issues in code the PR doesn't touch and "while you're here" ideas are follow-ups, phrased as optional. Judge the PR against its own purpose; ask for less code, not more, unless a real defect requires more (`references/scope-checks.md` § 2).
 - **Never** use absolute local paths (`/Users/...`, `/home/...`). Use repo-relative paths only.
-- **Match the PR's language.** The review or comment is written in the language of the PR itself (title, description, discussion): a pt-BR PR gets a pt-BR review, an English PR gets English. Code identifiers, paths, and quoted code stay verbatim. Mixed or unclear → default to English. (This is the one exception to the English-always baseline.)
+- **Write in English**, whatever the conversation language. Code identifiers, paths, and quoted code stay verbatim.
 
 ## Workflow
 
@@ -70,8 +70,8 @@ Apply the same restrictions as the `writing-pull-requests` skill, plus review-sp
 8. **Triage the findings** by severity (Blocker / Important / Recommended / Nice-to-have) — this taxonomy is your internal ordering tool, not output scaffolding.
    → verify: every finding has file:line evidence, the cause and consequence, and a disposition (fix before merge / follow-up / take-or-leave).
 
-9. **Render the review as human prose inside real sections** (`references/output-format.md`): a `## Summary` with what you did and the verdict, then `##` sections by disposition (before merge / this PR / follow-ups / tests) with a `###` per finding — prose written to the end of the line inside each. No emoji, no IDs, no paragraphs over ~5 sentences.
-   → verify: it passes the copy-paste safety check, is scannable by headings, AND reads aloud like a person — no label-lines, no hard-wrapped lines, no walls of text.
+9. **Post the review** (`references/output-format.md`): list the commentable lines, put each finding inline on the line the author would change (severity first, then what happens and what to do, with a `suggestion` when the fix fits), move findings with no line in the diff to the summary, check what's already on the PR so you don't repeat it, and post one review with event `COMMENT`. Without a PR, give the same shape in the chat.
+   → verify: the output-format checklist passes, and the review's URL is reported to the user.
 
 10. **Capture a learning (final step).** Ask: *did I encounter a review pattern, codebase quirk, recurring violation, or severity adjustment not in this SKILL.md or `references/`?* If yes, append a `learnings/YYYY-MM-DD-slug.md`. If no, skip.
 
@@ -81,9 +81,11 @@ The verdict maps mechanically from the triage. **Never inflate it.**
 
 | Situation | Verdict |
 |---|---|
-| At least one true Blocker | **Request changes** — and name exactly what unblocks it |
-| Important findings, zero Blockers | **Approve with comments** — the PR can merge; the author decides when to address them |
-| Only Recommended / Nice-to-have | **Approve** |
+| At least one true Blocker | "One thing needs to change before merge: …" — name exactly what unblocks it |
+| Important findings, zero Blockers | "Good to merge — a couple of things worth fixing"; the author decides when |
+| Only Recommended / Nits | "Looks good to merge" |
+
+The verdict is written in the summary; the review event stays `COMMENT` unless the user asks for `APPROVE` or `REQUEST_CHANGES`.
 
 ### Self-review and agent loops — the author does not decide
 
@@ -96,20 +98,20 @@ The table above is for reviewing **someone else's** change, where the author own
 
 A finding only counts as a Blocker if it meets the Blocker bar below (security defect, data loss/PII, broken build or tests, high-risk path with no test, a regression that makes user-facing requests wait or fail (for example a lock held across a long transaction on a row a hot path writes)) — "I'd strongly prefer this changed" is Important, **not** a Blocker, and never justifies Request changes. The same discipline applies to section placement: only true Blockers go under "Needs to change before merge"; everything else lives in "Worth fixing in this PR" or later. When in doubt between two severities, pick the lower one.
 
-## Severity scoring (internal triage — expressed in prose, never as labels)
+## Severity scoring — the label that opens each comment
 
-| Severity         | Meaning                                                          | How it sounds in the review |
+| Severity         | Meaning                                                          | Label |
 |------------------|------------------------------------------------------------------|------------------------------|
-| Blocker          | Must be fixed before merge. PII in logs, security defect, file-structure violation, missing test for a high-risk path, a regression that makes user-facing requests wait or fail (for example a lock held across a long transaction on a row a hot path writes). | "This needs to change before merge: …" |
-| Important        | Preferably this PR. SOLID violations, architecture leaks, weak error handling, missing adversarial tests. | "I'd fix this here rather than later: …" |
-| Recommended      | Can ship as a follow-up. Observability gaps, naming clarity, minor duplication. | "Fine as a follow-up: …" |
-| Nice-to-have     | Polish. Idiomatic suggestions, refactor opportunities that don't affect correctness. | "Take it or leave it: …" |
+| Blocker          | Must be fixed before merge. PII in logs, security defect, file-structure violation, missing test for a high-risk path, a regression that makes user-facing requests wait or fail (for example a lock held across a long transaction on a row a hot path writes). | `**Blocker:**` |
+| Important        | Preferably this PR. SOLID violations, architecture leaks, weak error handling, missing adversarial tests. | `**Important:**` |
+| Recommended      | Can ship as a follow-up. Observability gaps, naming clarity, minor duplication. | `**Recommended:**` |
+| Nit              | Polish. Idiomatic suggestions, refactor opportunities that don't affect correctness. | `**Nit:**` |
 
-The taxonomy orders the review; the words above carry it. **Never `#N` anywhere — GitHub auto-links it.**
+The label is the only scaffolding; the sentence after it carries the substance. **Never `#N` anywhere — GitHub auto-links it.**
 
 ## Required output structure
 
-Render exactly the skeleton in `references/output-format.md` § Structure: `## Summary` (what you checked, ran, and traced, plus the verdict in plain words), then sections by disposition — `## Needs to change before merge` (true Blockers only), `## Worth fixing in this PR`, `## Follow-ups and take-it-or-leave-it`, `## Tests` — with a `###` per finding written as prose. No emoji headers, no finding IDs, no `**File:**`-style label lines, no metadata tables. Omit empty sections. When the review comes from a self-review or agent loop, add `## Unresolved findings` (see the verdict rule above).
+One GitHub review: a short summary (what you checked, ran, and traced; the verdict in plain words; findings with no line in the diff) plus inline comments, each opening with `**Blocker:**`, `**Important:**`, `**Recommended:**`, or `**Nit:**`. Full rules, the posting procedure, and the pre-posting checklist: `references/output-format.md`. When the review comes from a self-review or agent loop, end the chat report with `## Unresolved findings`.
 
 ## The five questions to ask on every PR
 
@@ -140,14 +142,12 @@ These are Blockers automatically — full detail in `references/security-checks.
 
 ## Output format
 
-The review comment, ready to paste. Print it in the chat. Don't write a file. Don't run `gh`.
-
-Detailed rules — labeling schemes, length, length, link format, copy-paste safety check — in `references/output-format.md`.
+Posted on the PR as one review (inline comments + summary), or given in the chat in the same shape when there is no PR. Voice, severity labels, what goes inline vs in the summary, the posting procedure, and the checklist: `references/output-format.md`.
 
 ## See also
 
 - `../documenting-features/references/communication.md` — answer-first structure (Minto Pyramid); lead the review with the verdict, then findings by severity.
-- `references/output-format.md` — GitHub-comment formatting rules, label schemes, structure skeleton, copy-paste safety check.
+- `references/output-format.md` — how to write and post the review: voice, severity labels, inline vs summary, commentable lines, the payload and the `gh api` call, and the pre-posting checklist.
 - `references/security-checks.md` — PII zero-tolerance, AI security, third-party integration, AI-untrusted-code lens, AI runtime resilience.
 - `references/pr-pentest.md` — minimal dynamic pentest for a PR: 13 safe `curl` probes (auth, BOLA, BFLA, mass assignment, CSRF, CORS, headers/cookies, stored XSS, open redirect, SSRF, injection, brute force/enumeration, error leakage) with rules of engagement and WSTG IDs.
 - `references/web-security-checks.md` — client and server security as diff checks: XSS sinks, URL schemes, tokens in storage, UI-only authorization, CSRF/CORS/CSP/cookies, injection, BOLA/BFLA, mass assignment, SSRF, uploads, parsers, passwords, JWT, plus the PR-level reads (dependencies, CI, permission migrations).

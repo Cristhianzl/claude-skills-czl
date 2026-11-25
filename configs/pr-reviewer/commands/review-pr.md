@@ -25,5 +25,4 @@ finding is real. `gh pr diff` shows the change; it does not show what the change
 
 ## Output
 
-Render per `skills/reviewing-code/references/output-format.md`, run the copy-paste safety check,
-and print it in the chat. **Never** run `gh pr review` or `gh pr comment` — the human posts it.
+Post it on the PR as one review per `skills/reviewing-code/references/output-format.md`: inline comments on the changed lines (severity first, plain English), findings with no line in the diff in the short summary, event `COMMENT` unless the user asked otherwise. List the commentable lines before posting — one bad anchor rejects the whole review — and check what's already on the PR so you don't repeat it. Then give the user the review's URL. Never use `gh pr review` or `gh pr comment`.

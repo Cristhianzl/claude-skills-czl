@@ -1,96 +1,113 @@
-# Output format — write like a person
+# Output format — a GitHub review, written like a person
 
-The review is read by a colleague, on GitHub or in a `.md` file. It must read like a competent engineer wrote it after actually doing the work — not like a tool filled in a form. The severity taxonomy (Blocker / Important / Recommended / Nice-to-have) stays as your **internal triage**; the output expresses it in prose and in ordering, not in labeled scaffolding.
+When the user asks you to review a pull request, the review is **posted on the PR**: one GitHub review made of short inline comments on the exact lines they're about, plus one short summary comment. That's how experienced reviewers work — the author fixes each point where it lives, resolves the thread, and sees at a glance what's left. A long document at the end makes the author hunt for every `file:line`.
 
-## The exemplar shape
+When there's no PR (a local diff, a branch, a self-review before pushing), use the same shape in the chat: the summary first, then each inline comment headed by its `path:line`.
 
-A strong human review looks like this (structure, not content):
+## How a comment reads
 
-> Checked X in all N directions, with live tests. A, B and C all come through unchanged. I pushed three small fixes, each with a test that fails without it:
->
-> - [abc1234](link): `add_embeddings` raises above its `bulk_size` of 500, so a batch of 501+ failed. It now writes in slices.
-> - …
->
-> I wouldn't apply <bot>'s `text_field` suggestion as written: similarity search also reads `text`, so writes should keep matching ingestion. That can go in a follow-up.
+Write the way a good senior engineer talks to a colleague: plain English, short sentences, one idea per comment. Explain what happens and why it matters in words anyone on the team can follow — no jargon walls, no lecture. The aim is that the author understands the problem the first time they read it and knows exactly what to change.
 
-What makes it work: it **opens with what the reviewer did** (the evidence), findings are **complete sentences with the cause and the consequence in them**, links live **inside the sentence**, and every judgment ends with a **disposition** (fix now / follow-up / won't do, with the reason).
+Every inline comment has the same shape:
 
-## Voice rules
+1. **The severity, first, in bold:** `**Blocker:**`, `**Important:**`, `**Recommended:**`, or `**Nit:**`.
+2. **What happens**, in one or two sentences — the cause and the consequence, concretely ("an email like `' OR '1'='1` matches every row and returns someone else's account").
+3. **What to do about it** — the fix in a sentence, and a ` ```suggestion ` block when the fix fits in the commented lines, so the author can apply it with one click.
+4. **Evidence when you have it** — what you ran or measured, or the other file that makes this a problem (`login.py:70 updates the same row`).
 
-- **First person, evidence first.** Open with what you checked/ran/read — "Ran the migration against a copy of the staging DB", "Traced the auth path end to end" — then what you found. Never open with a metadata table or a verdict badge.
-- **Prose paragraphs, not forms.** No `**File:**` / `**Issue:**` / `**Why it matters:**` / `**Suggested fix:**` label lines — that information goes *inside* the sentences: "`chroma.py:56` coerces metadata to scalars, so a nested dict silently flattens and the round-trip loses it; the other two backends keep it. Either flatten everywhere or reject nested metadata at the interface."
-- **No invented finding IDs** (`B1`, `I2`, `F3`), no findings-count line, no emoji section headers, no severity badges. Severity is carried by **order** (what blocks the merge comes first) and by **plain words** ("this needs to happen before merge"; "fine as a follow-up"; "take it or leave it").
-- **Every judgment gets a disposition and a reason.** "I wouldn't do X as written: <reason>. <where it should go instead>." A finding without a recommended disposition is a complaint, not a review.
-- **Bullets only for true enumerations** (commits, repro steps, a list of affected files) — and each bullet is a complete thought, written to the end.
-- **Structure is not the enemy — walls of text are.** Use real GitHub markup: `##` section headings, `###` per finding, `code` spans, fenced code, bold sparingly. What stays banned is the *robotic* scaffolding: emoji in headings, finding IDs, metadata tables, label-lines.
-- **A paragraph carries one finding-sized idea.** More than ~5 sentences means it needs a split or its own `###`. Six ten-sentence paragraphs in a row is a bible, not a review — nobody reads it.
-- **Write in the PR's language** (title/description/discussion decide): pt-BR PR → pt-BR review; English PR → English. Code, paths, and quotes stay verbatim; mixed or unclear defaults to English.
+Most comments are two to five sentences. If a comment needs more, the point is probably two points.
 
-## Never hard-wrap prose
+A real example of the shape (a maintainer's comment on a lock held too long), adapted:
 
-**One paragraph = one logical line.** Press Enter only at a real boundary: end of paragraph, end of list item, before/after a heading or code fence. Never wrap at 72/80/100 columns — GitHub and every editor soft-wrap, and manual mid-sentence line breaks are the single strongest "a tool wrote this" tell in a `.md` file. This applies to every prose file you write, not just reviews.
+> **Blocker:** this lock stays on every user row until the whole sweep commits, because both callers run the sweep in one transaction (`main.py:552`, `preload.py:282`). Logins write `last_login_at` on that same row, so a login on another pod waits for the entire sweep — I measured 4.7 s with 1,000 users, against 0.01 s before. Committing after each user (and rolling back in the per-user `except`) keeps each lock to one user, like `initialize_all_user_variables` already does.
 
-## Structure (the skeleton — human voice inside real sections)
+## The severity labels
 
-Reviews with more than ~2 findings use this shape. A trivial PR can be a single short paragraph with no headings at all.
+| Label | Use it when | It means for the author |
+|---|---|---|
+| `**Blocker:**` | It meets the Blocker bar in `SKILL.md` (security defect, data loss/PII, broken build or tests, untested high-risk path, a regression that makes user requests wait or fail) | Must change before merge |
+| `**Important:**` | A real defect or risk below that bar | Should be fixed in this PR |
+| `**Recommended:**` | Worth doing; fine as a follow-up | Author's call on timing |
+| `**Nit:**` | Polish: naming, a simpler idiom, a leftover import | Take it or leave it |
 
-```markdown
-## Summary
+The label is the only label. No finding IDs (`B1`, `I2`), no emoji, no `**File:**` / `**Issue:**` / `**Fix:**` lines — the rest is prose. When in doubt between two labels, pick the lower one.
 
-<First person, 2-5 sentences: what you checked/ran (the evidence) and the verdict in plain words. The verdict follows the mechanical rule in SKILL.md: Request changes ONLY with a true Blocker; Important findings alone = "Good to merge — a few things worth addressing"; never "needs to change before merge" for something that doesn't meet the Blocker bar. Full-width lines, no hard wrap.>
+## The summary comment
 
-## Needs to change before merge
+The review's top-level body is short — usually three to six sentences, like a colleague's note:
 
-<ONLY true Blockers (security defect, data loss/PII, broken build/tests, untested high-risk path, a regression that makes user-facing requests wait or fail (for example a lock held across a long transaction on a row a hot path writes)). If nothing meets that bar, this section does not exist.>
+- **What you did:** what you read, traced, ran, or measured ("I ran the new test file against PostgreSQL 16 and SQLite; on the base it fails 3/3, on the PR it passes").
+- **The verdict in plain words:** "Looks good to merge", "Good to merge — a couple of things worth fixing", or "One thing needs to change before merge: …". It follows the verdict rule in `SKILL.md`.
+- **Findings that have no line to point at:** a missing test, a file that should be in a CI workflow the PR didn't touch, a problem in code outside the diff. Each gets a sentence or two with its severity label in bold at the start, exactly like an inline comment.
 
-### <Short descriptive title — no ID, no emoji>
+Don't repeat the inline comments in the summary. If everything is inline, the summary is just what you did and the verdict.
 
-<Prose: the cause, the consequence, the evidence (file:line inside the sentence), and the fix. One finding-sized idea per paragraph.>
+## What goes inline and what goes in the summary
 
-## Worth fixing in this PR
+GitHub only accepts inline comments on lines that are part of the PR's diff (the changed lines and the context lines around them, on the new side). Put a finding inline when you can point at a line in the diff that the author would change to fix it. Otherwise it goes in the summary, citing where the problem is ("`migration-validation.yml` lists test files explicitly, and this one isn't there").
 
-### <Short title>
+A finding about code outside the diff that the PR makes dangerous — a caller, another writer of the same row — goes **inline on the changed line that creates the danger**, and the comment names the other file.
 
-<...>
+## Posting the review
 
-## Follow-ups and take-it-or-leave-it
+Post **one** review per pass, so the author gets one notification and the comments arrive together.
 
-<Smaller items; a short list is fine when they're parallel. Each entry says its disposition.>
+1. **List the lines you can comment on.** A comment on a line outside the diff makes GitHub reject the **entire** review with `422` (`Path could not be resolved` for a file not in the PR, `Line could not be resolved` for a line outside the hunks), and nothing is posted. List the commentable lines first:
 
-## Tests
+   ```bash
+   python3 - <owner/repo> <number> <<'PY'
+   import json, re, subprocess, sys
+   repo, number = sys.argv[1], sys.argv[2]
+   raw = subprocess.run(["gh", "api", "--paginate", f"repos/{repo}/pulls/{number}/files"], capture_output=True, text=True, check=True).stdout
+   for f in json.loads(raw.replace("][", ",")):
+       spans = [(int(m.group(1)), int(m.group(1)) + int(m.group(2) or 1) - 1) for m in re.finditer(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@", f.get("patch", ""), re.M)]
+       print(f["filename"], ", ".join(f"{a}-{b}" for a, b in spans) or "(no commentable lines)")
+   PY
+   ```
 
-<What the tests prove, what's missing, what you ran.>
-```
+   Move any finding whose line isn't listed to the summary.
 
-Omit any section with nothing in it — empty sections are scaffolding. When the user asks for it or the list is long, close with a short action checklist (`- [ ]` one line per action, matching the findings one-for-one).
+2. **Write the payload** to a temporary file (outside the repository): the head commit, the event, the summary body, and the comments. Line numbers are the new file's lines (`"side": "RIGHT"`); a range uses `start_line` and `line`.
 
-No fixed length. A clean PR earns three sentences; a loaded one earns as much as its findings demand — and nothing more. Quote code sparingly (3–10 lines, fenced with a language tag; `<details>` for anything longer).
+   ```json
+   {
+     "commit_id": "<head sha from gh pr view <n> --json headRefOid>",
+     "event": "COMMENT",
+     "body": "<summary>",
+     "comments": [
+       {"path": "src/users.py", "line": 5, "side": "RIGHT", "body": "**Blocker:** …"},
+       {"path": "src/users.py", "start_line": 14, "start_side": "RIGHT", "line": 15, "side": "RIGHT", "body": "**Important:** …"}
+     ]
+   }
+   ```
 
-## Mechanics that prevent broken output (unchanged, non-negotiable)
+3. **Post it:**
 
-| Never | Why |
-|---|---|
-| `#N` / `GH-N` / bare issue numbers as references or labels | GitHub auto-links to unrelated PRs/issues |
-| `@username` mentions | Unwanted notifications |
-| `Fixes/Closes/Resolves #N` | Auto-closes issues on merge |
-| Absolute local paths (`/Users/...`, `/home/...`) | Leaks local environment |
-| Pasting full files | Unreadable; GitHub truncates |
-| The internal checklist verbatim | The output is the findings the checklist produced |
+   ```bash
+   gh api -X POST repos/<owner>/<repo>/pulls/<number>/reviews --input <payload.json>
+   ```
 
-Links: repo-relative `path/to/file.ts:42` by default; `[file.ts:42](path#L42)` only when anchors resolve; commit short-hashes linked when reviewing on GitHub.
+   Then report the review's URL (`html_url` in the response) to the user.
 
-## Copy-paste safety check (before delivering)
+**The event is `COMMENT` by default.** The verdict lives in the summary's words. Use `APPROVE` or `REQUEST_CHANGES` only when the user asks for it — they carry the user's name into the merge rules — and never `REQUEST_CHANGES` on a PR the user authored (GitHub refuses it with `422`).
 
-- [ ] No `#N` outside code fences; no `@mentions`; no `Fixes/Closes #N`; no local paths.
-- [ ] No hard-wrapped prose — every paragraph is one logical line.
-- [ ] Scannable: real `##`/`###` headings when there are more than ~2 findings; no paragraph over ~5 sentences; no wall of text.
-- [ ] Verdict not inflated: Request changes only if a finding meets the Blocker bar; "Needs to change before merge" contains only true Blockers.
-- [ ] Reads aloud like a person: no label-lines, no finding IDs, no emoji headers, no metadata table.
-- [ ] Every finding has file:line evidence in the sentence and a disposition.
-- [ ] Renders cleanly (fences closed, no broken tables).
+**Before posting, read what's already on the PR** (`gh api repos/<owner>/<repo>/pulls/<number>/comments` and the reviews). Don't repeat a point someone already made — a maintainer, a teammate, or a bot. Agree or disagree with it in a sentence of the summary if it matters. On a second pass over the same PR, comment only on what's new or still unresolved.
 
-## Raising specific finding kinds (same voice)
+## Mechanics that keep it clean
 
-- **Security:** state the assumption, why it's wrong or unverified, the blast radius, and the fix — as sentences: "This assumes the body is the signed content, but the provider signs a constructed string — anyone can forge the webhook. Implement the `x-signature` check per the official docs before merge."
-- **Comprehension:** quote or link the block and ask for the *why* ("Why this dispatch table instead of the strategy pattern already in `payment_strategies.py`?"); the PR shouldn't merge until the rationale is defended and captured durably or the block is rewritten with understanding.
-- **AI-generated code in a high-risk path:** name the assumption in the code, where to verify it (official docs/reference implementation), and the risk if it's wrong — and require that verification before merge.
+- English, always — code identifiers, paths, and quoted code stay verbatim.
+- Never `#N` in prose (GitHub links it to an unrelated issue or PR), never `Fixes/Closes/Resolves #N` (it closes issues on merge), never `@mentions` unless the user asks.
+- Never absolute local paths; repo-relative paths only.
+- Never hard-wrap prose: a paragraph is one line; Enter only between paragraphs, list items, and code fences.
+- Quote at most a few lines of code; the inline anchor already shows the code.
+- `suggestion` blocks replace exactly the commented lines — include every line of the range, with the original indentation.
+
+## Before posting — the checklist
+
+- [ ] Each inline comment opens with its bold severity label, then says what happens and what to do, in plain words.
+- [ ] Every inline line is in the commentable-lines list; everything else is in the summary.
+- [ ] The summary says what you did and the verdict, and doesn't repeat the inline comments.
+- [ ] The verdict isn't inflated: only true Blockers are labeled `**Blocker:**`.
+- [ ] No duplicate of a point already on the PR.
+- [ ] The event is `COMMENT` unless the user asked otherwise.
+- [ ] No `#N`, `@mentions`, local paths, or hard-wrapped lines.

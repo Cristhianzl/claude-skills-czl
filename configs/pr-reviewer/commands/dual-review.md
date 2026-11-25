@@ -22,5 +22,4 @@ and neither sees the other's findings until the end.
 4. **Up to 2 rounds.** After the author fixes the issues, re-run **both** reviewers fresh. If they
    still haven't converged after round 2, escalate to the human with the disagreement stated plainly.
 
-Output the merged review in the chat per `skills/reviewing-code/references/output-format.md`.
-Never post to GitHub, never run git.
+Deliver the merged review per `skills/reviewing-code/references/output-format.md`: post it on the PR as one review when the user asked to review a PR, otherwise give it in the chat. Never run git.

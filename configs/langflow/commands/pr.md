@@ -41,7 +41,7 @@ Opening the PR is not the last step. Every PR opened here is reviewed in the sam
 - Set the depth by risk tier (`references/context-sweep.md`): a PR touching concurrency, locks, transactions, migrations, startup sweeps, auth, or money gets the full context sweep and every test-evidence check, including whether each new test runs in CI.
 - This is a self-review: list every Blocker and every Important finding with a concrete fix under `## Unresolved findings` and ask the user whether to fix them now. Never move one into the PR description as an accepted cost.
 - Print the review in the chat, after the PR URL, per `skills/reviewing-code/references/output-format.md`.
-- Never run `gh pr review` or `gh pr comment` — the human posts it. Never fix a finding unasked: report it and let the user decide.
+- This is a self-review of the PR you just opened, so it stays in the chat: don't post it on the PR. Never fix a finding unasked: report it and let the user decide.
 
 ## Rules
 

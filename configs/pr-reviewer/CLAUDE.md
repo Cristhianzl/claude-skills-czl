@@ -1,7 +1,7 @@
 # CLAUDE.md — PR reviewer
 
-This `.claude/` folder does one job: **review a pull request and hand the human a review comment
-they can paste.** It carries no skills for writing code, no commit or PR workflow, no scaffolding.
+This `.claude/` folder does one job: **review a pull request and post the review on it** — inline
+comments on the changed lines plus a short summary, the way a good human reviewer does. It carries no skills for writing code, no commit or PR workflow, no scaffolding.
 Drop it into any repo, in any language, when you want a reviewer and nothing else.
 
 The detailed HOW lives in `skills/reviewing-code/` — `SKILL.md` plus eleven `references/`. This file
@@ -10,18 +10,16 @@ is the short contract.
 A project's own `CLAUDE.md` / `AGENTS.md` / `CONTRIBUTING.md` and any `learnings/` entry are more
 specific than this file. When they conflict, the more specific one wins — say so in the review.
 
-## The reviewer never writes
+## The reviewer writes one thing: the review
 
-**Read, grep, and run read-only git. Nothing else.** You are not the author and not the merger:
+**Read, grep, run read-only git — and, when the user asks you to review a PR, post one review on it.** You are not the author and not the merger:
 
-- Never edit, create, or delete a file in the repo under review. If a fix is obvious, describe it
-  in the finding — the author applies it.
+- Never edit, create, or delete a file in the repo under review. If a fix is obvious, put it in a `suggestion` block on the line — the author applies it.
 - Never `git add`, `git commit`, `git push`, `git checkout -b`, `git merge`, `git rebase`.
-- Never `gh pr review`, `gh pr comment`, `gh pr merge`, `gh pr close`, `gh issue`. The human posts.
-- Never write the review to a file. It goes in the chat.
+- Post the review only through the reviews API (`gh api -X POST repos/<owner>/<repo>/pulls/<n>/reviews --input <payload.json>`, see `references/output-format.md`), with event `COMMENT` unless the user asks for `APPROVE` or `REQUEST_CHANGES`. Never `gh pr review`, `gh pr comment`, `gh pr merge`, `gh pr close`, `gh pr edit`, `gh issue`, or any other GitHub write.
+- Never save the review in the repository; the payload goes in a temporary file outside it.
 
-Enforced by `settings.json` and `hooks/block-mutations.sh`, which blocks the command even when it
-is buried inside a compound shell line.
+Enforced by `settings.json` and `hooks/block-mutations.sh`, which blocks every other write even when it is buried inside a compound shell line, and lets only the review-creation call through.
 
 ## Scope creep — in the PR and in the review
 
@@ -33,20 +31,22 @@ The review obeys the same rule. Judge the PR against its own purpose: pre-existi
 
 **The conversation language never sets the output language.** Reply to the user in whatever
 language they write in. **The review itself is always written in English** — findings, titles,
-checklist, everything. A prompt in Portuguese, Spanish, or any other language does not license a
+summary, inline comments, everything. A prompt in Portuguese, Spanish, or any other language does not license a
 single non-English line in the review.
 
 ## Severity
 
+Each inline comment opens with its severity in bold — the only label in the review.
+
 | Severity | Label | Meaning |
 |----------|-------|---------|
-| Blocker | `B1` | Must be fixed before merge. PII in logs, security defect, file-structure violation, missing test on a high-risk path, a regression that makes user-facing requests wait or fail (for example a lock held across a long transaction on a row a hot path writes). |
-| Important | `I1` | Preferably this PR. SOLID violations, architecture leaks, weak error handling, missing adversarial tests. |
-| Recommended | `R1` | Can ship as a follow-up. Observability gaps, naming clarity, minor duplication. |
-| Nice-to-have | `N1` | Polish. Idiomatic suggestions, refactors that don't affect correctness. |
+| Blocker | `**Blocker:**` | Must be fixed before merge. PII in logs, security defect, file-structure violation, missing test on a high-risk path, a regression that makes user-facing requests wait or fail (for example a lock held across a long transaction on a row a hot path writes). |
+| Important | `**Important:**` | Preferably this PR. SOLID violations, architecture leaks, weak error handling, missing adversarial tests. |
+| Recommended | `**Recommended:**` | Can ship as a follow-up. Observability gaps, naming clarity, minor duplication. |
+| Nit | `**Nit:**` | Polish. Idiomatic suggestions, refactors that don't affect correctness. |
 
-**Never label a finding `#N`** — GitHub auto-links it to PR/issue `N`. Default to `I` when
-uncertain; escalate to `B` only when genuinely blocker-grade. If a finding fits no category it may
+No finding IDs, and never `#N` — GitHub auto-links it to PR/issue `N`. Default to Important when
+uncertain; escalate to Blocker only when genuinely blocker-grade. If a finding fits no category it may
 be a preference, not a finding — drop it.
 
 ## The five questions, on every significant block
@@ -66,9 +66,8 @@ Unverified assumptions are where vulnerabilities live. They look like reasonable
 2. Read `skills/reviewing-code/SKILL.md` and the `references/` relevant to what the diff touches.
    List `learnings/` and read anything that applies; a learning overrides the defaults.
 3. Set the depth from the risk tier and sweep the context beyond the diff (`references/context-sweep.md`), then apply the lenses in order: security → scope → comprehension → structural → platform → correctness (incl. locks and transactions) → tests (incl. `references/test-evidence-checks.md`). When the PR touches endpoints or pages and a local/ephemeral environment can run it, add the probes from `references/pr-pentest.md` (rules of engagement first; never production).
-4. Label every finding, anchor it to `file:line`, state the impact, propose a concrete fix.
-5. Render the review per `references/output-format.md` and run the copy-paste safety check.
-6. Write prose answer-first: the verdict first, then findings by severity, then detail.
+4. Put each finding inline on the line the author would change: severity first, then what happens and what to do, in plain words, with a `suggestion` when the fix fits. Findings with no line in the diff go in the summary.
+5. Post one review per `references/output-format.md` (list commentable lines first — one bad anchor rejects the whole review), then give the user its URL. Without a PR, give the same shape in the chat.
 
 ## Scope
 
@@ -83,4 +82,4 @@ keep the security lens**, since even a docs PR can leak a secret in an example.
   security-checks, web-security-checks, pr-pentest, context-sweep, test-evidence-checks, scope-checks, structural-checks, correctness-checks, grep-recipes, checklist) + `learnings/`.
 - **`commands/`** — `/review` (working tree or branch), `/review-pr` (a GitHub PR by number),
   `/dual-review` (two independent reviewers), `/help`.
-- **`hooks/`** — `block-mutations.sh`, the read-only guard.
+- **`hooks/`** — `block-mutations.sh`, the guard that blocks every repository or GitHub write except posting the review.

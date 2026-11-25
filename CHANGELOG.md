@@ -9,6 +9,12 @@ means: a hook starts blocking code it used to allow, a skill or rule reverses
 advice you may have built on, or a file moves so an existing install stops
 resolving it.
 
+## [2.8.1] - 2026-11-25
+
+### Fixed
+
+- **Reviews follow the PR's language again** (agnostic, langflow). 2.8.0 wrongly made posted reviews English-only; the rule is back to what it was through 2.7.0: a pt-BR PR gets a pt-BR review, an English PR gets English, mixed or unclear defaults to English, and code, paths, and quotes stay verbatim. Restored in `reviewing-code` (`SKILL.md`, `output-format.md`) and in both baselines' Language section. `pr-reviewer` is unchanged: it has always reviewed in English.
+
 ## [2.8.0] - 2026-11-25
 
 Reviews are now posted on the PR the way human reviewers work: short inline comments on the exact changed lines, each opening with its severity, plus a brief summary — instead of one long document at the end.

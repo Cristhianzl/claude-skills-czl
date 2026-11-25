@@ -1,6 +1,6 @@
 ---
 name: reviewing-code
-description: Review a pull request and post it on the PR as one GitHub review — short inline comments on the exact changed lines, each opening with its severity (Blocker / Important / Recommended / Nit), plus a brief summary of what was checked and the verdict, written in plain, friendly English like a colleague. Goes beyond the diff (callers, other writers, CI wiring, precedent) and checks the test evidence. Use when the user asks to review a PR, "code review", "review this diff", "verify the changes before merge", or asks for a second opinion on someone else's branch. Local diffs and self-reviews get the same shape in chat. Never merges, approves, or requests changes unless asked; never runs git.
+description: Review a pull request and post it on the PR as one GitHub review — short inline comments on the exact changed lines, each opening with its severity (Blocker / Important / Recommended / Nit), plus a brief summary of what was checked and the verdict, written in plain, friendly language like a colleague, in the PR's language. Goes beyond the diff (callers, other writers, CI wiring, precedent) and checks the test evidence. Use when the user asks to review a PR, "code review", "review this diff", "verify the changes before merge", or asks for a second opinion on someone else's branch. Local diffs and self-reviews get the same shape in chat. Never merges, approves, or requests changes unless asked; never runs git.
 license: MIT
 ---
 
@@ -27,13 +27,13 @@ Lighten formality for: docs-only changes, lockfile bumps with no API change, sin
 - **Never** save the review in the repository; the payload goes in a temporary file outside it.
 - **Never** use `#N` anywhere in the output — GitHub auto-links it to PR/issue `N`.
 - **Never hard-wrap prose**: one paragraph = one logical line; Enter only at paragraph/list/heading boundaries. Manual 72/80-column wrapping is the strongest "a tool wrote this" tell.
-- **Write like a person** — plain, friendly English, short sentences, one idea per comment: what happens, why it matters, what to change. The only label is the bold severity that opens each comment; no finding IDs, no `**File:**`-style lines, no emoji, no metadata tables. Full voice rules: `references/output-format.md`.
+- **Write like a person** — plain, friendly language, short sentences, one idea per comment: what happens, why it matters, what to change. The only label is the bold severity that opens each comment; no finding IDs, no `**File:**`-style lines, no emoji, no metadata tables. Full voice rules: `references/output-format.md`.
 - **Never** `@mention` users unless the user explicitly asks.
 - **Never** include `Fixes #N`, `Closes #N`, `Resolves #N` — they auto-close issues on merge.
 - **Never** paste full file contents — link with `path/to/file.ts:42` and quote 3-10 relevant lines max.
 - **Never request out-of-scope work as a blocker.** Pre-existing issues in code the PR doesn't touch and "while you're here" ideas are follow-ups, phrased as optional. Judge the PR against its own purpose; ask for less code, not more, unless a real defect requires more (`references/scope-checks.md` § 2).
 - **Never** use absolute local paths (`/Users/...`, `/home/...`). Use repo-relative paths only.
-- **Write in English**, whatever the conversation language. Code identifiers, paths, and quoted code stay verbatim.
+- **Match the PR's language.** The review or comment is written in the language of the PR itself (title, description, discussion): a pt-BR PR gets a pt-BR review, an English PR gets English. Code identifiers, paths, and quoted code stay verbatim. Mixed or unclear → default to English. (This is the one exception to the English-always baseline.)
 
 ## Workflow
 

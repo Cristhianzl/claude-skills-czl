@@ -6,7 +6,7 @@ When there's no PR (a local diff, a branch, a self-review before pushing), use t
 
 ## How a comment reads
 
-Write the way a good senior engineer talks to a colleague: plain English, short sentences, one idea per comment. Explain what happens and why it matters in words anyone on the team can follow — no jargon walls, no lecture. The aim is that the author understands the problem the first time they read it and knows exactly what to change.
+Write the way a good senior engineer talks to a colleague: plain words, short sentences, one idea per comment. Explain what happens and why it matters in words anyone on the team can follow — no jargon walls, no lecture. The aim is that the author understands the problem the first time they read it and knows exactly what to change.
 
 Every inline comment has the same shape:
 
@@ -95,7 +95,7 @@ Post **one** review per pass, so the author gets one notification and the commen
 
 ## Mechanics that keep it clean
 
-- English, always — code identifiers, paths, and quoted code stay verbatim.
+- Write in the PR's language (its title, description, and discussion decide): a pt-BR PR gets a pt-BR review, an English PR gets English; mixed or unclear defaults to English. Code identifiers, paths, and quoted code stay verbatim.
 - Never `#N` in prose (GitHub links it to an unrelated issue or PR), never `Fixes/Closes/Resolves #N` (it closes issues on merge), never `@mentions` unless the user asks.
 - Never absolute local paths; repo-relative paths only.
 - Never hard-wrap prose: a paragraph is one line; Enter only between paragraphs, list items, and code fences.

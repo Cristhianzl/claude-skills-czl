@@ -1,6 +1,6 @@
 ---
 name: reviewing-code
-description: Review a pull request and post it on the PR as one GitHub review — short inline comments on the exact changed lines, each opening with its severity (Blocker / Important / Recommended / Nit), plus a brief summary of what was checked and the verdict, written in plain, friendly English like a colleague. Goes beyond the diff (callers, other writers, CI wiring, precedent) and checks the test evidence. Use when the user asks to review a PR, "code review", "review this diff", "verify the changes before merge", or asks for a second opinion on someone else's branch. Local diffs and self-reviews get the same shape in chat. Never merges, approves, or requests changes unless asked; never runs git.
+description: Review a pull request and post it on the PR as one GitHub review — short inline comments on the exact changed lines, each opening with its severity (Blocker / Important / Recommended / Nit), plus a brief summary of what was checked and the verdict, written in plain, friendly English like a colleague (this config always reviews in English). Goes beyond the diff (callers, other writers, CI wiring, precedent) and checks the test evidence. Use when the user asks to review a PR, "code review", "review this diff", "verify the changes before merge", or asks for a second opinion on someone else's branch. Local diffs and self-reviews get the same shape in chat. Never merges, approves, or requests changes unless asked; never runs git.
 license: MIT
 ---
 

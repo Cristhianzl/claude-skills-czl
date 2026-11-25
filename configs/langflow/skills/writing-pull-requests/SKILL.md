@@ -87,6 +87,8 @@ DESCRIPTION:
 - **Never add AI attribution** — no "🤖 Generated with Claude Code" footer, no session links, no AI badges in titles/descriptions/commits, no `Co-Authored-By` trailer. Output must read as authored by the human.
 - **Never** produce a title needing "and" — that means two PRs.
 - **Never** invent scope. If the diff doesn't justify a scope, omit it.
+- **Never** present test evidence without saying where it ran. Results from a local run are labeled as local; a claim that CI covers something (a dialect, a service, a gated test) is checked against the workflow that runs it before it goes in the description.
+- **Never** write a known defect into the description as an "accepted cost", "known limitation", or "trade-off" unless the user approved leaving it. Open review findings are reported to the user under `## Unresolved findings`, not buried in the PR body.
 
 ## See also
 

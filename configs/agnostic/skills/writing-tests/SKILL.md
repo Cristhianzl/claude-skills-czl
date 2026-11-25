@@ -95,6 +95,9 @@ Happy-path tests alone are **insufficient**. Coverage of all four categories is 
 - Write tests based on **requirements / spec / expected behavior**, NOT on what the source code currently does. If you copy what the code does into the assertion, you found zero bugs.
 - Include tests that intentionally try to break the code: unexpected types, boundary values, malformed data, concurrent calls.
 - When a test fails: **first ask if the CODE is wrong**, not the test. Never silently change an assertion to match buggy code.
+- **A regression test must fail without the fix — prove it.** Run it against the code before the fix (revert the production change, keep the test) and see it fail, on every arm that claims coverage. A parametrized arm that passes without the fix covers nothing; say so or drop the claim.
+- **A test that doesn't run in CI doesn't count.** If a test is gated on an environment variable, a service, a database dialect, or a marker, wire it into a CI job that provides the gate — and if that workflow lists test files explicitly, add the file. Confirm in the job log that it ran, not skipped.
+- **Concurrency tests force the interleaving.** Use a per-subject barrier that releases only after every worker's first step, no timeout that lets one worker proceed alone, and confirm the test fails when the lock or constraint is removed (`reviewing-code/references/test-evidence-checks.md` §3).
 
 Full anti-patterns and adversarial examples in `references/anti-patterns.md`.
 

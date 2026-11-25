@@ -43,6 +43,12 @@ Apply the same restrictions as the `writing-pull-requests` skill, plus review-sp
    **Then check scope** (`references/scope-checks.md`): walk the diff file by file against the PR's stated purpose. Unrelated refactors/renames/reformatting, behavior changes the description doesn't mention, weakened or deleted test assertions, unneeded deps/abstractions/config, unrequested artifacts, and slop on added lines are findings.
    → verify: every changed file maps to the PR's purpose, is a disclosed required change, or is a finding.
 
+   **Then set the depth from the risk tier** (`references/context-sweep.md` § Risk tiers). Concurrency, locks, transactions, migrations, startup sweeps, auth, money, irreversible deletes, or data shared across users/processes make it Tier 3: every sweep, the concurrency lens, every test-evidence check, a fresh-context reviewer, and — if an automated reviewer also runs — its high effort level or above.
+   → verify: you can state the tier and why.
+
+   **Then sweep the context beyond the diff** (`references/context-sweep.md`): callers and transaction owners of every changed function; consumers of every value whose type, format, or identity changes; the contention map of everything the change locks or writes; the wiring that makes new tests, migrations, flags, and jobs actually run (CI workflows, gates, explicit file lists); and precedent in the codebase plus what the dependencies already provide at the project's declared floor. Most defects a human reviewer catches and a diff-only review misses live here.
+   → verify: the summary names what you traced outside the diff.
+
 2. **Apply the security lens** to every significant block (see `references/security-checks.md`; when the diff renders data, handles a request, or touches cookies, CORS, CSP, auth, queries, uploads, or outbound URLs, also `references/web-security-checks.md`). When such a PR can be run in a local or ephemeral environment, run the matching probes from `references/pr-pentest.md` under its rules of engagement — never against production or shared environments. Five questions: what is being trusted unverified? what's the authoritative source for this behavior? what happens on the failure path? who controls each value and could they lie? what is the blast radius if this is wrong?
    → verify: every "unverified assumption" has been mapped to either a finding or a defensible justification in the diff.
 
@@ -55,11 +61,11 @@ Apply the same restrictions as the `writing-pull-requests` skill, plus review-sp
 5. **Apply the platform-agnostic checks.** Paths, encoding, shell, temp/config dirs, line endings, time, CI matrix. Full grep recipes in `references/grep-recipes.md`. See `ensuring-cross-platform` for the rationale.
    → verify: no Windows-only bug ships through this PR.
 
-6. **Apply the correctness checks** (see `references/correctness-checks.md`). The third class of bug: code that is right on the happy path and silently wrong on an edge/error path. New enum member → audit every enumeration site. Control-flow/signal exceptions (pause/cancel/retry) propagate **unwrapped** through every layer. Degrade-don't-crash contracts never hard-raise.
+6. **Apply the correctness checks** (see `references/correctness-checks.md`). The third class of bug: code that is right on the happy path and silently wrong on an edge/error path. New enum member → audit every enumeration site. Control-flow/signal exceptions (pause/cancel/retry) propagate **unwrapped** through every layer. Degrade-don't-crash contracts never hard-raise. Locks and transactions (§4): what is locked, for how long (the enclosing transaction, often owned by a caller), who else waits, how each database engine behaves, and what an error inside the transaction does to the rest.
    → verify: every new state and every failure branch has a test that would fail if its line were deleted.
 
-7. **Apply the testing checks.** Coverage gate (≥75%, target 80%) shown by the author. Tests challenge the code, not confirm it. Both happy path AND adversarial. Anti-patterns absent (Mirror, Liar, Giant, Mockery, Inspector, Chain Gang, Flaky, Snowball). See `writing-tests` for the full list.
-   → verify: if you removed a line of business logic, at least one test would fail.
+7. **Apply the testing checks.** Coverage gate (≥75%, target 80%) shown by the author. Tests challenge the code, not confirm it. Both happy path AND adversarial. Anti-patterns absent (Mirror, Liar, Giant, Mockery, Inspector, Chain Gang, Flaky, Snowball). See `writing-tests` for the full list. Then the evidence checks (`references/test-evidence-checks.md`): each new test fails on the base code, on every arm that claims coverage; each new test file runs in CI with its gates satisfied; concurrency tests force the interleaving instead of hoping for it; local results in the PR description are labeled as local.
+   → verify: if you removed a line of business logic, at least one test would fail — in CI, not only on the author's machine.
 
 8. **Triage the findings** by severity (Blocker / Important / Recommended / Nice-to-have) — this taxonomy is your internal ordering tool, not output scaffolding.
    → verify: every finding has file:line evidence, the cause and consequence, and a disposition (fix before merge / follow-up / take-or-leave).
@@ -79,13 +85,22 @@ The verdict maps mechanically from the triage. **Never inflate it.**
 | Important findings, zero Blockers | **Approve with comments** — the PR can merge; the author decides when to address them |
 | Only Recommended / Nice-to-have | **Approve** |
 
-A finding only counts as a Blocker if it meets the Blocker bar below (security defect, data loss/PII, broken build or tests, high-risk path with no test) — "I'd strongly prefer this changed" is Important, **not** a Blocker, and never justifies Request changes. The same discipline applies to section placement: only true Blockers go under "Needs to change before merge"; everything else lives in "Worth fixing in this PR" or later. When in doubt between two severities, pick the lower one.
+### Self-review and agent loops — the author does not decide
+
+The table above is for reviewing **someone else's** change, where the author owns the follow-up. When the review is of your own change, or of a change an agent made — a pre-push review, a `/pr` review of a PR you just opened, any implement→review→fix loop — the author is the one being checked, so the author doesn't get to waive findings:
+
+- Every Blocker, and every Important finding that comes with a concrete fix, is **fixed before push**. Leaving one unfixed requires the user's explicit approval for that specific finding.
+- Writing a known defect into the PR description, a code comment, or a commit message as an "accepted cost", "known limitation", or "trade-off" without that approval is itself a Blocker — it converts a finding into documentation without anyone deciding.
+- After fixes, re-review **each** finding against the new code: fixed, waived by the user, or disputed with evidence (a test or measurement, not an argument). "Documented" is not a resolution.
+- The final report carries an `## Unresolved findings` section listing every finding not fixed, with its status and who approved it. An empty section is stated as empty.
+
+A finding only counts as a Blocker if it meets the Blocker bar below (security defect, data loss/PII, broken build or tests, high-risk path with no test, a regression that makes user-facing requests wait or fail (for example a lock held across a long transaction on a row a hot path writes)) — "I'd strongly prefer this changed" is Important, **not** a Blocker, and never justifies Request changes. The same discipline applies to section placement: only true Blockers go under "Needs to change before merge"; everything else lives in "Worth fixing in this PR" or later. When in doubt between two severities, pick the lower one.
 
 ## Severity scoring (internal triage — expressed in prose, never as labels)
 
 | Severity         | Meaning                                                          | How it sounds in the review |
 |------------------|------------------------------------------------------------------|------------------------------|
-| Blocker          | Must be fixed before merge. PII in logs, security defect, file-structure violation, missing test for a high-risk path. | "This needs to change before merge: …" |
+| Blocker          | Must be fixed before merge. PII in logs, security defect, file-structure violation, missing test for a high-risk path, a regression that makes user-facing requests wait or fail (for example a lock held across a long transaction on a row a hot path writes). | "This needs to change before merge: …" |
 | Important        | Preferably this PR. SOLID violations, architecture leaks, weak error handling, missing adversarial tests. | "I'd fix this here rather than later: …" |
 | Recommended      | Can ship as a follow-up. Observability gaps, naming clarity, minor duplication. | "Fine as a follow-up: …" |
 | Nice-to-have     | Polish. Idiomatic suggestions, refactor opportunities that don't affect correctness. | "Take it or leave it: …" |
@@ -94,65 +109,7 @@ The taxonomy orders the review; the words above carry it. **Never `#N` anywhere 
 
 ## Required output structure
 
-```markdown
-## Code Review Summary
-
-<2-4 sentence verdict: ship / changes-requested / blocked, and the headline reason>
-
-**Verdict:** <Approve | Approve with comments | Request changes | Block>
-**Findings:** <N blockers, M important, K recommended>
-
----
-
-## ⛔ Blockers (resolve before merge)
-
-### B1 — <Short title>
-**File:** `path/to/file.ts:42-58`
-**Issue:** <1-3 sentence problem statement>
-**Why it matters:** <impact / blast radius>
-**Suggested fix:** <concrete action>
-
-<details>
-<summary>Code reference</summary>
-
-```ts
-// quote only the 3-10 most relevant lines
-```
-</details>
-
-### B2 — <Short title>
-...
-
----
-
-## ⚠️ Important (preferably this PR)
-
-### I1 — <Short title>
-...
-
----
-
-## 💡 Recommended (can ship as a follow-up)
-
-### R1 — <Short title>
-...
-
----
-
-## ✅ Action checklist for the author
-
-**Blockers (resolve before merge):**
-- [ ] **B1** — <one-line restatement>
-- [ ] **B2** — <one-line restatement>
-
-**Important (preferably this PR):**
-- [ ] **I1** — <one-line restatement>
-
-**Recommended (can ship as a follow-up PR):**
-- [ ] **R1** — <one-line restatement>
-```
-
-Target length: 300–800 lines of markdown. Hard cap: 1500 lines (GitHub truncates long comments). One finding = one section.
+Render exactly the skeleton in `references/output-format.md` § Structure: `## Summary` (what you checked, ran, and traced, plus the verdict in plain words), then sections by disposition — `## Needs to change before merge` (true Blockers only), `## Worth fixing in this PR`, `## Follow-ups and take-it-or-leave-it`, `## Tests` — with a `###` per finding written as prose. No emoji headers, no finding IDs, no `**File:**`-style label lines, no metadata tables. Omit empty sections. When the review comes from a self-review or agent loop, add `## Unresolved findings` (see the verdict rule above).
 
 ## The five questions to ask on every PR
 
@@ -168,7 +125,7 @@ Unverified assumptions are where vulnerabilities live. They look like reasonable
 
 ## Blocker categories (zero-tolerance review)
 
-These get a `B` label automatically — full detail in `references/security-checks.md` and `references/structural-checks.md`:
+These are Blockers automatically — full detail in `references/security-checks.md` and `references/structural-checks.md`:
 
 - **PII in logs.** Any email, name, phone, address in a `logger`/`print`/`console` call. Approved identifiers: `auth_id`, `user_id`, `stripe_id`, internal `id`.
 - **Secrets in code.** Hardcoded API keys, tokens, passwords. Webhook secrets not in env vars.
@@ -197,6 +154,8 @@ Detailed rules — labeling schemes, length, length, link format, copy-paste saf
 - `skills/security-review` — for a dedicated, OWASP-2025 security audit (frontend + backend) beyond the always-on blockers here.
 - `skills/writing-secure-code` — the build-time rules behind `web-security-checks.md`; link the relevant reference in a finding instead of re-deriving it.
 - `references/structural-checks.md` — file structure hard limits, SOLID verification, pragmatic principles, layer separation, error handling.
+- `references/context-sweep.md` — risk tiers and the five sweeps beyond the diff: callers and transaction owners, consumers of changed values, the contention map, wiring (does it run in CI?), precedent and platform.
+- `references/test-evidence-checks.md` — fails without the fix (per arm), runs in CI (gates, explicit file lists, job logs, coverage), concurrency tests that force the schedule, local vs CI evidence, failure-path contracts.
 - `references/correctness-checks.md` — enum/state-machine completeness, control-flow exceptions propagate unwrapped, degrade-don't-crash contracts + the failure-path test spec.
 - `references/scope-checks.md` — is the PR in scope (unrelated hunks, unmentioned behavior changes, weakened tests, slop) and is the review in scope (no out-of-scope blockers).
 - `references/grep-recipes.md` — copy-paste grep commands for catching common violations across languages.

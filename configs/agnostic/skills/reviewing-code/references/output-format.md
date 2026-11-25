@@ -41,7 +41,7 @@ Reviews with more than ~2 findings use this shape. A trivial PR can be a single 
 
 ## Needs to change before merge
 
-<ONLY true Blockers (security defect, data loss/PII, broken build/tests, untested high-risk path). If nothing meets that bar, this section does not exist.>
+<ONLY true Blockers (security defect, data loss/PII, broken build/tests, untested high-risk path, a regression that makes user-facing requests wait or fail (for example a lock held across a long transaction on a row a hot path writes)). If nothing meets that bar, this section does not exist.>
 
 ### <Short descriptive title — no ID, no emoji>
 

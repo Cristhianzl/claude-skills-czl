@@ -4,7 +4,7 @@ This `.claude/` folder does one job: **review a pull request and hand the human 
 they can paste.** It carries no skills for writing code, no commit or PR workflow, no scaffolding.
 Drop it into any repo, in any language, when you want a reviewer and nothing else.
 
-The detailed HOW lives in `skills/reviewing-code/` — `SKILL.md` plus nine `references/`. This file
+The detailed HOW lives in `skills/reviewing-code/` — `SKILL.md` plus eleven `references/`. This file
 is the short contract.
 
 A project's own `CLAUDE.md` / `AGENTS.md` / `CONTRIBUTING.md` and any `learnings/` entry are more
@@ -40,7 +40,7 @@ single non-English line in the review.
 
 | Severity | Label | Meaning |
 |----------|-------|---------|
-| Blocker | `B1` | Must be fixed before merge. PII in logs, security defect, file-structure violation, missing test on a high-risk path. |
+| Blocker | `B1` | Must be fixed before merge. PII in logs, security defect, file-structure violation, missing test on a high-risk path, a regression that makes user-facing requests wait or fail (for example a lock held across a long transaction on a row a hot path writes). |
 | Important | `I1` | Preferably this PR. SOLID violations, architecture leaks, weak error handling, missing adversarial tests. |
 | Recommended | `R1` | Can ship as a follow-up. Observability gaps, naming clarity, minor duplication. |
 | Nice-to-have | `N1` | Polish. Idiomatic suggestions, refactors that don't affect correctness. |
@@ -65,7 +65,7 @@ Unverified assumptions are where vulnerabilities live. They look like reasonable
    claims something absent from the diff is a finding by itself.
 2. Read `skills/reviewing-code/SKILL.md` and the `references/` relevant to what the diff touches.
    List `learnings/` and read anything that applies; a learning overrides the defaults.
-3. Apply the lenses in order: security → scope → comprehension → structural → platform → correctness → tests. When the PR touches endpoints or pages and a local/ephemeral environment can run it, add the probes from `references/pr-pentest.md` (rules of engagement first; never production).
+3. Set the depth from the risk tier and sweep the context beyond the diff (`references/context-sweep.md`), then apply the lenses in order: security → scope → comprehension → structural → platform → correctness (incl. locks and transactions) → tests (incl. `references/test-evidence-checks.md`). When the PR touches endpoints or pages and a local/ephemeral environment can run it, add the probes from `references/pr-pentest.md` (rules of engagement first; never production).
 4. Label every finding, anchor it to `file:line`, state the impact, propose a concrete fix.
 5. Render the review per `references/output-format.md` and run the copy-paste safety check.
 6. Write prose answer-first: the verdict first, then findings by severity, then detail.
@@ -80,7 +80,7 @@ keep the security lens**, since even a docs PR can leak a secret in an example.
 ## Map of this configuration
 
 - **`skills/reviewing-code/`** — the whole ruleset. `SKILL.md` + `references/` (output-format,
-  security-checks, web-security-checks, pr-pentest, scope-checks, structural-checks, correctness-checks, grep-recipes, checklist) + `learnings/`.
+  security-checks, web-security-checks, pr-pentest, context-sweep, test-evidence-checks, scope-checks, structural-checks, correctness-checks, grep-recipes, checklist) + `learnings/`.
 - **`commands/`** — `/review` (working tree or branch), `/review-pr` (a GitHub PR by number),
   `/dual-review` (two independent reviewers), `/help`.
 - **`hooks/`** — `block-mutations.sh`, the read-only guard.

@@ -1,4 +1,4 @@
-# Correctness checks — state machines, control-flow exceptions, failure paths
+# Correctness checks — state machines, control-flow exceptions, failure paths, locks and transactions
 
 > The structural and security checks catch *shape* and *trust*. These catch a third class:
 > **logic that is correct on the happy path and silently wrong on an edge or error path.**
@@ -88,10 +88,26 @@ retry). Two recurring shapes:
 
 A PR that adds a `SUSPENDED` state, a degrade-to-`None` path, a rollback-on-failure, or a
 suspend/resume boundary, but whose tests only exercise the clean happy path, is **under-tested by
-construction**. Ask for the adversarial cases: non-serializable
+construction**. Ask for the adversarial cases (`writing-tests` covers the shapes): non-serializable
 input, the failure mid-persist, the timeout-cleanup path, the concurrent retry, the loop/cyclic
 flow. The happy-path green is not evidence the edge path works — it's evidence it was never run.
 
 > Real examples caught only by edge tests: a checkpoint builder that hard-raised on a non-JSON
 > `built_object` (bypassing the pause → run FAILED); a resume that re-consumed an already-exhausted
 > async generator; a deadline sweep that transitioned the job but leaked its checkpoint row.
+
+---
+
+## 4. Locks, transactions, and concurrency
+
+Concurrency defects pass every single-threaded test and every diff-only read. Review them as four questions, answered with code outside the diff (`context-sweep.md` sweeps 1 and 3).
+
+**What is locked, and how strongly?** Name each lock the change takes: a row lock (and its mode), a table lock, a database-wide write lock, an advisory lock, a file or distributed lock. Lock modes differ by engine, and plain writes take locks too. Observed on PostgreSQL 17.9: a no-op `UPDATE` of a non-key column on a row behaves like `SELECT … FOR NO KEY UPDATE` — inserts into child tables that reference the row go through, while another non-key `UPDATE` of the row and another `FOR NO KEY UPDATE` wait; `SET id = id` behaves the same because the key value doesn't change; `FOR UPDATE` also blocks those child inserts. Observed on SQLite (WAL): a single-row no-op `UPDATE` inside a transaction takes the database-wide write lock, so a write to an unrelated table waits, while plain reads continue. Two engine-specific branches that end up taking the same lock can often be one statement — check before accepting both.
+
+**How long is it held?** A lock lives until the enclosing transaction ends (observed: the competing update waited while the holder's transaction was open and went through right after it committed). Find who owns that transaction — often a caller far from the diff, such as a startup sweep or a batch job that commits once at the end. A per-item lock inside a loop that commits once holds every item's lock until the last item is done. Long-running work over many items commits per item, like any established per-item helper in the codebase.
+
+**Who else waits?** From the contention map: every other path that writes or locks the same rows — user-facing requests above all (a profile save, a checkout updating stock, a token refresh). If a request waits behind a background sweep, the finding is the measured or estimated wait, not "possible contention". When the environment allows, measure it: hold the lock in one session and time the competing statement in another.
+
+**What does an error inside the transaction do?** On PostgreSQL, after any failed statement the transaction is aborted and every later statement is rejected until a rollback (observed: "current transaction is aborted, commands ignored until end of transaction block"); a `ROLLBACK TO SAVEPOINT` recovers it. So a loop that catches an exception per item and continues — without a rollback or savepoint — fails every following item and loses the earlier uncommitted work. The contract to look for is explicit: per-item atomicity (commit or roll back each item) or all-or-nothing (stop at the first error), and a test for the one chosen.
+
+Also check lock ordering when several rows are locked in one transaction (consistent order, or deadlocks under load), retries on lock timeouts (bounded, with backoff), and that idempotency comes from a constraint or a conditional write rather than from check-then-insert timing.

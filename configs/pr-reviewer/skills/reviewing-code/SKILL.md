@@ -41,6 +41,12 @@ The review is a chat message the human copies and posts. It is never a side effe
    **Then check scope** (`references/scope-checks.md`): walk the diff file by file against the PR's stated purpose. Unrelated refactors/renames/reformatting, behavior changes the description doesn't mention, weakened or deleted test assertions, unneeded deps/abstractions/config, unrequested artifacts, and slop on added lines are findings.
    → verify: every changed file maps to the PR's purpose, is a disclosed required change, or is a finding.
 
+   **Then set the depth from the risk tier** (`references/context-sweep.md` § Risk tiers). Concurrency, locks, transactions, migrations, startup sweeps, auth, money, irreversible deletes, or data shared across users/processes make it Tier 3: every sweep, the concurrency lens, every test-evidence check, a fresh-context reviewer, and — if an automated reviewer also runs — its high effort level or above.
+   → verify: you can state the tier and why.
+
+   **Then sweep the context beyond the diff** (`references/context-sweep.md`): callers and transaction owners of every changed function; consumers of every value whose type, format, or identity changes; the contention map of everything the change locks or writes; the wiring that makes new tests, migrations, flags, and jobs actually run (CI workflows, gates, explicit file lists); and precedent in the codebase plus what the dependencies already provide at the project's declared floor. Most defects a human reviewer catches and a diff-only review misses live here.
+   → verify: the summary names what you traced outside the diff.
+
 2. **Apply the security lens** to every significant block (see `references/security-checks.md`; when the diff renders data, handles a request, or touches cookies, CORS, CSP, auth, queries, uploads, or outbound URLs, also `references/web-security-checks.md`). When such a PR can be run in a local or ephemeral environment, run the matching probes from `references/pr-pentest.md` under its rules of engagement — never against production or shared environments. Five questions: what is being trusted unverified? what's the authoritative source for this behavior? what happens on the failure path? who controls each value and could they lie? what is the blast radius if this is wrong?
    → verify: every "unverified assumption" has been mapped to either a finding or a defensible justification in the diff.
 
@@ -53,11 +59,11 @@ The review is a chat message the human copies and posts. It is never a side effe
 5. **Apply the platform-agnostic checks.** Paths, encoding, shell, temp/config dirs, line endings, time, CI matrix. Full grep recipes in `references/grep-recipes.md`; the reviewer checklist is in `references/structural-checks.md`.
    → verify: no Windows-only bug ships through this PR.
 
-6. **Apply the correctness checks** (see `references/correctness-checks.md`). The third class of bug: code that is right on the happy path and silently wrong on an edge/error path. New enum member → audit every enumeration site. Control-flow/signal exceptions (pause/cancel/retry) propagate **unwrapped** through every layer. Degrade-don't-crash contracts never hard-raise.
+6. **Apply the correctness checks** (see `references/correctness-checks.md`). The third class of bug: code that is right on the happy path and silently wrong on an edge/error path. New enum member → audit every enumeration site. Control-flow/signal exceptions (pause/cancel/retry) propagate **unwrapped** through every layer. Degrade-don't-crash contracts never hard-raise. Locks and transactions (§4): what is locked, for how long (the enclosing transaction, often owned by a caller), who else waits, how each database engine behaves, and what an error inside the transaction does to the rest.
    → verify: every new state and every failure branch has a test that would fail if its line were deleted.
 
-7. **Apply the testing checks.** Coverage gate (≥75%, target 80%) shown by the author. Tests challenge the code, not confirm it. Both happy path AND adversarial. Anti-patterns absent (Mirror, Liar, Giant, Mockery, Inspector, Chain Gang, Flaky, Snowball). Full testing checks in `references/structural-checks.md`.
-   → verify: if you removed a line of business logic, at least one test would fail.
+7. **Apply the testing checks.** Coverage gate (≥75%, target 80%) shown by the author. Tests challenge the code, not confirm it. Both happy path AND adversarial. Anti-patterns absent (Mirror, Liar, Giant, Mockery, Inspector, Chain Gang, Flaky, Snowball). Full testing checks in `references/structural-checks.md`. Then the evidence checks (`references/test-evidence-checks.md`): each new test fails on the base code, on every arm that claims coverage; each new test file runs in CI with its gates satisfied; concurrency tests force the interleaving instead of hoping for it; local results in the PR description are labeled as local.
+   → verify: if you removed a line of business logic, at least one test would fail — in CI, not only on the author's machine.
 
 8. **Compile the findings** by severity (B = Blocker, I = Important, R = Recommended, N = Nice-to-have). Output format in `references/output-format.md`.
    → verify: every finding has a label, a file:line reference, a problem statement, an impact statement, and a suggested fix.
@@ -71,12 +77,14 @@ The review is a chat message the human copies and posts. It is never a side effe
 
 | Severity         | Label | Meaning                                                          |
 |------------------|-------|------------------------------------------------------------------|
-| Blocker          | `B1`  | Must be fixed before merge. PII in logs, security defect, file-structure violation, missing test for a high-risk path. |
+| Blocker          | `B1`  | Must be fixed before merge. PII in logs, security defect, file-structure violation, missing test for a high-risk path, a regression that makes user-facing requests wait or fail (for example a lock held across a long transaction on a row a hot path writes). |
 | Important        | `I1`  | Preferably this PR. SOLID violations, architecture leaks, weak error handling, missing adversarial tests. |
 | Recommended      | `R1`  | Can ship as a follow-up. Observability gaps, naming clarity, minor duplication. |
 | Nice-to-have     | `N1`  | Polish. Idiomatic suggestions, refactor opportunities that don't affect correctness. |
 
 Use these labels consistently throughout the review. **Never `#N` — GitHub auto-links it.**
+
+When the PR under review is your own or an agent's, the author doesn't get to waive findings: a Blocker, or an Important finding with a concrete fix, is fixed before merge or waived by the user explicitly, and a known defect written into the PR description as an "accepted cost" without that approval is itself a Blocker. End such a review with `## Unresolved findings` listing every finding not yet fixed.
 
 ## Required output structure
 
@@ -180,6 +188,8 @@ Detailed rules — labeling schemes, length, length, link format, copy-paste saf
 - `references/pr-pentest.md` — minimal dynamic pentest for a PR: 13 safe `curl` probes (auth, BOLA, BFLA, mass assignment, CSRF, CORS, headers/cookies, stored XSS, open redirect, SSRF, injection, brute force/enumeration, error leakage) with rules of engagement and WSTG IDs.
 - `references/web-security-checks.md` — client and server security as diff checks: XSS sinks, URL schemes, tokens in storage, UI-only authorization, CSRF/CORS/CSP/cookies, injection, BOLA/BFLA, mass assignment, SSRF, uploads, parsers, passwords, JWT, plus the PR-level reads (dependencies, CI, permission migrations).
 - `references/structural-checks.md` — file structure hard limits, SOLID verification, pragmatic principles, layer separation, error handling, testing, platform agnosticism.
+- `references/context-sweep.md` — risk tiers and the five sweeps beyond the diff: callers and transaction owners, consumers of changed values, the contention map, wiring (does it run in CI?), precedent and platform.
+- `references/test-evidence-checks.md` — fails without the fix (per arm), runs in CI (gates, explicit file lists, job logs, coverage), concurrency tests that force the schedule, local vs CI evidence, failure-path contracts.
 - `references/correctness-checks.md` — enum/state-machine completeness, control-flow exceptions propagate unwrapped, degrade-don't-crash contracts + the failure-path test spec.
 - `references/scope-checks.md` — is the PR in scope (unrelated hunks, unmentioned behavior changes, weakened tests, slop) and is the review in scope (no out-of-scope blockers).
 - `references/grep-recipes.md` — copy-paste grep commands for catching common violations across languages.

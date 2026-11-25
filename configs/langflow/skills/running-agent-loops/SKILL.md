@@ -18,6 +18,9 @@ List `learnings/` and read anything relevant. Project-specific loop conventions,
 - **The reviewer is never the author.** Put review/verify in a separate step/context so it isn't anchored to the implementation.
 - **Two focused passes beat one constrained pass.** Don't pile negative instructions onto the implementer — add a separate **de-sloppify** pass (below). Quality from constraints decays; quality from a dedicated cleanup step doesn't.
 - **Every loop has an explicit stop condition.** Bound it by max-runs, max-cost, max-duration, or a completion signal — never "until it feels done".
+- **Review findings live in a ledger the implementer can't silently close.** Every finding a review step raises is recorded with its severity and a status: `fixed` (re-verified against the new code by the reviewer), `waived` (by the user, for that finding), or `open`. The loop does not finish with an open Blocker or an open Important finding that has a concrete fix; turning one into an "accepted cost" in a PR description, comment, or commit message needs the user's approval first (`reviewing-code` → Self-review and agent loops).
+- **The orchestrator reads the ledger, not just the summary.** Before reporting success, read every finding the implementer left unfixed and challenge each one; the final report lists them under `## Unresolved findings` (stated as empty when it is). A PR body is not where an unfixed finding gets reported.
+- **Match review depth to risk.** Concurrency, locks, transactions, migrations, startup sweeps, auth, and money get the deep tier (`reviewing-code/references/context-sweep.md`): the full context sweep and test-evidence checks, a fresh-context reviewer, and any automated reviewer at its high effort level or above.
 
 ## The patterns (pick the simplest that fits)
 

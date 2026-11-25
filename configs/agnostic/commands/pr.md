@@ -38,6 +38,8 @@ Opening the PR is not the last step. Every PR opened here is reviewed in the sam
 
 - Gather from GitHub, not from memory: `gh pr view <n>`, `gh pr diff <n>`, `gh pr checks <n>`.
 - Apply `skills/reviewing-code/SKILL.md` end to end, including its `learnings/` and the `references/` the diff touches. Run it in a fresh subagent when one is available and hand it only the PR number — the context that wrote the code is the worst reviewer of it.
+- Set the depth by risk tier (`references/context-sweep.md`): a PR touching concurrency, locks, transactions, migrations, startup sweeps, auth, or money gets the full context sweep and every test-evidence check, including whether each new test runs in CI.
+- This is a self-review: list every Blocker and every Important finding with a concrete fix under `## Unresolved findings` and ask the user whether to fix them now. Never move one into the PR description as an accepted cost.
 - Print the review in the chat, after the PR URL, per `skills/reviewing-code/references/output-format.md`.
 - Never run `gh pr review` or `gh pr comment` — the human posts it. Never fix a finding unasked: report it and let the user decide.
 

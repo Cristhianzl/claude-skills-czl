@@ -26,6 +26,21 @@ CRITICAL — Comprehension Audit (Blockers)
 [ ] No "the AI wrote it, I trust it" code in the diff — every line is defensible
 [ ] No "future AI will refactor this" assumption baked in anywhere
 
+CRITICAL — Context beyond the diff (context-sweep.md; all items on Tier 3)
+[ ] Risk tier stated; Tier 3 got every sweep, the concurrency lens, and a fresh-context reviewer
+[ ] Callers of every changed function found; the transaction owner and its lifetime known
+[ ] Every value whose type/format/identity changes followed to each consumer (storage keys, external systems, caches)
+[ ] Contention map done: every other path that writes or locks what this change writes or locks, and whether it waits
+[ ] Every new test file, migration, flag, and job is wired into something that runs it (CI job, gates satisfied, explicit lists)
+[ ] Existing pattern in the codebase and platform API at the dependency floor checked before accepting new machinery
+
+CRITICAL — Test evidence (test-evidence-checks.md)
+[ ] Each new test fails on the base code, on every arm that claims to cover the fix
+[ ] Each gated arm (env var, dialect, marker) runs in some CI job; the job log shows it ran, not skipped
+[ ] Concurrency tests force the interleaving (per-subject barrier, no timeout escape, fail without the protection)
+[ ] Local-only evidence in the PR description is labeled as such
+[ ] Self-review / agent loop: every Blocker and fixable Important finding fixed, or waived by the user; `## Unresolved findings` present
+
 CRITICAL — AI-Generated Code in High-Risk Areas (Blockers, when applicable)
 [ ] Every external API call verified against the provider's official documentation (not the AI's claim)
 [ ] Every signature / HMAC / JWT verification compared line-by-line with the reference implementation

@@ -9,6 +9,28 @@ means: a hook starts blocking code it used to allow, a skill or rule reverses
 advice you may have built on, or a file moves so an existing install stops
 resolving it.
 
+## [2.7.0] - 2026-11-25
+
+Reviews now look where a maintainer looks: outside the diff, at what actually runs, and at what the change costs other users. Prompted by two Langflow PRs that passed a pre-push review and still drew a maintainer's requested changes. Measured by blind reviews of the original pre-fix commits, in isolated repos without the fix commits or comments, scored against the maintainer's six points: the incident's review detected 2 and applied none; the previous skill caught 5 plus 1 partial; the new skill caught all 6 in two separate runs.
+
+### Added
+
+- **`reviewing-code/references/context-sweep.md`** (agnostic, langflow, pr-reviewer) — risk tiers that set review depth (Tier 3: concurrency, locks, transactions, migrations, startup sweeps, auth, money, shared data), an **execute-before-you-judge** step for Tier 3 (throwaway engines, new tests on base and head per engine, measured cost of any accepted trade-off, CI log and coverage), and five sweeps beyond the diff: callers and transaction owners, consumers of changed values (with a tested `perl` recipe that lists rebindings), the contention map of everything the change locks or writes, wiring (does each new test, migration, flag, and job actually run — gates, explicit CI file lists), and precedent plus platform APIs at the dependency floor.
+- **`reviewing-code/references/test-evidence-checks.md`** (agnostic, langflow, pr-reviewer) — each new test fails on the base on every arm that claims coverage; each gated arm runs in CI; concurrency tests force the interleaving (per-subject barrier, no timeout escape, re-checks not counted, fail without the protection); local evidence labeled as local; failure-path contracts.
+- **Locks and transactions lens** in `correctness-checks.md` §4, with every engine claim measured on PostgreSQL 17.9 and SQLite: which statements take which row lock, lock lifetime equals the enclosing transaction, who waits, and what an error does to a PostgreSQL transaction (aborted until rollback; savepoint recovers).
+- **Langflow learning** (langflow) — verified facts the sweeps need: PostgreSQL tests run in CI only when listed by name in `migration-validation.yml` or `component-compatibility.yml`, boot sweeps run in one transaction, login writes the `user` row, the per-user-commit and lock idioms, the Alembic floor, and the Kubernetes store's ID encoding.
+
+### Changed
+
+- **The author never waives a finding** (`reviewing-code`, `running-agent-loops`, `writing-pull-requests`, `/pr`): in a self-review or agent loop, every Blocker and every Important finding with a concrete fix is fixed or explicitly waived by the user; writing a known defect into a PR as an "accepted cost" without approval is itself a Blocker; findings are re-verified after fixes; reports carry `## Unresolved findings`. Loops keep a findings ledger the implementer can't silently close, and the orchestrator reads it before reporting.
+- **Blocker bar** now includes a regression that makes user-facing requests wait or fail, matching how a maintainer judged a lock held across a startup sweep.
+- **`writing-tests`** — a regression test must be shown to fail without the fix on every arm; gated tests are wired into CI; concurrency tests force the interleaving.
+- **`reviewing-code` output** — the "Required output structure" block no longer contradicts the hard rules (no emoji headers, finding IDs, or label lines in agnostic/langflow); it now points to the prose skeleton in `output-format.md`.
+
+### Known limitation
+
+- A rebinding whose consequence lives in a type-dependent consumer (a `str` vs `UUID` ID reaching a store that encodes them differently) was flagged as a rebinding but not traced to the consumer in one of two runs; the sweep now requires that trace explicitly.
+
 ## [2.6.0] - 2026-11-18
 
 ### Added

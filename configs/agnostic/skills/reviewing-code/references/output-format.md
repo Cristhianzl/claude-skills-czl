@@ -1,8 +1,8 @@
 # Output format — a GitHub review, written like a person
 
-When the user asks you to review a pull request, the review is **posted on the PR**: one GitHub review made of short inline comments on the exact lines they're about, plus one short summary comment. That's how experienced reviewers work — the author fixes each point where it lives, resolves the thread, and sees at a glance what's left. A long document at the end makes the author hunt for every `file:line`.
+When the user asks you to review a pull request **someone else opened**, the review is **posted on the PR**: one GitHub review made of short inline comments on the exact lines they're about, plus one short summary comment. That's how experienced reviewers work — the author fixes each point where it lives, resolves the thread, and sees at a glance what's left. A long document at the end makes the author hunt for every `file:line`.
 
-When there's no PR (a local diff, a branch, a self-review before pushing), use the same shape in the chat: the summary first, then each inline comment headed by its `path:line`.
+When the PR is the **user's own** — its author is the account `gh` is logged in as — never post anything on it, not a review and not a single comment: give the same shape in the chat. Check before writing the payload (`gh pr view <n> --json author --jq .author.login` against `gh api user --jq .login`); `hooks/check-own-pr-review.py` blocks the call anyway. When there's no PR (a local diff, a branch, a self-review before pushing), use the same shape in the chat too: the summary first, then each inline comment headed by its `path:line`.
 
 ## How a comment reads
 

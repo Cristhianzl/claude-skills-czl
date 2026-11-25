@@ -24,4 +24,4 @@ model; `references/` holds the depth — `context-sweep.md`, `test-evidence-chec
 overrides the defaults — the agent reads it first. That's where project-specific severity
 adjustments, banned patterns, and recurring violations belong.
 
-**The output is a GitHub review on the PR** — short inline comments on the changed lines, each starting with `**Blocker:**`, `**Important:**`, `**Recommended:**`, or `**Nit:**`, plus a brief summary of what was checked and the verdict. It is posted as a plain comment review; it approves or requests changes only when you ask. `/review` (no PR) gives the same shape in the chat.
+**The output is a GitHub review on the PR** — short inline comments on the changed lines, each starting with `**Blocker:**`, `**Important:**`, `**Recommended:**`, or `**Nit:**`, plus a brief summary of what was checked and the verdict. It is posted as a plain comment review; it approves or requests changes only when you ask. Your own PRs are never commented on — their review comes in the chat. `/review` (no PR) gives the same shape in the chat.

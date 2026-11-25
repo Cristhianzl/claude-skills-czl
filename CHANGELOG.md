@@ -9,6 +9,13 @@ means: a hook starts blocking code it used to allow, a skill or rule reverses
 advice you may have built on, or a file moves so an existing install stops
 resolving it.
 
+## [2.9.0] - 2026-11-25
+
+### Added
+
+- **Your own PRs are never commented on** (agnostic, langflow, pr-reviewer). When you ask for a review of a PR you opened, the review comes in the chat in the same shape (summary, then each comment headed by its `path:line` and severity) and nothing is posted on the PR. Only PRs opened by other people get posted reviews. Written into `reviewing-code` (`SKILL.md`, `output-format.md`), `/review-pr`, `/dual-review`, and the `pr-reviewer` contract.
+- **`hooks/check-own-pr-review.py`** (agnostic, langflow, pr-reviewer) — enforces it: before any write to a pull request (`gh api` review and comment endpoints, including the implicit POST that `-f`/`-F`/`--field`/`--raw-field`/`--input` trigger, and `gh pr review`/`gh pr comment` by number or URL), it compares the PR's author with the account `gh` is logged in as and blocks when they match; it fails closed when the author can't be verified, and lets comments on plain issues and all reads through. Verified against real PRs (one of yours, one by someone else, a plain issue, an unresolvable PR): 13/13 cases on Python 3.9 and 3.12.
+
 ## [2.8.1] - 2026-11-25
 
 ### Fixed

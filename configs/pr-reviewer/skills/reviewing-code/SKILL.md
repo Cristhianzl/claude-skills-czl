@@ -20,9 +20,10 @@ Lighten formality for: docs-only changes, lockfile bumps with no API change, sin
 
 ## Hard rules — what the reviewer may and may not do
 
-- **When the user asks you to review a PR, post the review on it** — one GitHub review with inline comments and a summary, through the reviews API, exactly as `references/output-format.md` describes. Report the review's URL afterwards. Post nothing else to GitHub: no separate comments, no edits to the PR, no labels, no merges, no closing.
+- **Never post on the user's own PR.** If the PR's author is the account `gh` is logged in as (compare `gh pr view <n> --json author --jq .author.login` with `gh api user --jq .login`), nothing goes on the PR — no review, no inline comment, no conversation comment: give the review in the chat in the same shape. Only PRs opened by other people get posted reviews. Enforced by `hooks/check-own-pr-review.py`, which blocks any write to a PR the session's account authored.
+- **When the user asks you to review someone else's PR, post the review on it** — one GitHub review with inline comments and a summary, through the reviews API, exactly as `references/output-format.md` describes. Report the review's URL afterwards. Post nothing else to GitHub: no separate comments, no edits to the PR, no labels, no merges, no closing.
 - **The event is `COMMENT` unless the user asks for `APPROVE` or `REQUEST_CHANGES`.** The verdict is written in the summary. Never `REQUEST_CHANGES` on the user's own PR (GitHub refuses it).
-- **No PR to post on** (a local diff, a branch, a self-review before push, the review `/pr` runs on the PR you just opened): give the same shape in the chat — summary first, then each comment headed by its `path:line`.
+- **No PR to post on, or the PR is the user's own** (a local diff, a branch, a self-review before push, the review `/pr` runs on the PR you just opened, any PR the user authored): give the same shape in the chat — summary first, then each comment headed by its `path:line`.
 - **Never** run `git commit`, `git add`, `git push`. Only the human commits.
 - **Never** save the review in the repository; the payload goes in a temporary file outside it.
 - **Never** use `#N` anywhere in the output — GitHub auto-links it to PR/issue `N`.

@@ -12,14 +12,14 @@ specific than this file. When they conflict, the more specific one wins — say 
 
 ## The reviewer writes one thing: the review
 
-**Read, grep, run read-only git — and, when the user asks you to review a PR, post one review on it.** You are not the author and not the merger:
+**Read, grep, run read-only git — and, when the user asks you to review someone else's PR, post one review on it.** Never post anything on a PR the user authored; their own PRs are reviewed in the chat. You are not the author and not the merger:
 
 - Never edit, create, or delete a file in the repo under review. If a fix is obvious, put it in a `suggestion` block on the line — the author applies it.
 - Never `git add`, `git commit`, `git push`, `git checkout -b`, `git merge`, `git rebase`.
 - Post the review only through the reviews API (`gh api -X POST repos/<owner>/<repo>/pulls/<n>/reviews --input <payload.json>`, see `references/output-format.md`), with event `COMMENT` unless the user asks for `APPROVE` or `REQUEST_CHANGES`. Never `gh pr review`, `gh pr comment`, `gh pr merge`, `gh pr close`, `gh pr edit`, `gh issue`, or any other GitHub write.
 - Never save the review in the repository; the payload goes in a temporary file outside it.
 
-Enforced by `settings.json` and `hooks/block-mutations.sh`, which blocks every other write even when it is buried inside a compound shell line, and lets only the review-creation call through.
+Enforced by `settings.json` and `hooks/block-mutations.sh`, which blocks every other write even when it is buried inside a compound shell line, and lets only the review-creation call through; `hooks/check-own-pr-review.py` additionally blocks any write to a PR the session's account authored.
 
 ## Scope creep — in the PR and in the review
 

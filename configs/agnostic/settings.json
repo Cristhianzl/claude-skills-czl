@@ -133,6 +133,10 @@
           {
             "type": "command",
             "command": "input=$(cat); cmd=$(printf '%s' \"$input\" | jq -r '.tool_input.command // empty'); case \"$cmd\" in *\"git push\"*) printf '%s' \"$input\" | \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre-push-smoke.sh\" ;; esac"
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-own-pr-review.py\""
           }
         ]
       }
